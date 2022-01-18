@@ -53,17 +53,17 @@ function drawPanel(cfg, inner, outer, offset)
   cfg.color = color(230,130,30);
 
   stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer);
-  snailTrail(cfg, inner);
+  snailTrail(cfg, outer, 1);
+  snailTrail(cfg, inner, 1);
 
-  cfg.color = color(255,225,0);
+  cfg.color = color(255,215,0);
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
 
   stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer);
-  snailTrail(cfg, inner);
+  snailTrail(cfg, outer, 1);
+  snailTrail(cfg, inner, 1);
 }
 
 function computeStretchers(inner, outer)
@@ -79,8 +79,8 @@ function computeStretchers(inner, outer)
   
   stretchers = [
     [[minX, midY], [minX+paddingX, midY]],
-    [[midX, maxY-paddingY], [midX, maxY]],
-    [[maxX-paddingX, midY], [maxX, midY]],
+    [[midX, maxY], [midX, maxY-paddingY]],
+    [[maxX, midY], [maxX-paddingX, midY]],
     [[midX, minY], [midX, minY+paddingY]],
   ]
 
@@ -92,12 +92,25 @@ function computeStretchers(inner, outer)
  * @param {*} cfg
  * @param {*} points
  */
-function snailTrail(cfg, points) {
-  points
-    .map(coords => createVector(...coords))
-    .forEach((elt, i, arr) => {
-      unit(cfg, elt, arr[(i + 1) % arr.length]);
-    });
+function snailTrail(cfg, points, loop) {
+  if (loop)
+  {
+    points
+      .map(coords => createVector(...coords))
+      .forEach((elt, i, arr) => {
+        unit(cfg, elt, arr[(i + 1) % arr.length]);
+      });
+  } else 
+  {
+    points
+      .map(coords => createVector(...coords))
+      .forEach((elt, i, arr) => {
+        if (i < arr.length - 1)
+        {
+          unit(cfg, elt, arr[i + 1]);
+        }
+      });
+  }
 }
 
 function unit(cfg, p1, p2) {
