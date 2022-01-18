@@ -15,7 +15,7 @@ function setup() {
 }
 
 function draw() {
-  background(20);
+  background(178,34,34);
 
   cfg.t = min(1, (frameCount % (duration + hold)) / duration);
 
@@ -40,17 +40,59 @@ function draw() {
     [[300, 200], [350, 200]],
   ];
 
-  cfg.offset = 3;
-  cfg.weight = 15;
-  cfg.color = color(220, 220, 0);
+  let shadowOffset = 3;
+  let shadowWeight = 10;
+  let weight = 15;
+
+  cfg.offsetx = shadowOffset;
+  cfg.offsety = shadowOffset;
+  cfg.weight = weight;
+  cfg.color = color(230,130,30);
 
   stretchers.forEach(s => snailTrail(cfg, s));
   snailTrail(cfg, outer);
   snailTrail(cfg, inner);
 
-  cfg.color = color(220, 0, 0);
-  cfg.weight = 10;
-  cfg.offset = 0;
+  cfg.color = color(255,225,0);
+  cfg.weight = shadowWeight;
+  cfg.offsetx = 0;
+  cfg.offsety = 0;
+
+  stretchers.forEach(s => snailTrail(cfg, s));
+  snailTrail(cfg, outer);
+  snailTrail(cfg, inner);
+
+  cfg.offsetx = shadowOffset + 200;
+  cfg.offsety = shadowOffset;
+  cfg.weight = weight;
+  cfg.color = color(230,130,30);
+
+  stretchers.forEach(s => snailTrail(cfg, s));
+  snailTrail(cfg, outer);
+  snailTrail(cfg, inner);
+
+  cfg.color = color(255,225,0);
+  cfg.weight = shadowWeight;
+  cfg.offsetx = 200;
+  cfg.offsety = 0;
+
+  stretchers.forEach(s => snailTrail(cfg, s));
+  snailTrail(cfg, outer);
+  snailTrail(cfg, inner);
+
+  cfg.offsetx = shadowOffset + 400;
+  cfg.offsety = shadowOffset;
+  cfg.weight = weight;
+  cfg.color = color(230,130,30);
+
+  stretchers.forEach(s => snailTrail(cfg, s));
+  snailTrail(cfg, outer);
+  snailTrail(cfg, inner);
+
+  cfg.color = color(255,225,0);
+  cfg.weight = shadowWeight;
+  cfg.offsetx = 400;
+  cfg.offsety = 0;
 
   stretchers.forEach(s => snailTrail(cfg, s));
   snailTrail(cfg, outer);
@@ -80,7 +122,10 @@ function unit(cfg, p1, p2) {
   stroke(cfg.color);
   strokeWeight(cfg.weight);
 
-  line(p1.x + cfg.offset, p1.y + cfg.offset, x + cfg.offset, y + cfg.offset);
+  line(p1.x + cfg.offsetx, 
+    p1.y + cfg.offsety, 
+    x + cfg.offsetx, 
+    y + cfg.offsety);
 }
 
 /*
