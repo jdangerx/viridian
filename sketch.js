@@ -19,6 +19,7 @@ function draw() {
 
   cfg.t = min(1, (frameCount % (duration + hold)) / duration);
 
+  // IMPORTANT. Order square points BL, TL, TR, BR
   let outer = [
     [50, 50],
     [50, 350],
@@ -27,25 +28,27 @@ function draw() {
   ];
 
   let inner = [
-    [300, 100],
-    [300, 300],
-    [100, 300],
     [100, 100],
+    [100, 300],
+    [300, 300],
+    [300, 100],
   ];
 
-  let stretchers = [
-    [[200, 50], [200, 100]],
-    [[200, 300], [200, 350]],
-    [[50, 200], [100, 200]],
-    [[300, 200], [350, 200]],
-  ];
+  let stretchers = computeStretchers(inner, outer);
 
+  drawPanel(cfg, inner, outer, createVector(0, 0));
+  drawPanel(cfg, inner, outer, createVector(200, 0));
+  drawPanel(cfg, inner, outer, createVector(400, 0));
+}
+
+function drawPanel(cfg, inner, outer, offset)
+{
   let shadowOffset = 3;
   let shadowWeight = 10;
   let weight = 15;
 
-  cfg.offsetx = shadowOffset;
-  cfg.offsety = shadowOffset;
+  cfg.offsetx = shadowOffset + offset.x;
+  cfg.offsety = shadowOffset + offset.y;
   cfg.weight = weight;
   cfg.color = color(230,130,30);
 
@@ -55,48 +58,33 @@ function draw() {
 
   cfg.color = color(255,225,0);
   cfg.weight = shadowWeight;
-  cfg.offsetx = 0;
-  cfg.offsety = 0;
+  cfg.offsetx = offset.x;
+  cfg.offsety = offset.y;
 
   stretchers.forEach(s => snailTrail(cfg, s));
   snailTrail(cfg, outer);
   snailTrail(cfg, inner);
+}
 
-  cfg.offsetx = shadowOffset + 200;
-  cfg.offsety = shadowOffset;
-  cfg.weight = weight;
-  cfg.color = color(230,130,30);
+function computeStretchers(inner, outer)
+{
+  let midY = lerp(inner[1][0], inner[1][1], 0.5);
+  let midX = lerp(inner[0][0], inner[2][0], 0.5); 
+  let paddingY = ((outer[2][1] - outer[0][1]) - (inner[2][1] - inner[0][1])) * 0.5
+  let paddingX = ((outer[2][1] - outer[0][1]) - (inner[2][1] - inner[0][1])) * 0.5
+  let minX = outer[0][0]
+  let minY = outer[0][1]
+  let maxX = outer[2][0]
+  let maxY = outer[2][1]
+  
+  stretchers = [
+    [[minX, midY], [minX+paddingX, midY]],
+    [[midX, maxY-paddingY], [midX, maxY]],
+    [[maxX-paddingX, midY], [maxX, midY]],
+    [[midX, minY], [midX, minY+paddingY]],
+  ]
 
-  stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer);
-  snailTrail(cfg, inner);
-
-  cfg.color = color(255,225,0);
-  cfg.weight = shadowWeight;
-  cfg.offsetx = 200;
-  cfg.offsety = 0;
-
-  stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer);
-  snailTrail(cfg, inner);
-
-  cfg.offsetx = shadowOffset + 400;
-  cfg.offsety = shadowOffset;
-  cfg.weight = weight;
-  cfg.color = color(230,130,30);
-
-  stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer);
-  snailTrail(cfg, inner);
-
-  cfg.color = color(255,225,0);
-  cfg.weight = shadowWeight;
-  cfg.offsetx = 400;
-  cfg.offsety = 0;
-
-  stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer);
-  snailTrail(cfg, inner);
+  return stretchers;
 }
 
 /**
