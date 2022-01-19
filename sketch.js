@@ -1,5 +1,7 @@
-let duration = 120;
-let hold = 30;
+let overall = 400;
+let prehold = 0.0;
+let duration = 1.0;
+let hold = 1 - prehold - duration;
 let cfg;
 
 function setup() {
@@ -17,7 +19,8 @@ function setup() {
 function draw() {
   background(178,34,34);
 
-  cfg.t = min(1, (frameCount % (duration + hold)) / duration);
+  // cfg.t = min(1, (frameCount % (duration + hold)) / duration);
+  cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   // IMPORTANT. Order square points BL, TL, TR, BR
   let outer = [
@@ -36,13 +39,14 @@ function draw() {
 
   let stretchers = computeStretchers(inner, outer);
 
-  drawPanel(cfg, inner, outer, createVector(0, 0));
-  drawPanel(cfg, inner, outer, createVector(200, 0));
-  drawPanel(cfg, inner, outer, createVector(400, 0));
+  drawPanel(cfg, inner, outer, createVector(0, 0), 0.4, 0.2);
+  drawPanel(cfg, inner, outer, createVector(200, 0), 0, 0.5);
+  drawPanel(cfg, inner, outer, createVector(400, 0), 0.2, 0.6);
 }
 
-function drawPanel(cfg, inner, outer, offset)
+function drawPanel(cfg, inner, outer, offset, prehold, duration)
 {
+  let t = min(max(0, (cfg.t - prehold) / duration), 1);
   let shadowOffset = 3;
   let shadowWeight = 10;
   let weight = 15;
@@ -52,18 +56,18 @@ function drawPanel(cfg, inner, outer, offset)
   cfg.weight = weight;
   cfg.color = color(230,130,30);
 
-  stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer, 1);
-  snailTrail(cfg, inner, 1);
+  stretchers.forEach(s => snailTrail(cfg, s, false, t));
+  snailTrail(cfg, outer, 1, t);
+  snailTrail(cfg, inner, 1, t);
 
   cfg.color = color(255,215,0);
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
 
-  stretchers.forEach(s => snailTrail(cfg, s));
-  snailTrail(cfg, outer, 1);
-  snailTrail(cfg, inner, 1);
+  stretchers.forEach(s => snailTrail(cfg, s, false, t));
+  snailTrail(cfg, outer, 1, t);
+  snailTrail(cfg, inner, 1, t);
 }
 
 function computeStretchers(inner, outer)
@@ -92,13 +96,16 @@ function computeStretchers(inner, outer)
  * @param {*} cfg
  * @param {*} points
  */
-function snailTrail(cfg, points, loop) {
+function snailTrail(cfg, points, loop, t) {
+  if (t === 0) {
+    return;
+  }
   if (loop)
   {
     points
       .map(coords => createVector(...coords))
       .forEach((elt, i, arr) => {
-        unit(cfg, elt, arr[(i + 1) % arr.length]);
+        unit(cfg, elt, arr[(i + 1) % arr.length], t);
       });
   } else 
   {
@@ -107,14 +114,14 @@ function snailTrail(cfg, points, loop) {
       .forEach((elt, i, arr) => {
         if (i < arr.length - 1)
         {
-          unit(cfg, elt, arr[i + 1]);
+          unit(cfg, elt, arr[i + 1], t);
         }
       });
   }
 }
 
-function unit(cfg, p1, p2) {
-  let time = getGain(cfg.t, 0.3);
+function unit(cfg, p1, p2, t) {
+  let time = getGain(t, 0.3);
 
   let x = lerp(p1.x, p2.x, time);
   let y = lerp(p1.y, p2.y, time);
