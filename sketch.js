@@ -8,6 +8,8 @@ let shadowOffset = 3;
 let shadowWeight = 10;
 let weight = 15;
 
+let loopCounter = 0;
+
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
 
@@ -29,6 +31,11 @@ function draw() {
 
   // cfg.t = min(1, (frameCount % (duration + hold)) / duration);
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+
+  if (frameCount % overall == 0)
+  {
+    loopCounter++;
+  }
   
   //animation1();
   animation2();
@@ -63,10 +70,11 @@ function animation2()
 {
   cfg.t = max(0.001, cfg.t);
   let third = 1/3;
-  let margin = 100;
+  let margin = 50;
   let side = 210;
+  let height = margin+side*(5/3);
   let frameBorderTop = [[0, margin],[width, margin]];
-  let frameBorderBot = [[0, margin+side*(5/3)],[width, margin+side*(5/3)]];
+  let frameBorderBot = [[0, height],[width, height]];
                         
   for (i=-1; i < 10; ++i)
   {
@@ -88,19 +96,36 @@ function animation2()
                     [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]-side * 2 * third],
                     [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]]];
 
-                    let easedTime = getGain(cfg.t, 0.02);
-                    if (cfg.t < 0.5) {
-                      drawTrail(cfg, square, createVector(lerp(0, side*(1+third), easedTime), 0), 0.0, 0.0, 1);
-                    }
-                    drawTrail(cfg, topSquare, createVector(0, 0), 0.0, 0, 0);    
-                    drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
-                    if (cfg.t >= 0.5) {
-                      drawTrail(cfg, square, createVector(lerp(0, side*(1+third), easedTime), 0), 0.0, 0.0, 1);
-                    }
+                    if (loopCounter == 0)
+                    {
+                      drawTrail(cfg, square, createVector(0, 0), 0.6, 0.4, 1);
+                      drawTrail(cfg, topSquare, createVector(0, 0), 0.2, 0.4, 0);    
+                      drawTrail(cfg, botSquare, createVector(0, 0), 0.2, 0.4, 0);
+                    }  
+                    else
+                    {
+                      let easedTime = getGain(cfg.t, 0.02);
+                      if (cfg.t < 0.5) {
+                        drawTrail(cfg, square, createVector(lerp(0, side*(1+third), easedTime), 0), 0.0, 0.0, 1);
+                      }
+                      drawTrail(cfg, topSquare, createVector(0, 0), 0.0, 0, 0);    
+                      drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
+                      if (cfg.t >= 0.5) {
+                        drawTrail(cfg, square, createVector(lerp(0, side*(1+third), easedTime), 0), 0.0, 0.0, 1);
+                      }  
+                    } 
   }
 
-  drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0, 0);
-  drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0, 0);
+  if (loopCounter == 0)
+  {
+    drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0.2, 0);
+    drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0.2, 0);
+  }
+  else
+  {
+    drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0, 0);
+    drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0, 0);
+  }
 }
 
 function animation3() {
@@ -280,3 +305,32 @@ function smoothstep (min, max, value) {
   var x = Math.max(0, Math.min(1, (value-min)/(max-min)));
   return x*x*(3 - 2*x);
 };
+
+function record() {
+  chunks.length = 0;
+  let stream = document.querySelector('canvas').captureStream(30),
+    recorder = new MediaRecorder(stream);
+  recorder.ondataavailable = e => {
+    if (e.data.size) {
+      chunks.push(e.data);
+    }
+  };
+  recorder.onstop = exportVideo;
+  btn.onclick = e => {
+    recorder.stop();
+    btn.textContent = 'start recording';
+    btn.onclick = record;
+  };
+  recorder.start();
+  btn.textContent = 'stop recording';
+}
+
+function exportVideo(e) {
+  var blob = new Blob(chunks);
+  var vid = document.createElement('video');
+  vid.id = 'recorded'
+  vid.controls = true;
+  vid.src = URL.createObjectURL(blob);
+  document.body.appendChild(vid);
+  vid.play();
+}
