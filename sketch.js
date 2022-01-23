@@ -1,6 +1,6 @@
-let overall = 800;
+let overall = 400;
 let prehold = 0.0;
-let duration = 0.7;
+let duration = 1.0;
 let hold = 1 - prehold - duration;
 let cfg;
 
@@ -61,38 +61,46 @@ function animation1()
 
 function animation2()
 {
+  cfg.t = max(0.001, cfg.t);
+  let third = 1/3;
   let margin = 100;
-  let side = 200;
+  let side = 210;
   let frameBorderTop = [[0, margin],[width, margin]];
-  let frameBorderBot = [[0, margin+side*1.66],[width, margin+side*1.66]];
+  let frameBorderBot = [[0, margin+side*(5/3)],[width, margin+side*(5/3)]];
                         
-  for (i=0; i < 10; ++i)
+  for (i=-1; i < 10; ++i)
   {
-    let offset = (side*0.3333) * (i+1) + side * i; 
+    let offset = (side*third) * (i+1) + side * i; 
     let topSquare = [[frameBorderTop[0][0]+offset, frameBorderTop[0][1]],
-                    [frameBorderTop[0][0]+offset, frameBorderTop[0][1]+side * 0.6666],
-                    [frameBorderTop[0][0]+offset + side, frameBorderTop[0][1]+side * 0.6666],
+                    [frameBorderTop[0][0]+offset, frameBorderTop[0][1]+side * 2 * third],
+                    [frameBorderTop[0][0]+offset + side, frameBorderTop[0][1]+side * 2 * third],
                     [frameBorderTop[0][0]+offset + side, frameBorderTop[0][1]]];
 
-    let offsetMid = (side*0.3333) * (i-5) + side * i; 
-    let square = [[frameBorderTop[0][0]+offsetMid, frameBorderTop[0][1]+side*0.3333],
-                    [frameBorderTop[0][0]+offsetMid, frameBorderTop[0][1]+side*0.3333+side],
-                    [frameBorderTop[0][0]+offsetMid + side, frameBorderTop[0][1]+side*0.3333+side],
-                    [frameBorderTop[0][0]+offsetMid + side, frameBorderTop[0][1]+side*0.3333]];
+    let offsetMid = offset - 2 * side/3; // (side*third) * (i-4) + side * (i + 1); 
+    // 
+    let square = [[frameBorderTop[0][0]+offsetMid, frameBorderTop[0][1]+side*third],
+                    [frameBorderTop[0][0]+offsetMid, frameBorderTop[0][1]+side*third+side],
+                    [frameBorderTop[0][0]+offsetMid + side, frameBorderTop[0][1]+side*third+side],
+                    [frameBorderTop[0][0]+offsetMid + side, frameBorderTop[0][1]+side*third]];
     
     let botSquare = [[frameBorderBot[0][0]+offset, frameBorderBot[0][1]],
-                    [frameBorderBot[0][0]+offset, frameBorderBot[0][1]-side * 0.6666],
-                    [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]-side * 0.6666],
+                    [frameBorderBot[0][0]+offset, frameBorderBot[0][1]-side * 2 * third],
+                    [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]-side * 2 * third],
                     [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]]];
 
-                    drawTrail(cfg, square, createVector(lerp(0, side*1.3333, cfg.t), 0), 0.4, 0.2, 1);
-                    drawTrail(cfg, topSquare, createVector(0, 0), 0.2, 0.2, 0);    
-                    drawTrail(cfg, botSquare, createVector(0, 0), 0.2, 0.2, 0);
-
+                    let easedTime = getGain(cfg.t, 0.02);
+                    if (cfg.t < 0.5) {
+                      drawTrail(cfg, square, createVector(lerp(0, side*(1+third), easedTime), 0), 0.0, 0.0, 1);
+                    }
+                    drawTrail(cfg, topSquare, createVector(0, 0), 0.0, 0, 0);    
+                    drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
+                    if (cfg.t >= 0.5) {
+                      drawTrail(cfg, square, createVector(lerp(0, side*(1+third), easedTime), 0), 0.0, 0.0, 1);
+                    }
   }
 
-  drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0.2, 0);
-  drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0.2, 0);
+  drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0, 0);
+  drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0, 0);
 }
 
 function animation3() {
