@@ -1,4 +1,4 @@
-let overall = 600;
+let overall = 800;
 let prehold = 0.0;
 let duration = 0.7;
 let hold = 1 - prehold - duration;
@@ -11,6 +11,10 @@ let weight = 15;
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
 
+  weight = window.innerWidth / 100;
+  shadowWeight = weight;
+  shadowOffset = weight * 0.5;
+
   cfg = {
     color: color(220, 0, 0),
     neg: 0,
@@ -21,14 +25,14 @@ function setup() {
 }
 
 function draw() {
-  background(178,34,34);
+  background(158,34,34);
 
   // cfg.t = min(1, (frameCount % (duration + hold)) / duration);
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
   
   //animation1();
   animation2();
-  animation3();
+  //animation3();
 }
 
 function animation1()
@@ -57,11 +61,38 @@ function animation1()
 
 function animation2()
 {
-  let frameBorderTop = [[0, 50],[width, 50]];
-  let frameBorderBot = [[0, height-50],[width, height-50]];
+  let margin = 100;
+  let side = 200;
+  let frameBorderTop = [[0, margin],[width, margin]];
+  let frameBorderBot = [[0, margin+side*1.66],[width, margin+side*1.66]];
                         
-  drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0.4, 0);
-  drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0.4, 0);
+  for (i=0; i < 5; ++i)
+  {
+    let offset = (side*0.33) * (i+1) + side * i; 
+    let topSquare = [[frameBorderTop[0][0]+offset, frameBorderTop[0][1]],
+                    [frameBorderTop[0][0]+offset, frameBorderTop[0][1]+side * 0.66],
+                    [frameBorderTop[0][0]+offset + side, frameBorderTop[0][1]+side * 0.66],
+                    [frameBorderTop[0][0]+offset + side, frameBorderTop[0][1]]];
+
+    let offsetMid = (side*0.33) * (i-1) + side * i; 
+    let square = [[frameBorderTop[0][0]+offsetMid, frameBorderTop[0][1]+side*0.33],
+                    [frameBorderTop[0][0]+offsetMid, frameBorderTop[0][1]+side*0.33+side],
+                    [frameBorderTop[0][0]+offsetMid + side, frameBorderTop[0][1]+side*0.33+side],
+                    [frameBorderTop[0][0]+offsetMid + side, frameBorderTop[0][1]+side*0.33]];
+    
+    let botSquare = [[frameBorderBot[0][0]+offset, frameBorderBot[0][1]],
+                    [frameBorderBot[0][0]+offset, frameBorderBot[0][1]-side * 0.66],
+                    [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]-side * 0.66],
+                    [frameBorderBot[0][0]+offset + side, frameBorderBot[0][1]]];
+
+                    drawTrail(cfg, square, createVector(lerp(0, side*1.33, cfg.t), 0), 0.4, 0.2, 1);
+                    drawTrail(cfg, topSquare, createVector(0, 0), 0.2, 0.2, 0);    
+                    drawTrail(cfg, botSquare, createVector(0, 0), 0.2, 0.2, 0);
+
+  }
+
+  drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0.2, 0);
+  drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0.2, 0);
 }
 
 function animation3() {
@@ -236,3 +267,8 @@ function getGain(time, gain) {
   else
     return getBias(time * 2.0 - 1.0, 1.0 - gain) / 2.0 + 0.5;
 }
+
+function smoothstep (min, max, value) {
+  var x = Math.max(0, Math.min(1, (value-min)/(max-min)));
+  return x*x*(3 - 2*x);
+};
