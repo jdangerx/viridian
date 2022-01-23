@@ -1,11 +1,15 @@
-let overall = 400;
+let overall = 600;
 let prehold = 0.0;
-let duration = 1.0;
+let duration = 0.7;
 let hold = 1 - prehold - duration;
 let cfg;
 
+let shadowOffset = 3;
+let shadowWeight = 10;
+let weight = 15;
+
 function setup() {
-  createCanvas(800, 400);
+  createCanvas(window.innerWidth, window.innerHeight);
 
   cfg = {
     color: color(220, 0, 0),
@@ -21,8 +25,15 @@ function draw() {
 
   // cfg.t = min(1, (frameCount % (duration + hold)) / duration);
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+  
+  //animation1();
+  animation2();
+  animation3();
+}
 
-  // IMPORTANT. Order square points BL, TL, TR, BR
+function animation1()
+{
+    // IMPORTANT. Order square points BL, TL, TR, BR
   let outer = [
     [50, 50],
     [50, 350],
@@ -39,17 +50,35 @@ function draw() {
 
   let stretchers = computeStretchers(inner, outer);
 
-  drawPanel(cfg, inner, outer, createVector(0, 0), 0.4, 0.2);
-  drawPanel(cfg, inner, outer, createVector(200, 0), 0, 0.5);
-  drawPanel(cfg, inner, outer, createVector(400, 0), 0.2, 0.6);
+  drawPanel(cfg, inner, outer, createVector(0, 0), 0.0, 0.4);
+  drawPanel(cfg, inner, outer, createVector(200, 0), 0.4, 0.6);
+  drawPanel(cfg, inner, outer, createVector(400, 0), 0.0, 0.4);
+}
+
+function animation2()
+{
+  let frameBorderTop = [[0, 50],[width, 50]];
+  let frameBorderBot = [[0, height-50],[width, height-50]];
+                        
+  drawTrail(cfg, frameBorderTop, createVector(0, 0), 0, 0.4, 0);
+  drawTrail(cfg, frameBorderBot, createVector(0, 0), 0, 0.4, 0);
+}
+
+function animation3() {
+  let path = [
+    //[200, 0],
+    [200, 300],
+    [300, 300],
+    [300, 200],
+    
+  ];
+  let quad = quadReflect(path);
+  drawTrail(cfg, quad, createVector(100, 100), 0.2, 0.5, true);
 }
 
 function drawPanel(cfg, inner, outer, offset, prehold, duration)
 {
   let t = min(max(0, (cfg.t - prehold) / duration), 1);
-  let shadowOffset = 3;
-  let shadowWeight = 10;
-  let weight = 15;
 
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
@@ -68,6 +97,25 @@ function drawPanel(cfg, inner, outer, offset, prehold, duration)
   stretchers.forEach(s => snailTrail(cfg, s, false, t));
   snailTrail(cfg, outer, 1, t);
   snailTrail(cfg, inner, 1, t);
+}
+
+function drawTrail(cfg, points, offset, prehold, duration, loop)
+{
+  let t = min(max(0, (cfg.t - prehold) / duration), 1);
+
+  cfg.offsetx = shadowOffset + offset.x;
+  cfg.offsety = shadowOffset + offset.y;
+  cfg.weight = weight;
+  cfg.color = color(230,130,30);
+
+  snailTrail(cfg, points, loop, t);
+
+  cfg.color = color(255,215,0);
+  cfg.weight = shadowWeight;
+  cfg.offsetx = offset.x;
+  cfg.offsety = offset.y;
+
+  snailTrail(cfg, points, loop, t);
 }
 
 function computeStretchers(inner, outer)
@@ -94,7 +142,7 @@ function computeStretchers(inner, outer)
 /**
  * Given a list of points - start a stroke from each point, and animate towards the next one.
  * @param {*} cfg
- * @param {*} points
+ * @param {*} points: list[list[int]] - list of [x, y] - vectorization happens here
  */
 function snailTrail(cfg, points, loop, t) {
   if (t === 0) {
@@ -149,6 +197,33 @@ Line render styles
 * from very blurry to in-focus
 * lines starting to snail trail at different times, from outside in or inside out
 */
+
+/**
+path: list[list[int]] - a list of [x, y] coordinates to flip
+axis: "LR" or "UD" - 
+*/
+function reflect(path, axis) {
+  if (axis.toUpperCase() === "LR") {
+    return path.concat(path.map(([x, y]) => [-x, y]).reverse());
+  } else if (axis.toUpperCase() === "UD") {
+    return path.concat(path.map(([x, y]) => [x, -y]).reverse());
+  }
+  throw "Axis was neither LR or UD, dingus!"
+}
+
+
+/**
+* Reflect LR, then reflect that UD, then offset so that all the numbers are positive.
+*/
+function quadReflect(path) {
+  let lr = reflect(path, "LR");
+  let quad = reflect(lr, "UD");
+  let minX = Math.min(...quad.map(([x, y]) => x))
+  let minY = Math.min(...quad.map(([x, y]) => y))
+  return quad.map(([x, y]) => [x - minX, y - minY]);
+}
+
+
 
 // rachel found these easing functions somewhere, I forget where. Perlin?
 function getBias(time, bias) {
