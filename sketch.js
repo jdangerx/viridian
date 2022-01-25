@@ -1,8 +1,9 @@
-let overall = 400;
+let overall = 800;
 let prehold = 0.0;
 let duration = 1.0;
 let hold = 1 - prehold - duration;
 let cfg;
+let videoRecorder = null;
 
 let shadowOffset = 3;
 let shadowWeight = 10;
@@ -11,7 +12,7 @@ let weight = 15;
 let loopCounter = 0;
 
 function setup() {
-  createCanvas(window.innerWidth, window.innerHeight);
+  createCanvas(1200, 400);
 
   weight = window.innerWidth / 100;
   shadowWeight = weight;
@@ -38,10 +39,19 @@ function renormalize(t, prehold, duration) {
 function draw() {
   background(158, 34, 34);
 
+  if (frameCount == 0)
+  {
+    record();
+  }
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   if (frameCount % overall == 0) {
     loopCounter++;
+  }
+
+  if (loopCounter > 0)
+  {
+    videoRecorder.stop();
   }
 
   //animation1();
@@ -128,11 +138,20 @@ function animation2() {
   }
 }
 
-function animation3() {
+function animation3()
+{
+  drawQuadPattern(createVector(100, 50), 0.05, 0.15);
+  drawQuadPattern(createVector(300, 50), 0.20, 0.15);
+  drawQuadPattern(createVector(500, 50), 0.35, 0.15);
+  drawQuadPattern(createVector(700, 50), 0.50, 0.15);
+  drawQuadPattern(createVector(900, 50), 0.65, 0.15);
+}
+
+function drawQuadPattern(offset, prehold, duration) {
   let oldWeight = weight;
   let oldShadowWeight = shadowWeight;
   let oldShadowOffset = shadowOffset;
-  let grid = 30;
+  let grid = 10;
   weight = 0.4 * grid;
   shadowWeight = 0.3 * grid;
   shadowOffset = 0.2 * grid;
@@ -164,8 +183,8 @@ function animation3() {
     [8, 10],
   ].map(scale);
   let outerQuad = quadReflect(outer);
-  drawUnderstaffedTrail(cfg, innerQuad, createVector(100, 100), 0.2, 0.5, true);
-  drawUnderstaffedTrail(cfg, outerQuad.reverse(), createVector(100, 100), 0.2, 0.5, true);
+  drawUnderstaffedTrail(cfg, innerQuad, offset, prehold, duration, true);
+  drawUnderstaffedTrail(cfg, outerQuad.reverse(), offset, prehold, duration, true);
 
   weight = oldWeight;
   shadowWeight = oldShadowWeight;
@@ -388,12 +407,8 @@ function record() {
     }
   };
   recorder.onstop = exportVideo;
-  btn.onclick = e => {
-    recorder.stop();
-    btn.textContent = 'start recording';
-    btn.onclick = record;
-  };
   recorder.start();
+  videoRecorder = recorder;
   btn.textContent = 'stop recording';
 }
 
