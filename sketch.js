@@ -1,8 +1,9 @@
-let overall = 800;
+let overall = 200;
 let prehold = 0.0;
 let duration = 1.0;
 let hold = 1 - prehold - duration;
 let cfg;
+let chunks = [];
 let videoRecorder = null;
 
 let shadowOffset = 3;
@@ -39,9 +40,10 @@ function renormalize(t, prehold, duration) {
 function draw() {
   background(158, 34, 34);
 
-  if (frameCount == 0)
+  if (frameCount == 1)
   {
-    record();
+    console.log("Recoridng noew");
+    videoRecorder = record();
   }
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
@@ -49,9 +51,11 @@ function draw() {
     loopCounter++;
   }
 
-  if (loopCounter > 0)
+  if (videoRecorder != null && loopCounter > 0)
   {
+    console.log("now stop");
     videoRecorder.stop();
+    videoRecorder = null;
   }
 
   //animation1();
@@ -398,9 +402,19 @@ function smoothstep(min, max, value) {
 };
 
 function record() {
+  console.log("ahola");
   chunks.length = 0;
+
+  var options;
+  if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+    options = {mimeType: 'video/webm; codecs=vp9'};
+  } if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+   options = {mimeType: 'video/webm; codecs=vp8'};
+  }
+
   let stream = document.querySelector('canvas').captureStream(30),
-    recorder = new MediaRecorder(stream);
+    recorder = new MediaRecorder(stream, options);
+    console.log(recorder.mimeType);
   recorder.ondataavailable = e => {
     if (e.data.size) {
       chunks.push(e.data);
@@ -408,16 +422,17 @@ function record() {
   };
   recorder.onstop = exportVideo;
   recorder.start();
-  videoRecorder = recorder;
-  btn.textContent = 'stop recording';
+  console.log("started");
+  return recorder;
 }
 
 function exportVideo(e) {
+  console.log("we exporting video");
   var blob = new Blob(chunks);
   var vid = document.createElement('video');
   vid.id = 'recorded'
   vid.controls = true;
   vid.src = URL.createObjectURL(blob);
   document.body.appendChild(vid);
-  vid.play();
+  vid.download = 'test.webm';
 }
