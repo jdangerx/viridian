@@ -1,16 +1,17 @@
-let overall = 200;
+let overall = 1000;
 let prehold = 0.0;
 let duration = 1.0;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
-let videoRecorder = null;
 
 let shadowOffset = 3;
 let shadowWeight = 10;
 let weight = 15;
 
 let loopCounter = 0;
+let capturer = new CCapture({ format: 'webm', framerate: 30, name: "test" });
+let doCapture = false;
 
 function setup() {
   createCanvas(1200, 400);
@@ -40,27 +41,25 @@ function renormalize(t, prehold, duration) {
 function draw() {
   background(158, 34, 34);
 
-  if (frameCount == 1)
-  {
-    console.log("Recoridng noew");
-    videoRecorder = record();
+  if (frameCount == 1 && doCapture) {
+    capturer.start()
   }
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   if (frameCount % overall == 0) {
     loopCounter++;
-  }
-
-  if (videoRecorder != null && loopCounter > 0)
-  {
-    console.log("now stop");
-    videoRecorder.stop();
-    videoRecorder = null;
+    if (loopCounter === 1 && doCapture) {
+      capturer.stop()
+      capturer.save()
+    }
   }
 
   //animation1();
   //animation2();
   animation3();
+  if (loopCounter === 0 && doCapture) {
+    capturer.capture(document.getElementById('defaultCanvas0'));
+  }
 }
 
 function animation1() {
@@ -142,8 +141,7 @@ function animation2() {
   }
 }
 
-function animation3()
-{
+function animation3() {
   drawQuadPattern(createVector(100, 50), 0.05, 0.15);
   drawQuadPattern(createVector(300, 50), 0.20, 0.15);
   drawQuadPattern(createVector(500, 50), 0.35, 0.15);
@@ -163,15 +161,15 @@ function drawQuadPattern(offset, prehold, duration) {
   const scale = ([x, y]) => [x * grid, y * grid];
 
   let inner = [
-    [9, 4],
-    [7, 4],
-    [7, 9],
-    [10, 9],
-    [10, 10],
-    [9, 10],
-    [9, 7],
-    [4, 7],
-    [4, 9],
+    [-9, 4],
+    [-7, 4],
+    [-7, 9],
+    [-10, 9],
+    [-10, 10],
+    [-9, 10],
+    [-9, 7],
+    [-4, 7],
+    [-4, 9],
   ].map(scale);
   let innerQuad = quadReflect(inner);
 
@@ -400,39 +398,3 @@ function smoothstep(min, max, value) {
   var x = Math.max(0, Math.min(1, (value - min) / (max - min)));
   return x * x * (3 - 2 * x);
 };
-
-function record() {
-  console.log("ahola");
-  chunks.length = 0;
-
-  var options;
-  if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-    options = {mimeType: 'video/webm; codecs=vp9'};
-  } if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
-   options = {mimeType: 'video/webm; codecs=vp8'};
-  }
-
-  let stream = document.querySelector('canvas').captureStream(30),
-    recorder = new MediaRecorder(stream, options);
-    console.log(recorder.mimeType);
-  recorder.ondataavailable = e => {
-    if (e.data.size) {
-      chunks.push(e.data);
-    }
-  };
-  recorder.onstop = exportVideo;
-  recorder.start();
-  console.log("started");
-  return recorder;
-}
-
-function exportVideo(e) {
-  console.log("we exporting video");
-  var blob = new Blob(chunks);
-  var vid = document.createElement('video');
-  vid.id = 'recorded'
-  vid.controls = true;
-  vid.src = URL.createObjectURL(blob);
-  document.body.appendChild(vid);
-  vid.download = 'test.webm';
-}
