@@ -41,7 +41,7 @@ function renormalize(t, prehold, duration) {
 
 
 function draw() {
-  background(158, 34, 34);
+  background(0, 255, 255);
 
   if (frameCount == 1 && doCapture) {
     capturer.start()
@@ -99,7 +99,7 @@ function belt(cfg, margin, side, direction) {
   let frameBorderTop = [[0, margin], [width, margin]];
   let frameBorderBot = [[0, height], [width, height]];
 
-  for (i = -1; i < 10; ++i) {
+  for (i = -1; i < 12; ++i) {
     let offset = (side * third) * (i + 1) + side * i;
     let topSquare = [[frameBorderTop[0][0] + offset, frameBorderTop[0][1]],
     [frameBorderTop[0][0] + offset, frameBorderTop[0][1] + side * 2 * third],
@@ -234,7 +234,7 @@ function drawPanel(cfg, inner, outer, offset, prehold, duration) {
   snailTrail(cfg, outer, 1, t);
   snailTrail(cfg, inner, 1, t);
 
-  cfg.color = color(255, 215, 0);
+  cfg.color = color(255, 55, 255);
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
