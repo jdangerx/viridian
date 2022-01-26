@@ -1,9 +1,11 @@
-let overall = 1000;
+let overall = 400;
 let prehold = 0.0;
-let duration = 1.0;
+let duration = 0.85;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
+
+let MIN_QUAD_CORNER = 10;
 
 let shadowOffset = 3;
 let shadowWeight = 10;
@@ -14,9 +16,9 @@ let capturer = new CCapture({ format: 'webm', framerate: 30, name: "test" });
 let doCapture = false;
 
 function setup() {
-  createCanvas(1200, 400);
+  createCanvas(2400, 800);
 
-  weight = window.innerWidth / 100;
+  weight = window.innerWidth / 150;
   shadowWeight = weight;
   shadowOffset = weight * 0.5;
 
@@ -55,8 +57,8 @@ function draw() {
   }
 
   //animation1();
-  //animation2();
-  animation3();
+  animation2();
+  //animation3();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
   }
@@ -86,10 +88,13 @@ function animation1() {
 }
 
 function animation2() {
+  belt(cfg, 50, 180, 1);
+  belt(cfg, 400, 180, -1);
+}
+
+function belt(cfg, margin, side, direction) {
   cfg.t = max(0.001, cfg.t);
   let third = 1 / 3;
-  let margin = 50;
-  let side = 210;
   let height = margin + side * (5 / 3);
   let frameBorderTop = [[0, margin], [width, margin]];
   let frameBorderBot = [[0, height], [width, height]];
@@ -120,6 +125,10 @@ function animation2() {
     }
     else {
       let easedTime = getGain(cfg.t, 0.02);
+      if (direction < 0)
+      {
+        easedTime = 1-easedTime;
+      }
       if (cfg.t < 0.5) {
         drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
       }
@@ -142,23 +151,31 @@ function animation2() {
 }
 
 function animation3() {
-  drawQuadPattern(createVector(100, 50), 0.05, 0.15);
-  drawQuadPattern(createVector(300, 50), 0.20, 0.15);
-  drawQuadPattern(createVector(500, 50), 0.35, 0.15);
-  drawQuadPattern(createVector(700, 50), 0.50, 0.15);
-  drawQuadPattern(createVector(900, 50), 0.65, 0.15);
+  let size = createVector(300, 600);
+  drawQuadPattern(createVector(100, 50), 0.05, 0.15, size, 10);
+  drawQuadPattern(createVector(400, 50), 0.20, 0.15, size, 10);
+  drawQuadPattern(createVector(700, 50), 0.35, 0.15, size, 10);
+  drawQuadPattern(createVector(1000, 50), 0.50, 0.15, size, 10);
+  drawQuadPattern(createVector(1300, 50), 0.65, 0.15, size, 10);
 }
 
-function drawQuadPattern(offset, prehold, duration) {
+// be nice with divisibility of cell size
+function drawQuadPattern(offset, prehold, duration, size, cellSize) {
   let oldWeight = weight;
   let oldShadowWeight = shadowWeight;
   let oldShadowOffset = shadowOffset;
-  let grid = 10;
-  weight = 0.4 * grid;
-  shadowWeight = 0.3 * grid;
-  shadowOffset = 0.2 * grid;
 
-  const scale = ([x, y]) => [x * grid, y * grid];
+  let cellsX = size.x / cellSize * 0.5;
+  let cellsY = size.y / cellSize * 0.5;
+
+  let fillNumX = cellsX - MIN_QUAD_CORNER;
+  let fillNumY = cellsY - MIN_QUAD_CORNER;
+
+  weight = 0.4 * cellSize;
+  shadowWeight = 0.3 * cellSize;
+  shadowOffset = 0.2 * cellSize;
+
+  const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
   let inner = [
     [-9, 4],
@@ -170,9 +187,10 @@ function drawQuadPattern(offset, prehold, duration) {
     [-9, 7],
     [-4, 7],
     [-4, 9],
-  ].map(scale);
+  ].map(([x, y]) => [x - fillNumX, y + fillNumY])
+  .map(scale);
+  
   let innerQuad = quadReflect(inner);
-
   let outer = [
     [10, 8],
     [5, 8],
@@ -183,7 +201,9 @@ function drawQuadPattern(offset, prehold, duration) {
     [9, 5],
     [8, 5],
     [8, 10],
-  ].map(scale);
+  ].map(([x, y]) => [x + fillNumX, y + fillNumY])
+  .map(scale);
+
   let outerQuad = quadReflect(outer);
   drawUnderstaffedTrail(cfg, innerQuad, offset, prehold, duration, true);
   drawUnderstaffedTrail(cfg, outerQuad.reverse(), offset, prehold, duration, true);
@@ -267,6 +287,11 @@ function computeStretchers(inner, outer) {
     [[maxX, midY], [maxX - paddingX, midY]],
     [[midX, minY], [midX, minY + paddingY]],
   ]
+
+  //127 height
+  //219 accross
+
+  // 52 inches
 
   return stretchers;
 }
