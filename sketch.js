@@ -128,14 +128,23 @@ function belt(cfg, margin, side, direction) {
       if (direction < 0)
       {
         easedTime = 1-easedTime;
-      }
-      if (cfg.t < 0.5) {
-        drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
-      }
-      drawTrail(cfg, topSquare, createVector(0, 0), 0.0, 0, 0);
-      drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
-      if (cfg.t >= 0.5) {
-        drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
+        if (cfg.t >= 0.5) {
+          drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
+        }
+        drawTrail(cfg, topSquare, createVector(0, 0), 0.0, 0, 0);
+        drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
+        if (cfg.t < 0.5) {
+          drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
+        }  
+      } else {
+        if (cfg.t < 0.5) {
+          drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
+        }
+        drawTrail(cfg, topSquare, createVector(0, 0), 0.0, 0, 0);
+        drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
+        if (cfg.t >= 0.5) {
+          drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
+        }
       }
     }
   }
