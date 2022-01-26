@@ -15,6 +15,11 @@ let loopCounter = 0;
 let capturer = new CCapture({ format: 'webm', framerate: 30, name: "test" });
 let doCapture = false;
 
+let yellow;
+let gold;
+let magenta;
+let cyan;
+
 function setup() {
   createCanvas(2400, 800);
 
@@ -29,6 +34,11 @@ function setup() {
     weight: 10,
     offset: 10,
   }
+
+  gold = color(230, 130, 30);
+  yellow = color(255, 215, 0);
+  magenta = color(255, 0, 255);
+  cyan = color(0, 255, 255);
 }
 
 function renormalize(t, prehold, duration) {
@@ -56,8 +66,8 @@ function draw() {
     }
   }
 
-  //animation1();
-  animation2();
+  animation1();
+  //animation2();
   //animation3();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
@@ -66,25 +76,41 @@ function draw() {
 
 function animation1() {
   // IMPORTANT. Order square points BL, TL, TR, BR
-  let outer = [
-    [50, 50],
-    [50, 350],
-    [350, 350],
-    [350, 50]
-  ];
 
-  let inner = [
-    [100, 100],
-    [100, 300],
-    [300, 300],
-    [300, 100],
-  ];
+  let cellSize = 50;
+  const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
-  let stretchers = computeStretchers(inner, outer);
+  let outer1 = [
+    [1, 1],
+    [1, 7],
+    [7, 7],
+    [7, 1]
+  ].map(scale);
 
-  drawPanel(cfg, inner, outer, createVector(0, 0), 0.0, 0.4);
-  drawPanel(cfg, inner, outer, createVector(200, 0), 0.4, 0.6);
-  drawPanel(cfg, inner, outer, createVector(400, 0), 0.0, 0.4);
+  let inner1 = [
+    [2, 2],
+    [2, 6],
+    [6, 6],
+    [6, 2],
+  ].map(scale);
+
+  let outer2 = [
+    [1, 1],
+    [1, 7],
+    [12, 7],
+    [12, 1]
+  ].map(scale);
+
+  let inner2 = [
+    [2, 2],
+    [2, 6],
+    [11, 6],
+    [11, 2],
+  ].map(scale);
+
+  drawPanel(cfg, inner1, outer1, createVector(0, 0), 0.0, 0.4);
+  drawPanel(cfg, inner2, outer2, createVector(200, 150), 0.4, 0.6);
+  drawPanel(cfg, inner1, outer1, createVector(650, 0), 0.0, 0.4);
 }
 
 function animation2() {
@@ -223,18 +249,20 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
 }
 
 function drawPanel(cfg, inner, outer, offset, prehold, duration) {
+
   let t = renormalize(cfg.t, prehold, duration);
+  let stretchers = computeStretchers(inner, outer);
 
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = weight;
-  cfg.color = color(230, 130, 30);
+  cfg.color = magenta;
 
   stretchers.forEach(s => snailTrail(cfg, s, false, t));
   snailTrail(cfg, outer, 1, t);
   snailTrail(cfg, inner, 1, t);
 
-  cfg.color = color(255, 55, 255);
+  cfg.color = yellow;
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
@@ -250,11 +278,11 @@ function drawTrail(cfg, points, offset, prehold, duration, loop) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = weight;
-  cfg.color = color(230, 130, 30);
+  cfg.color = yellow;
 
   snailTrail(cfg, points, loop, t);
 
-  cfg.color = color(255, 215, 0);
+  cfg.color = gold;
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
