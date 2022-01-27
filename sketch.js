@@ -12,7 +12,7 @@ let shadowWeight = 10;
 let weight = 15;
 
 let loopCounter = 0;
-let capturer = new CCapture({ format: 'webm', framerate: 60, name: "animation3-draw" });
+let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
 let doCapture = true;
 
 let yellow;
@@ -44,7 +44,8 @@ function setup() {
   magenta = color(255, 0, 255);
   cyan = color(0, 255, 255);
   persianBlue = color(21, 60, 180);
-  rose = color(246, 46, 151);
+//  rose = color(246, 46, 151);
+  rose = color(255, 65, 171);
   goldenRod = color(249, 172, 83);
 }
 
@@ -312,7 +313,7 @@ function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = weight;
-  cfg.color = color(0);
+  cfg.color = color(30, 0, 30);
 
   understaffedSnailTrail(cfg, points, loop, t);
 
