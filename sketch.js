@@ -13,7 +13,7 @@ let weight = 20;
 
 let loopCounter = 0;
 let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
-let doCapture = false;
+let doCapture = true;
 
 let yellow;
 let gold;
@@ -24,8 +24,8 @@ let rose;
 let goldenRod;
 
 function setup() {
-  createCanvas(2640, 450);
-  // createCanvas(2640, 762);
+  // createCanvas(2640, 450);
+  createCanvas(2640, 762);
 
   weight = window.innerWidth / 200;
   shadowWeight = weight;
@@ -67,7 +67,7 @@ function draw() {
   if (frameCount == 1 && doCapture) {
     capturer.start();
   }
-  cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+  cfg.t = min(max(0.0001, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   if (frameCount % overall == 0) {
     loopCounter++;
@@ -97,49 +97,52 @@ function animation1() {
 
   let outer1 = [
     [0, 0],
-    [0, 4],
-    [6, 4],
+    [0, 5],
+    [6, 5],
     [6, 0],
   ].map(scale);
 
   let inner1 = [
     [1, 1],
-    [1, 3],
-    [5, 3],
+    [1, 4],
+    [5, 4],
     [5, 1],
   ].map(scale);
 
   let outer2 = [
     [0, 0],
-    [0, 11],
-    [6, 11],
+    [0, 15],
+    [6, 15],
     [6, 0],
   ].map(scale);
 
   let inner2 = [
     [1, 1],
-    [1, 10],
-    [5, 10],
+    [1, 14],
+    [5, 14],
     [5, 1],
   ].map(scale);
 
 
   let num_iters = 20;
-  let xOffset = cellSize;
+  let xOffset = -3 * cellSize;
   for (i = 0; i < num_iters; i++) {
     let start_time = 0 / num_iters;
     let duration = 1 / num_iters;
-    let xscale = 1.2 + cos((cfg.t + i) * 10) * 0.2 + cos((cfg.t + 3 * i) * 20) * 0.2;
+    let xscale = 1.4
+      + cos((cfg.t + i) * 10) * 0.4 * cubicPulse(0.5, 0.5, cfg.t)
+      + cos((cfg.t + i) * 17) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
+      + cos((cfg.t + i) * 3) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
+      ;
     let inner1Scaled = inner1.map(([x, y]) => [x * xscale, y]);
     let outer1Scaled = outer1.map(([x, y]) => [x * xscale, y]);
 
     let inner2Scaled = inner2.map(([x, y]) => [x * xscale, y]);
     let outer2Scaled = outer2.map(([x, y]) => [x * xscale, y]);
 
+    duration = 0;
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, cellSize), start_time + 0.1 * duration, 0.4 * duration);
-    // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(xOffset, 5 * cellSize), start_time + 0.4 * duration, 0.5 * duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(xOffset, cellSize), start_time + 0.4 * duration, 0.5 * duration);
     // bottom
     drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, 16 * cellSize), start_time + 0.2 * duration, 0.4 * duration);
 
@@ -504,3 +507,13 @@ function smoothstep(min, max, value) {
   var x = Math.max(0, Math.min(1, (value - min) / (max - min)));
   return x * x * (3 - 2 * x);
 };
+
+// https://www.iquilezles.org/www/articles/functions/functions.htm
+function cubicPulse(center, width, x) {
+  x = abs(x - center);
+  if (x > width) {
+    return 0.0;
+  }
+  x /= width;
+  return 1.0 - x * x * (3.0 - 2.0 * x);
+}
