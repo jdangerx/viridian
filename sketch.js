@@ -1,6 +1,6 @@
-let overall = 7000;
+let overall = 500;
 let prehold = 0.0;
-let duration = 0.85;
+let duration = 0.35;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
@@ -9,11 +9,11 @@ let MIN_QUAD_CORNER = 10;
 
 let shadowOffset = 3;
 let shadowWeight = 10;
-let weight = 15;
+let weight = 20;
 
 let loopCounter = 0;
 let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
-let doCapture = true;
+let doCapture = false;
 
 let yellow;
 let gold;
@@ -24,8 +24,8 @@ let rose;
 let goldenRod;
 
 function setup() {
-  //createCanvas(2640, 450);
-  createCanvas(2640, 762);
+  createCanvas(2640, 450);
+  // createCanvas(2640, 762);
 
   weight = window.innerWidth / 200;
   shadowWeight = weight;
@@ -44,7 +44,7 @@ function setup() {
   magenta = color(255, 0, 255);
   cyan = color(0, 255, 255);
   persianBlue = color(21, 60, 180);
-//  rose = color(246, 46, 151);
+  //  rose = color(246, 46, 151);
   rose = color(255, 65, 171);
   goldenRod = color(249, 172, 83);
 }
@@ -77,9 +77,9 @@ function draw() {
     }
   }
 
-  //animation1();
+  animation1();
   //animation2();
-  animation3();
+  // animation3();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
   }
@@ -87,41 +87,55 @@ function draw() {
 
 function animation1() {
   // IMPORTANT. Order square points BL, TL, TR, BR
+  // 
 
-  let cellSize = 50;
+  weight = 5;
+  shadowWeight = 8;
+  shadowOffset = 5;
+
+  let cellSize = 20;
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
   let outer1 = [
     [1, 1],
-    [1, 7],
-    [7, 7],
-    [7, 1]
+    [1, 5],
+    [7, 5],
+    [7, 1],
   ].map(scale);
 
   let inner1 = [
     [2, 2],
-    [2, 6],
-    [6, 6],
+    [2, 4],
+    [6, 4],
     [6, 2],
   ].map(scale);
 
   let outer2 = [
     [1, 1],
-    [1, 7],
-    [12, 7],
-    [12, 1]
+    [7, 1],
+    [7, 12],
+    [1, 12]
   ].map(scale);
 
   let inner2 = [
     [2, 2],
-    [2, 6],
-    [11, 6],
-    [11, 2],
+    [6, 2],
+    [6, 11],
+    [2, 11],
   ].map(scale);
 
-  drawPanel(cfg, inner1, outer1, createVector(0, 0), 0.0, 0.4);
-  drawPanel(cfg, inner2, outer2, createVector(200, 150), 0.4, 0.6);
-  drawPanel(cfg, inner1, outer1, createVector(650, 0), 0.0, 0.4);
+  let num_iters = 20;
+  for (i = 0; i < num_iters; i++) {
+    let start_time = i / num_iters;
+    let duration = 1 / num_iters;
+    let xOffset = 7.5 * i * cellSize;
+    // top
+    drawPanel(cfg, inner1, outer1, createVector(xOffset, 0), start_time + 0.1 * duration, 0.4 * duration);
+    // center
+    drawPanel(cfg, inner2, outer2, createVector(xOffset, 4 * cellSize), start_time + 0.4 * duration, 0.5 * duration);
+    // bottom
+    drawPanel(cfg, inner1, outer1, createVector(xOffset, 15 * cellSize), start_time + 0.2 * duration, 0.4 * duration);
+  }
 }
 
 function animation2() {
@@ -162,9 +176,8 @@ function belt(cfg, margin, side, direction) {
     }
     else {
       let easedTime = getGain(cfg.t, 0.02);
-      if (direction < 0)
-      {
-        easedTime = 1-easedTime;
+      if (direction < 0) {
+        easedTime = 1 - easedTime;
         if (cfg.t >= 0.5) {
           drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
         }
@@ -172,7 +185,7 @@ function belt(cfg, margin, side, direction) {
         drawTrail(cfg, botSquare, createVector(0, 0), 0., 0, 0);
         if (cfg.t < 0.5) {
           drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
-        }  
+        }
       } else {
         if (cfg.t < 0.5) {
           drawTrail(cfg, square, createVector(lerp(0, side * (1 + third), easedTime), 0), 0.0, 0.0, 1);
@@ -201,11 +214,10 @@ function animation3() {
 
   let count = 7;
   let margin = createVector(100, 50);
-  for (let i=0; i < count; ++i)
-  {
+  for (let i = 0; i < count; ++i) {
     let newSize = createVector(size.x, size.y);// - Math.cos((cfg.t + i * 0.2) * 4) * 150);
     let newMargin = createVector(100, 50);
-    drawQuadPattern(createVector(newMargin.x + i * size.x, newMargin.y), i * 1/count, 1/count, newSize, 15);
+    drawQuadPattern(createVector(newMargin.x + i * size.x, newMargin.y), i * 1 / count, 1 / count, newSize, 15);
   }
 }
 
@@ -238,8 +250,8 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
     [-4, 7],
     [-4, 9],
   ].map(([x, y]) => [x - fillNumX, y + fillNumY])
-  .map(scale);
-  
+    .map(scale);
+
   let innerQuad = quadReflect(inner);
   let outer = [
     [10, 8],
@@ -252,7 +264,7 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
     [8, 5],
     [8, 10],
   ].map(([x, y]) => [x + fillNumX, y + fillNumY])
-  .map(scale);
+    .map(scale);
 
   let outerQuad = quadReflect(outer);
   drawUnderstaffedTrail(cfg, innerQuad, offset, prehold, duration, true);
@@ -270,7 +282,7 @@ function drawPanel(cfg, inner, outer, offset, prehold, duration) {
 
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
-  cfg.weight = weight;
+  cfg.weight = shadowWeight;
   cfg.color = magenta;
 
   stretchers.forEach(s => snailTrail(cfg, s, false, t));
@@ -278,7 +290,7 @@ function drawPanel(cfg, inner, outer, offset, prehold, duration) {
   snailTrail(cfg, inner, 1, t);
 
   cfg.color = yellow;
-  cfg.weight = shadowWeight;
+  cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
 
