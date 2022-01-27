@@ -1,6 +1,6 @@
 let overall = 500;
 let prehold = 0.0;
-let duration = 0.35;
+let duration = 1.0;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
@@ -86,8 +86,7 @@ function draw() {
 }
 
 function animation1() {
-  // IMPORTANT. Order square points BL, TL, TR, BR
-  // 
+  // IMPORTANT. Order square points TL, BL, BR, TR (0, 0 is top left)
 
   weight = 5;
   shadowWeight = 8;
@@ -97,44 +96,55 @@ function animation1() {
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
   let outer1 = [
-    [1, 1],
-    [1, 5],
-    [7, 5],
-    [7, 1],
+    [0, 0],
+    [0, 4],
+    [6, 4],
+    [6, 0],
   ].map(scale);
 
   let inner1 = [
-    [2, 2],
-    [2, 4],
-    [6, 4],
-    [6, 2],
+    [1, 1],
+    [1, 3],
+    [5, 3],
+    [5, 1],
   ].map(scale);
 
   let outer2 = [
-    [1, 1],
-    [7, 1],
-    [7, 12],
-    [1, 12]
+    [0, 0],
+    [0, 11],
+    [6, 11],
+    [6, 0],
   ].map(scale);
 
   let inner2 = [
-    [2, 2],
-    [6, 2],
-    [6, 11],
-    [2, 11],
+    [1, 1],
+    [1, 10],
+    [5, 10],
+    [5, 1],
   ].map(scale);
 
+
   let num_iters = 20;
+  let xOffset = cellSize;
   for (i = 0; i < num_iters; i++) {
-    let start_time = i / num_iters;
+    let start_time = 0 / num_iters;
     let duration = 1 / num_iters;
-    let xOffset = 7.5 * i * cellSize;
+    let xscale = 1.2 + cos((cfg.t + i) * 10) * 0.2 + cos((cfg.t + 3 * i) * 20) * 0.2;
+    let inner1Scaled = inner1.map(([x, y]) => [x * xscale, y]);
+    let outer1Scaled = outer1.map(([x, y]) => [x * xscale, y]);
+
+    let inner2Scaled = inner2.map(([x, y]) => [x * xscale, y]);
+    let outer2Scaled = outer2.map(([x, y]) => [x * xscale, y]);
+
     // top
-    drawPanel(cfg, inner1, outer1, createVector(xOffset, 0), start_time + 0.1 * duration, 0.4 * duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, cellSize), start_time + 0.1 * duration, 0.4 * duration);
     // center
-    drawPanel(cfg, inner2, outer2, createVector(xOffset, 4 * cellSize), start_time + 0.4 * duration, 0.5 * duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(xOffset, 5 * cellSize), start_time + 0.4 * duration, 0.5 * duration);
     // bottom
-    drawPanel(cfg, inner1, outer1, createVector(xOffset, 15 * cellSize), start_time + 0.2 * duration, 0.4 * duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, 16 * cellSize), start_time + 0.2 * duration, 0.4 * duration);
+
+    let width = outer1Scaled[3][0];
+    xOffset += width + cellSize * 1.5;
   }
 }
 
@@ -278,6 +288,7 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
 function drawPanel(cfg, inner, outer, offset, prehold, duration) {
 
   let t = renormalize(cfg.t, prehold, duration);
+
   let stretchers = computeStretchers(inner, outer);
 
   cfg.offsetx = shadowOffset + offset.x;
@@ -339,14 +350,17 @@ function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
 }
 
 function computeStretchers(inner, outer) {
-  let midY = lerp(inner[1][0], inner[1][1], 0.5);
+  // TL BL BR TR
+  // 0  3
+  // 1  2
+  let midY = lerp(inner[0][1], inner[1][1], 0.5);
   let midX = lerp(inner[0][0], inner[2][0], 0.5);
-  let paddingY = ((outer[2][1] - outer[0][1]) - (inner[2][1] - inner[0][1])) * 0.5
-  let paddingX = ((outer[2][1] - outer[0][1]) - (inner[2][1] - inner[0][1])) * 0.5
-  let minX = outer[0][0]
-  let minY = outer[0][1]
-  let maxX = outer[2][0]
-  let maxY = outer[2][1]
+  let paddingY = outer[2][1] - inner[2][1];
+  let paddingX = outer[2][0] - inner[2][0];
+  let minX = outer[0][0];
+  let minY = outer[0][1];
+  let maxX = outer[2][0];
+  let maxY = outer[2][1];
 
   stretchers = [
     [[minX, midY], [minX + paddingX, midY]],
