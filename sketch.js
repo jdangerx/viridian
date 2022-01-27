@@ -1,4 +1,4 @@
-let overall = 400;
+let overall = 7000;
 let prehold = 0.0;
 let duration = 0.85;
 let hold = 1 - prehold - duration;
@@ -12,18 +12,22 @@ let shadowWeight = 10;
 let weight = 15;
 
 let loopCounter = 0;
-let capturer = new CCapture({ format: 'webm', framerate: 30, name: "test" });
-let doCapture = false;
+let capturer = new CCapture({ format: 'webm', framerate: 60, name: "animation3-draw" });
+let doCapture = true;
 
 let yellow;
 let gold;
 let magenta;
 let cyan;
+let persianBlue;
+let rose;
+let goldenRod;
 
 function setup() {
-  createCanvas(2400, 800);
+  //createCanvas(2640, 450);
+  createCanvas(2640, 762);
 
-  weight = window.innerWidth / 150;
+  weight = window.innerWidth / 200;
   shadowWeight = weight;
   shadowOffset = weight * 0.5;
 
@@ -39,6 +43,9 @@ function setup() {
   yellow = color(255, 215, 0);
   magenta = color(255, 0, 255);
   cyan = color(0, 255, 255);
+  persianBlue = color(21, 60, 180);
+  rose = color(246, 46, 151);
+  goldenRod = color(249, 172, 83);
 }
 
 function renormalize(t, prehold, duration) {
@@ -49,12 +56,15 @@ function renormalize(t, prehold, duration) {
   return min(max(0, (t - prehold) / duration), 1);
 }
 
+let timeDone = false;
+let timeStart = false;
 
 function draw() {
-  background(0, 255, 255);
+  //background(0, 255, 255);
+  background(21, 60, 180);
 
   if (frameCount == 1 && doCapture) {
-    capturer.start()
+    capturer.start();
   }
   cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
@@ -66,9 +76,9 @@ function draw() {
     }
   }
 
-  animation1();
+  //animation1();
   //animation2();
-  //animation3();
+  animation3();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
   }
@@ -114,8 +124,8 @@ function animation1() {
 }
 
 function animation2() {
-  belt(cfg, 50, 180, 1);
-  belt(cfg, 400, 180, -1);
+  belt(cfg, 40, 93, 1);
+  belt(cfg, 240, 93, -1);
 }
 
 function belt(cfg, margin, side, direction) {
@@ -125,7 +135,7 @@ function belt(cfg, margin, side, direction) {
   let frameBorderTop = [[0, margin], [width, margin]];
   let frameBorderBot = [[0, height], [width, height]];
 
-  for (i = -1; i < 12; ++i) {
+  for (i = -3; i < 22; ++i) {
     let offset = (side * third) * (i + 1) + side * i;
     let topSquare = [[frameBorderTop[0][0] + offset, frameBorderTop[0][1]],
     [frameBorderTop[0][0] + offset, frameBorderTop[0][1] + side * 2 * third],
@@ -186,12 +196,16 @@ function belt(cfg, margin, side, direction) {
 }
 
 function animation3() {
-  let size = createVector(300, 600);
-  drawQuadPattern(createVector(100, 50), 0.05, 0.15, size, 10);
-  drawQuadPattern(createVector(400, 50), 0.20, 0.15, size, 10);
-  drawQuadPattern(createVector(700, 50), 0.35, 0.15, size, 10);
-  drawQuadPattern(createVector(1000, 50), 0.50, 0.15, size, 10);
-  drawQuadPattern(createVector(1300, 50), 0.65, 0.15, size, 10);
+  let size = createVector(350, 350);
+
+  let count = 7;
+  let margin = createVector(100, 50);
+  for (let i=0; i < count; ++i)
+  {
+    let newSize = createVector(size.x, size.y);// - Math.cos((cfg.t + i * 0.2) * 4) * 150);
+    let newMargin = createVector(100, 50);
+    drawQuadPattern(createVector(newMargin.x + i * size.x, newMargin.y), i * 1/count, 1/count, newSize, 15);
+  }
 }
 
 // be nice with divisibility of cell size
@@ -206,9 +220,9 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
   let fillNumX = cellsX - MIN_QUAD_CORNER;
   let fillNumY = cellsY - MIN_QUAD_CORNER;
 
-  weight = 0.4 * cellSize;
-  shadowWeight = 0.3 * cellSize;
-  shadowOffset = 0.2 * cellSize;
+  weight = 0.7 * cellSize;
+  shadowWeight = 0.22 * cellSize;
+  shadowOffset = 0.125 * cellSize;
 
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
@@ -278,11 +292,13 @@ function drawTrail(cfg, points, offset, prehold, duration, loop) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = weight;
-  cfg.color = yellow;
+  //cfg.color = color(125, 25, 75);
+  cfg.color = rose;
 
   snailTrail(cfg, points, loop, t);
 
-  cfg.color = gold;
+  //cfg.color = magenta;
+  cfg.color = yellow;
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
@@ -296,11 +312,12 @@ function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = weight;
-  cfg.color = color(230, 130, 30);
+  cfg.color = color(0);
 
   understaffedSnailTrail(cfg, points, loop, t);
 
-  cfg.color = color(255, 215, 0);
+  cfg.color = rose;
+  //cfg.color = yellow;
   cfg.weight = shadowWeight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
