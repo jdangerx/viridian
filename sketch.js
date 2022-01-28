@@ -76,10 +76,10 @@ function draw() {
     }
   }
 
-  //animation1();
+  animation1();
   //animation2();
   //animation3();
-  animation4();
+  //animation4();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
     if (frameCount % 100 === 0) {
@@ -114,17 +114,17 @@ function animation1() {
   ].map(scale);
 
   let outer2 = [
-    [0, 1],
-    [0, 11],
-    [6, 11],
-    [6, 1],
+    [0, 2],
+    [0, 10],
+    [6, 10],
+    [6, 2],
   ].map(scale);
 
   let inner2 = [
-    [1, 2],
-    [1, 10],
-    [5, 10],
-    [5, 2],
+    [1, 3],
+    [1, 9],
+    [5, 9],
+    [5, 3],
   ].map(scale);
 
 
