@@ -77,7 +77,7 @@ function draw() {
   }
 
   animation1();
-  //animation2();
+  // animation2();
   //animation3();
   //animation4();
   if (loopCounter === 0 && doCapture) {
@@ -128,10 +128,11 @@ function animation1() {
   ].map(scale);
 
 
-  let numIters = 8;
+  let numIters = 7;
   let xOffset = 0;
-  let center = 1320 - outer1[3][0] / 2 - cellSize * 0.75; // center of canvas - width/2 - margin/2
-  for (i = -numIters; i < numIters; i++) {
+  let margin = cellSize * 1.5
+  let center = 1320 + margin / 2;
+  for (i = 0; i < numIters; i++) {
     let duration = 0.05;
     let start_time_edge = duration;
     let start_time = duration + start_time_edge;
@@ -139,7 +140,7 @@ function animation1() {
       start_time_edge = 0;
       start_time = start_time + duration;
     }
-    let xscale = 1.2
+    let xscale = 1.25
       + cos((cfg.t + i) * 10) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
       + cos((cfg.t + i) * 30) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
       ;
@@ -158,7 +159,7 @@ function animation1() {
     drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 16 * cellSize), start_time_edge, duration);
 
     let width = outer1Scaled[3][0];
-    xOffset += width + cellSize * 1.5;
+    xOffset += width + margin;
 
     // because the xOffset is from the left, when we're doing the left side we need 
     // to take into account both the width of the panel we drew on the last iteration, 
