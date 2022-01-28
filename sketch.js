@@ -112,15 +112,15 @@ function animation1() {
 
   let outer2 = [
     [0, 1],
-    [0, 10],
-    [6, 10],
+    [0, 11],
+    [6, 11],
     [6, 1],
   ].map(scale);
 
   let inner2 = [
     [1, 2],
-    [1, 9],
-    [5, 9],
+    [1, 10],
+    [5, 10],
     [5, 2],
   ].map(scale);
 
@@ -145,7 +145,6 @@ function animation1() {
     let inner2Scaled = inner2.map(([x, y]) => [x * xscale, y]);
     let outer2Scaled = outer2.map(([x, y]) => [x * xscale, y]);
 
-    duration = 0;
     // top
     drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, cellSize), start_time_edge, duration);
     // center
