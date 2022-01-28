@@ -24,7 +24,7 @@ let rose;
 let goldenRod;
 
 function setup() {
-  let height = doCapture ? 762 : 450;
+  let height = doCapture ? 762 : 536;
   createCanvas(2640, height);
 
   weight = window.innerWidth / 200;
@@ -41,7 +41,7 @@ function setup() {
 
   gold = color(230, 130, 30);
   yellow = color(255, 215, 0);
-  magenta = color(255, 0, 255);
+  magenta = color(255, 75, 255);
   cyan = color(0, 235, 235);
   persianBlue = color(21, 60, 180);
   rose = color(255, 65, 171);
@@ -61,7 +61,8 @@ let timeStart = false;
 
 function draw() {
   //background(0, 255, 255);
-  background(21, 60, 180);
+  //background(21, 60, 180);
+  background(0);
 
   if (frameCount == 1 && doCapture) {
     capturer.start();
@@ -115,15 +116,15 @@ function animation1() {
 
   let outer2 = [
     [0, 2],
-    [0, 10],
-    [6, 10],
+    [0, 13],
+    [6, 13],
     [6, 2],
   ].map(scale);
 
   let inner2 = [
     [1, 3],
-    [1, 9],
-    [5, 9],
+    [1, 12],
+    [5, 12],
     [5, 3],
   ].map(scale);
 
@@ -152,11 +153,11 @@ function animation1() {
 
 
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2*cellSize), start_time_edge, duration);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 5 * cellSize), start_time, duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), start_time, duration);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 16 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 20 * cellSize), start_time_edge, duration);
 
     let width = outer1Scaled[3][0];
     xOffset += width + margin;
@@ -165,11 +166,11 @@ function animation1() {
     // to take into account both the width of the panel we drew on the last iteration, 
     // and the width of the panel we're about to draw
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2*cellSize), start_time_edge, duration);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 5 * cellSize), start_time, duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), start_time, duration);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 16 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 20 * cellSize), start_time_edge, duration);
 
   }
 }
@@ -335,7 +336,7 @@ function drawPanel(cfg, inner, outer, offset, prehold, duration) {
   snailTrail(cfg, outer, 1, t, true);
   snailTrail(cfg, inner, 1, t, true);
 
-  cfg.color = rose;
+  cfg.color = magenta;
   cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
