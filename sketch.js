@@ -77,8 +77,8 @@ function draw() {
     }
   }
 
-  animation1();
-  // animation2();
+  //animation1();
+  animation2();
   //animation3();
   //animation4();
   if (loopCounter === 0 && doCapture) {
@@ -181,8 +181,8 @@ function animation2() {
   shadowWeight = 10;
   shadowOffset = 3;
 
-  belt(cfg, 40, 93, 1);
-  belt(cfg, 240, 93, -1);
+  belt(cfg, 40, 120, 1);
+  belt(cfg, 280, 120, -1);
 }
 
 function belt(cfg, margin, side, direction) {
@@ -353,7 +353,7 @@ function drawTrail(cfg, points, offset, prehold, duration, loop, fadeIn) {
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = shadowWeight;
   //cfg.color = color(125, 25, 75);
-  cfg.color = rose;
+  cfg.color = magenta;
 
   snailTrail(cfg, points, loop, t, fadeIn);
 
