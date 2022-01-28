@@ -24,8 +24,8 @@ let rose;
 let goldenRod;
 
 function setup() {
-  // createCanvas(2640, 450);
-  createCanvas(2640, 762);
+  let height = doCapture ? 762 : 450;
+  createCanvas(2640, height);
 
   weight = window.innerWidth / 200;
   shadowWeight = weight;
@@ -76,12 +76,15 @@ function draw() {
     }
   }
 
-  animation1();
+  //animation1();
   //animation2();
   //animation3();
-  //animation4();
+  animation4();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
+    if (frameCount % 100 === 0) {
+      console.log("captured up til frame: " + frameCount + "/" + overall);
+    }
   }
 }
 
@@ -125,10 +128,11 @@ function animation1() {
   ].map(scale);
 
 
-  let num_iters = 15;
-  let xOffset = cellSize;
-  for (i = 0; i < num_iters; i++) {
-    let duration = 0.1;
+  let numIters = 8;
+  let xOffset = 0;
+  let center = 1320 - outer1[3][0] / 2 - cellSize * 0.75; // center of canvas - width/2 - margin/2
+  for (i = -numIters; i < numIters; i++) {
+    let duration = 0.05;
     let start_time_edge = duration;
     let start_time = duration + start_time_edge;
     if (i % 2 == 0) {
@@ -136,8 +140,8 @@ function animation1() {
       start_time = start_time + duration;
     }
     let xscale = 1.2
-      + cos((cfg.t + i) * 10) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
-      + cos((cfg.t + i) * 30) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
+      + cos((cfg.t + i) * 10) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
+      + cos((cfg.t + i) * 30) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
       ;
     let inner1Scaled = inner1.map(([x, y]) => [x * xscale, y]);
     let outer1Scaled = outer1.map(([x, y]) => [x * xscale, y]);
@@ -145,15 +149,27 @@ function animation1() {
     let inner2Scaled = inner2.map(([x, y]) => [x * xscale, y]);
     let outer2Scaled = outer2.map(([x, y]) => [x * xscale, y]);
 
+
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, cellSize), start_time_edge, duration);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(xOffset, 5 * cellSize), start_time, duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 5 * cellSize), start_time, duration);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, 16 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 16 * cellSize), start_time_edge, duration);
 
     let width = outer1Scaled[3][0];
     xOffset += width + cellSize * 1.5;
+
+    // because the xOffset is from the left, when we're doing the left side we need 
+    // to take into account both the width of the panel we drew on the last iteration, 
+    // and the width of the panel we're about to draw
+    // top
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, cellSize), start_time_edge, duration);
+    // center
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 5 * cellSize), start_time, duration);
+    // bottom
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 16 * cellSize), start_time_edge, duration);
+
   }
 }
 
@@ -399,6 +415,7 @@ function computeStretchers(inner, outer) {
 }
 
 function animation4() {
+  overall = 200;
   noFill();
   let position = createVector(200, 200);
   let size = createVector(100, 100);
@@ -562,4 +579,9 @@ function cubicPulse(center, width, x) {
   }
   x /= width;
   return 1.0 - x * x * (3.0 - 2.0 * x);
+}
+
+// like cubicpulse but we can set there to be a plateau at the top
+function widePulse(start, end, transition, x) {
+  return smoothstep(start, start + transition, x) - smoothstep(end, end + transition, x);
 }
