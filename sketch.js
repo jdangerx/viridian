@@ -1,4 +1,4 @@
-let overall = 500;
+let overall = 3000;
 let prehold = 0.0;
 let duration = 1.0;
 let hold = 1 - prehold - duration;
@@ -13,7 +13,7 @@ let weight = 20;
 
 let loopCounter = 0;
 let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
-let doCapture = true;
+let doCapture = false;
 
 let yellow;
 let gold;
@@ -42,9 +42,8 @@ function setup() {
   gold = color(230, 130, 30);
   yellow = color(255, 215, 0);
   magenta = color(255, 0, 255);
-  cyan = color(0, 255, 255);
+  cyan = color(0, 235, 235);
   persianBlue = color(21, 60, 180);
-  //  rose = color(246, 46, 151);
   rose = color(255, 65, 171);
   goldenRod = color(249, 172, 83);
 }
@@ -79,18 +78,20 @@ function draw() {
 
   animation1();
   //animation2();
-  // animation3();
+  //animation3();
+  //animation4();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
   }
 }
 
 function animation1() {
+  overall = 3000;
   // IMPORTANT. Order square points TL, BL, BR, TR (0, 0 is top left)
 
-  weight = 5;
-  shadowWeight = 8;
-  shadowOffset = 5;
+  weight = 7;
+  shadowWeight = 10;
+  shadowOffset = 3;
 
   let cellSize = 20;
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
@@ -110,29 +111,33 @@ function animation1() {
   ].map(scale);
 
   let outer2 = [
-    [0, 0],
-    [0, 15],
-    [6, 15],
-    [6, 0],
+    [0, 1],
+    [0, 10],
+    [6, 10],
+    [6, 1],
   ].map(scale);
 
   let inner2 = [
-    [1, 1],
-    [1, 14],
-    [5, 14],
-    [5, 1],
+    [1, 2],
+    [1, 9],
+    [5, 9],
+    [5, 2],
   ].map(scale);
 
 
-  let num_iters = 20;
-  let xOffset = -3 * cellSize;
+  let num_iters = 15;
+  let xOffset = cellSize;
   for (i = 0; i < num_iters; i++) {
-    let start_time = 0 / num_iters;
-    let duration = 1 / num_iters;
-    let xscale = 1.4
-      + cos((cfg.t + i) * 10) * 0.4 * cubicPulse(0.5, 0.5, cfg.t)
-      + cos((cfg.t + i) * 17) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
-      + cos((cfg.t + i) * 3) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
+    let duration = 0.1;
+    let start_time_edge = duration;
+    let start_time = duration + start_time_edge;
+    if (i % 2 == 0) {
+      start_time_edge = 0;
+      start_time = start_time + duration;
+    }
+    let xscale = 1.2
+      + cos((cfg.t + i) * 10) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
+      + cos((cfg.t + i) * 30) * 0.2 * cubicPulse(0.5, 0.5, cfg.t)
       ;
     let inner1Scaled = inner1.map(([x, y]) => [x * xscale, y]);
     let outer1Scaled = outer1.map(([x, y]) => [x * xscale, y]);
@@ -142,9 +147,11 @@ function animation1() {
 
     duration = 0;
     // top
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(xOffset, cellSize), start_time + 0.4 * duration, 0.5 * duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, cellSize), start_time_edge, duration);
+    // center
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(xOffset, 5 * cellSize), start_time, duration);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, 16 * cellSize), start_time + 0.2 * duration, 0.4 * duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(xOffset, 16 * cellSize), start_time_edge, duration);
 
     let width = outer1Scaled[3][0];
     xOffset += width + cellSize * 1.5;
@@ -152,6 +159,11 @@ function animation1() {
 }
 
 function animation2() {
+  overall = 1000;
+  weight = 7;
+  shadowWeight = 10;
+  shadowOffset = 3;
+
   belt(cfg, 40, 93, 1);
   belt(cfg, 240, 93, -1);
 }
@@ -225,6 +237,10 @@ function belt(cfg, margin, side, direction) {
 function animation3() {
   let size = createVector(350, 350);
 
+  weight = window.innerWidth / 200;
+  shadowWeight = weight;
+  shadowOffset = weight * 0.5;
+
   let count = 7;
   let margin = createVector(100, 50);
   for (let i = 0; i < count; ++i) {
@@ -246,8 +262,8 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
   let fillNumX = cellsX - MIN_QUAD_CORNER;
   let fillNumY = cellsY - MIN_QUAD_CORNER;
 
-  weight = 0.7 * cellSize;
-  shadowWeight = 0.22 * cellSize;
+  shadowWeight = 0.7 * cellSize;
+  weight = 0.22 * cellSize;
   shadowOffset = 0.125 * cellSize;
 
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
@@ -297,40 +313,40 @@ function drawPanel(cfg, inner, outer, offset, prehold, duration) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = shadowWeight;
-  cfg.color = magenta;
+  cfg.color = cyan;
 
   stretchers.forEach(s => snailTrail(cfg, s, false, t));
-  snailTrail(cfg, outer, 1, t);
-  snailTrail(cfg, inner, 1, t);
+  snailTrail(cfg, outer, 1, t, true);
+  snailTrail(cfg, inner, 1, t, true);
 
-  cfg.color = yellow;
+  cfg.color = rose;
   cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
 
-  stretchers.forEach(s => snailTrail(cfg, s, false, t));
-  snailTrail(cfg, outer, 1, t);
-  snailTrail(cfg, inner, 1, t);
+  stretchers.forEach(s => snailTrail(cfg, s, false, t, true));
+  snailTrail(cfg, outer, 1, t, true);
+  snailTrail(cfg, inner, 1, t, true);
 }
 
-function drawTrail(cfg, points, offset, prehold, duration, loop) {
+function drawTrail(cfg, points, offset, prehold, duration, loop, fadeIn) {
   let t = min(max(0, (cfg.t - prehold) / duration), 1);
 
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
-  cfg.weight = weight;
+  cfg.weight = shadowWeight;
   //cfg.color = color(125, 25, 75);
   cfg.color = rose;
 
-  snailTrail(cfg, points, loop, t);
+  snailTrail(cfg, points, loop, t, fadeIn);
 
   //cfg.color = magenta;
   cfg.color = yellow;
-  cfg.weight = shadowWeight;
+  cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
 
-  snailTrail(cfg, points, loop, t);
+  snailTrail(cfg, points, loop, t, fadeIn);
 }
 
 function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
@@ -338,14 +354,14 @@ function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
 
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
-  cfg.weight = weight;
-  cfg.color = color(30, 0, 30);
+  cfg.weight = shadowWeight;
+  cfg.color = color(0, 0, 0, 255);
 
   understaffedSnailTrail(cfg, points, loop, t);
 
   cfg.color = rose;
   //cfg.color = yellow;
-  cfg.weight = shadowWeight;
+  cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
 
@@ -356,8 +372,11 @@ function computeStretchers(inner, outer) {
   // TL BL BR TR
   // 0  3
   // 1  2
-  let midY = lerp(inner[0][1], inner[1][1], 0.5);
-  let midX = lerp(inner[0][0], inner[2][0], 0.5);
+  let t = 0.5;
+  let midY1 = lerp(inner[0][1], inner[1][1], t);
+  let midY2 = lerp(inner[1][1], inner[0][1], t);
+  let midX1 = lerp(inner[0][0], inner[2][0], t);
+  let midX2 = lerp(inner[2][0], inner[0][0], t);
   let paddingY = outer[2][1] - inner[2][1];
   let paddingX = outer[2][0] - inner[2][0];
   let minX = outer[0][0];
@@ -366,10 +385,10 @@ function computeStretchers(inner, outer) {
   let maxY = outer[2][1];
 
   stretchers = [
-    [[minX, midY], [minX + paddingX, midY]],
-    [[midX, maxY], [midX, maxY - paddingY]],
-    [[maxX, midY], [maxX - paddingX, midY]],
-    [[midX, minY], [midX, minY + paddingY]],
+    [[minX, midY1], [minX + paddingX, midY1]],
+    [[midX1, maxY], [midX1, maxY - paddingY]],
+    [[maxX, midY2], [maxX - paddingX, midY2]],
+    [[midX2, minY], [midX2, minY + paddingY]],
   ]
 
   //127 height
@@ -380,12 +399,19 @@ function computeStretchers(inner, outer) {
   return stretchers;
 }
 
+function animation4() {
+  noFill();
+  let position = createVector(200, 200);
+  let size = createVector(100, 100);
+  arcUnit(cfg, position, size, 0, 2 * PI, cfg.t);
+}
+
 /**
  * Given a list of points - start a stroke from each point, and animate towards the next one.
  * @param {*} cfg
  * @param {*} points: list[list[int]] - list of [x, y] - vectorization happens here
  */
-function snailTrail(cfg, points, loop, t) {
+function snailTrail(cfg, points, loop, t, fadeIn) {
   if (t === 0) {
     return;
   }
@@ -393,14 +419,14 @@ function snailTrail(cfg, points, loop, t) {
     points
       .map(coords => createVector(...coords))
       .forEach((elt, i, arr) => {
-        unit(cfg, elt, arr[(i + 1) % arr.length], t);
+        unit(cfg, elt, arr[(i + 1) % arr.length], t, fadeIn);
       });
   } else {
     points
       .map(coords => createVector(...coords))
       .forEach((elt, i, arr) => {
         if (i < arr.length - 1) {
-          unit(cfg, elt, arr[i + 1], t);
+          unit(cfg, elt, arr[i + 1], t, fadeIn);
         }
       });
   }
@@ -434,20 +460,41 @@ function understaffedSnailTrail(cfg, points, loop, t) {
   }
 }
 
-function unit(cfg, p1, p2, t) {
+function unit(cfg, p1, p2, t, fadeIn) {
   let time = getGain(t, 0.3);
 
   let x = lerp(p1.x, p2.x, time);
   let y = lerp(p1.y, p2.y, time);
 
+  let a = 255;
+  if (fadeIn && t <= 0.1) {
+    a = lerp(0, 255, t * 10);
+  }
+
+
+  let c = cfg.color;
+  c.setAlpha(a);
+
   strokeCap(ROUND);
-  stroke(cfg.color);
+  stroke(c);
   strokeWeight(cfg.weight);
 
   line(p1.x + cfg.offsetx,
     p1.y + cfg.offsety,
     x + cfg.offsetx,
     y + cfg.offsety);
+}
+
+function arcUnit(cfg, position, size, angleStart, angleStop, t) {
+  let time = getGain(t, 0.3);
+
+  let x = lerp(angleStart, angleStop, time);
+
+  strokeCap(ROUND);
+  stroke(cfg.color);
+  strokeWeight(cfg.weight);
+
+  arc(position.x, position.y, size.x, size.y, angleStart, x, OPEN);
 }
 
 /*
