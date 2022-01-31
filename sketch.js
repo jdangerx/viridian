@@ -78,9 +78,9 @@ function draw() {
   }
 
   //animation1();
-  animation2();
+  //animation2();
   //animation3();
-  //animation4();
+  animation4();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
     if (frameCount % 100 === 0) {
@@ -279,8 +279,13 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
   let fillNumX = cellsX - MIN_QUAD_CORNER;
   let fillNumY = cellsY - MIN_QUAD_CORNER;
 
-  shadowWeight = 0.7 * cellSize;
-  weight = 0.22 * cellSize;
+  // These alternate weights look good in black and rose on a non-black background
+  //shadowWeight = 0.7 * cellSize;
+  //weight = 0.22 * cellSize;
+  
+  shadowWeight = 0.6 * cellSize;
+  weight = 0.35 * cellSize;
+
   shadowOffset = 0.125 * cellSize;
 
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
@@ -372,12 +377,11 @@ function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = shadowWeight;
-  cfg.color = color(0, 0, 0, 255);
+  cfg.color = magenta;
 
   understaffedSnailTrail(cfg, points, loop, t);
 
-  cfg.color = rose;
-  //cfg.color = yellow;
+  cfg.color = color(0, 200, 255);
   cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
@@ -416,7 +420,40 @@ function computeStretchers(inner, outer) {
   return stretchers;
 }
 
-function animation4() {
+function animation4()
+{
+  let size = createVector(300, 400);
+
+  weight = window.innerWidth / 200;
+  shadowWeight = weight;
+  shadowOffset = weight * 0.5;
+
+  let count = 4;
+  let margin = createVector(0, 70);
+  let accumulatedWidth = 0;
+  for (let i = 0; i < count; ++i) {
+    let newMargin = createVector(margin.x, margin.y);
+    let center = 1320 + newMargin.x / 2;
+
+    let newX = size.x + Math.cos((cfg.t + i * 0.3) * 4) * 50;
+    let newY = size.y + Math.cos((cfg.t + (i * 0.1)) * 15) * 75;
+    let newSize = createVector(newX, newY);
+
+    let offsetLeft = center + accumulatedWidth;
+    if (offsetLeft + newSize.x > 2640)
+    {
+      newSize.x = 2640 - (center + accumulatedWidth);
+    }
+    let offsetRight = center - (accumulatedWidth + newSize.x);
+    newMargin.y = newMargin.y + (size.y - newSize.y)* 0.5;
+    drawQuadPattern(createVector(offsetLeft, newMargin.y), i*0.5/count, 0.5/count, newSize, 17);
+    drawQuadPattern(createVector(offsetRight, newMargin.y), i*0.5/count, 0.5/count, newSize, 17);
+
+    accumulatedWidth += newSize.x;
+  }
+}
+
+function animation5() {
   overall = 200;
   noFill();
   let position = createVector(200, 200);
