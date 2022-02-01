@@ -1,6 +1,6 @@
-let overall = 3000;
+let overall = 1000;
 let prehold = 0.0;
-let duration = 1.0;
+let duration = 0.01;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
@@ -13,7 +13,7 @@ let weight = 20;
 
 let loopCounter = 0;
 let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
-let doCapture = false;
+let doCapture = true;
 
 let yellow;
 let gold;
@@ -78,9 +78,9 @@ function draw() {
   }
 
   //animation1();
-  //animation2();
+  animation2();
   //animation3();
-  animation4();
+  //animation4();
   if (loopCounter === 0 && doCapture) {
     capturer.capture(document.getElementById('defaultCanvas0'));
     if (frameCount % 100 === 0) {
@@ -252,7 +252,7 @@ function belt(cfg, margin, side, direction) {
 }
 
 function animation3() {
-  let size = createVector(350, 350);
+  let size = createVector(350, 450);
 
   weight = window.innerWidth / 200;
   shadowWeight = weight;
@@ -263,7 +263,7 @@ function animation3() {
   for (let i = 0; i < count; ++i) {
     let newSize = createVector(size.x, size.y);// - Math.cos((cfg.t + i * 0.2) * 4) * 150);
     let newMargin = createVector(100, 50);
-    drawQuadPattern(createVector(newMargin.x + i * size.x, newMargin.y), i * 1 / count, 1 / count, newSize, 15);
+    drawQuadPattern(createVector(newMargin.x + i * size.x, newMargin.y), i * 1 / count, 1 / count, newSize, 17);
   }
 }
 
@@ -377,11 +377,11 @@ function drawUnderstaffedTrail(cfg, points, offset, prehold, duration, loop) {
   cfg.offsetx = shadowOffset + offset.x;
   cfg.offsety = shadowOffset + offset.y;
   cfg.weight = shadowWeight;
-  cfg.color = magenta;
+  cfg.color = goldenRod;
 
   understaffedSnailTrail(cfg, points, loop, t);
 
-  cfg.color = color(0, 200, 255);
+  cfg.color = color(255, 0, 30);
   cfg.weight = weight;
   cfg.offsetx = offset.x;
   cfg.offsety = offset.y;
