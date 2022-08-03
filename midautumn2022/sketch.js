@@ -6,7 +6,7 @@ let scallopSize;
 let DOUGH_RGB;
 let HIGHLIGHT_RGB;
 let SHADOW_RGB;
-
+let scribble;
 let t = 0;
 
 function frameToTime(frame, loopFrames, prehold, duration) {
@@ -35,6 +35,10 @@ function setup() {
     SHADOW_RGB = color(150, 100, 30);
     scallopSize = patternSize * 1.5;
     pattern = createGraphics(patternSize, patternSize);
+    pattern.frameRate(10);
+    scribble = new Scribble(pattern);
+    scribble.bowing = 0.2;
+    scribble.roughness = 0.4;
     mask = createGraphics(patternSize * 1.2, patternSize * 1.2);
     scallop = createGraphics(scallopSize, scallopSize);
     makeScallops();
@@ -45,7 +49,7 @@ function setup() {
 }
 
 function makeScallops() {
-    // scallop could be done with p5.polar
+    // scallop could be done with gyrate
     // should we pass in the graphics element, instead of mutating global state?
     scallop.noStroke();
     scallop.background('rgba(0, 0, 0, 0)')
@@ -110,12 +114,12 @@ function flower(ctx) {
     eased = lerp(20, 40, 0.5 + 0.5 * sin(2 * TAU * t));
     ctx.strokeWeight(4);
 
-    ctx.circle(100, 100, 80);
-    ctx.circle(100, 100, 60);
-    ctx.circle(100, 100, 40);
+    scribble.scribbleEllipse(100, 100, 80, 80);
+    scribble.scribbleEllipse(100, 100, 60, 60);
+    scribble.scribbleEllipse(100, 100, 40, 40);
 
     unit = () => {
-        ctx.ellipse(0, 75, eased, 50);
+        scribble.scribbleEllipse(0, 75, eased, 50);
     };
     num = 32;
     gyrate(ctx, unit, [], createVector(100, 100), num, TAU / num);
