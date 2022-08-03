@@ -9,16 +9,11 @@ let SHADOW_RGB;
 
 let t = 0;
 
-function frameToTime(frame) {
-    // TODO: how do we define the ratios by animation instead of having to 
-    // manually change things every time?
-    const loopFrames = 300;
-    const preHoldRatio = 0.0;
+function frameToTime(frame, loopFrames, prehold, duration) {
     // we take this total duration, and renormalize each frameCount within it
     // to a range [0, 1] - this converts frame count to 'time', where the unit of
     // time is 'one loop'.
-    const durationRatio = 1.0;
-    t = addHoldTime(frame % loopFrames / loopFrames, preHoldRatio, durationRatio)
+    t = addHoldTime(frame % loopFrames / loopFrames, prehold, duration)
     return t;
 }
 
@@ -78,6 +73,8 @@ function makeScallops() {
 
 
 function waffle() {
+    t = frameToTime(frameCount, 300, 0.1, 0.8);
+    eased = lerp(0, patternSize, widePulse(0.2, 0.8, 0.2, t));
     pattern.circle(patternSize / 2, patternSize / 2, patternSize - 5);
     for (let i = 0; i < 10; i++) {
         x = 10 * (2 * i + 1)
@@ -107,7 +104,8 @@ function gyrate(ctx, unitFunc, args, center, iterations, stepSize, callback) {
     ctx.pop()
 }
 
-function flower(ctx, t) {
+function flower(ctx) {
+    t = frameToTime(frameCount, 300, 0, 1);
     ctx.push();
     eased = lerp(20, 40, 0.5 + 0.5 * sin(2 * TAU * t));
     ctx.strokeWeight(4);
@@ -127,8 +125,6 @@ function flower(ctx, t) {
 
 function draw() {
     background(200, 200, 240);
-    t = frameToTime(frameCount)
-    eased = lerp(0, patternSize, smoothstep(0.2, 0.8, t));
 
     pattern.background(DOUGH_RGB);
     pattern.strokeWeight(6);
@@ -138,16 +134,36 @@ function draw() {
     pattern.push();
     pattern.translate(3, 3);
     pattern.stroke(SHADOW_RGB);
-    flower(pattern, t)
+    flower(pattern)
     pattern.pop();
 
     pattern.stroke(HIGHLIGHT_RGB);
     pattern.circle(patternSize / 2, patternSize / 2, patternSize - 5);
-    flower(pattern, t)
+    flower(pattern)
 
     mask.image(pattern, 0, 0);
     image(scallop, mouseX - scallopSize / 2, mouseY - scallopSize / 2);
     image(mask, mouseX - patternSize / 2, mouseY - patternSize / 2);
+
+
+    pattern.background(DOUGH_RGB);
+    pattern.strokeWeight(6);
+    pattern.strokeCap(SQUARE);
+    pattern.fill('rgba(0, 0, 0, 0)');
+
+    pattern.push();
+    pattern.translate(3, 3);
+    pattern.stroke(SHADOW_RGB);
+    waffle();
+    pattern.pop();
+
+    pattern.stroke(HIGHLIGHT_RGB);
+    pattern.circle(patternSize / 2, patternSize / 2, patternSize - 5);
+    waffle();
+
+    mask.image(pattern, 0, 0);
+    image(scallop, mouseX - scallopSize / 2 - 250, mouseY - scallopSize / 2);
+    image(mask, mouseX - patternSize / 2 - 250, mouseY - patternSize / 2);
 }
 
 
