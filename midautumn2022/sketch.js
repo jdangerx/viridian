@@ -10,12 +10,14 @@ let SHADOW_RGB;
 let t = 0;
 
 function frameToTime(frame) {
+    // TODO: how do we define the ratios by animation instead of having to 
+    // manually change things every time?
     const loopFrames = 300;
-    const preHoldRatio = 0.1;
+    const preHoldRatio = 0.0;
     // we take this total duration, and renormalize each frameCount within it
     // to a range [0, 1] - this converts frame count to 'time', where the unit of
     // time is 'one loop'.
-    const durationRatio = 0.8;
+    const durationRatio = 1.0;
     t = addHoldTime(frame % loopFrames / loopFrames, preHoldRatio, durationRatio)
     return t;
 }
@@ -83,6 +85,46 @@ function waffle() {
         pattern.line(0, x, eased, x);
     }
 }
+
+function gyrate(ctx, unitFunc, args, center, iterations, stepSize, callback) {
+    // ctx: a graphics context from createGraphics
+    // unitFunc: the func that draws something you want gyrated
+    // args: list of any additional args you want to pass to unitFunc
+    // center: vector representing where the center of the gyration should be
+    // iterations: num iterations
+    // stepSize (radians): how big the step size is
+    // callback: any post-processing you need to do to args? (TODO: add 
+    //   iterations + stepSize to the args before hitting callback)
+    ctx.push()
+    ctx.translate(center);
+    for (let i = 0; i < iterations; i++) {
+        ctx.rotate(stepSize);
+        if (callback) {
+            args = callback(args);
+        }
+        unitFunc.apply(null, args);
+    }
+    ctx.pop()
+}
+
+function flower(ctx, t) {
+    ctx.push();
+    eased = lerp(20, 40, 0.5 + 0.5 * sin(2 * TAU * t));
+    ctx.strokeWeight(4);
+
+    ctx.circle(100, 100, 80);
+    ctx.circle(100, 100, 60);
+    ctx.circle(100, 100, 40);
+
+    unit = () => {
+        ctx.ellipse(0, 75, eased, 50);
+    };
+    num = 32;
+    gyrate(ctx, unit, [], createVector(100, 100), num, TAU / num);
+    ctx.pop();
+}
+
+
 function draw() {
     background(200, 200, 240);
     t = frameToTime(frameCount)
@@ -96,12 +138,12 @@ function draw() {
     pattern.push();
     pattern.translate(3, 3);
     pattern.stroke(SHADOW_RGB);
-    waffle()
+    flower(pattern, t)
     pattern.pop();
 
     pattern.stroke(HIGHLIGHT_RGB);
     pattern.circle(patternSize / 2, patternSize / 2, patternSize - 5);
-    waffle()
+    flower(pattern, t)
 
     mask.image(pattern, 0, 0);
     image(scallop, mouseX - scallopSize / 2, mouseY - scallopSize / 2);
