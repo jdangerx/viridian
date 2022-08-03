@@ -59,6 +59,9 @@ function draw() {
     background(0);
     t = frameToTime(frameCount)
     pattern.background(200);
+    pattern.stroke(240);
+    pattern.strokeWeight(6);
+    pattern.strokeCap(SQUARE);
     eased = lerp(0, 200, smoothstep(0.2, 0.8, t));
     for (let i = 0; i < 10; i++) {
         x = 10 * (2 * i + 1)
