@@ -38,17 +38,17 @@ function setup() {
     // scallop could be done with p5.polar
     scallop.background('rgba(0, 0, 0, 0)')
     scallop.fill(200);
-    const numScallops = 30;
+    const numScallops = 8;
     const stepSize = TAU / numScallops;
-    const bigRadius = patternSize / 2 * 1.1;
+    const ringRadius = patternSize / 2;
     for (let i = 0; i < numScallops; i++) {
-        x = cos(i * stepSize) * bigRadius;
-        y = sin(i * stepSize) * bigRadius;
-        const smallDiameter = TAU * bigRadius / numScallops * 1.2;
-        scallop.circle(scallopSize / 2 + x, scallopSize / 2 + y, smallDiameter);
+        const diameter = TAU * ringRadius / numScallops * 1.5;
+        x = cos(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
+        y = sin(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
+        scallop.circle(scallopSize / 2 + x, scallopSize / 2 + y, diameter);
     }
     scallop.fill(240);
-    scallop.circle(scallopSize / 2, scallopSize / 2, 2 * bigRadius);
+    scallop.circle(scallopSize / 2, scallopSize / 2, 2 * ringRadius * 1.1);
     mask.background('rgba(0, 0, 0, 0)')
     mask.fill('rgba(0, 0, 0, 1)')
     mask.circle(patternSize / 2, patternSize / 2, patternSize);
