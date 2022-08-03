@@ -13,7 +13,7 @@ let weight = 20;
 
 let loopCounter = 0;
 let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
-let doCapture = true;
+let doCapture = false;
 
 let yellow;
 let gold;
@@ -153,7 +153,7 @@ function animation1() {
 
 
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2*cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2 * cellSize), start_time_edge, duration);
     // center
     drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), start_time, duration);
     // bottom
@@ -166,7 +166,7 @@ function animation1() {
     // to take into account both the width of the panel we drew on the last iteration, 
     // and the width of the panel we're about to draw
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2*cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2 * cellSize), start_time_edge, duration);
     // center
     drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), start_time, duration);
     // bottom
@@ -282,7 +282,7 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
   // These alternate weights look good in black and rose on a non-black background
   //shadowWeight = 0.7 * cellSize;
   //weight = 0.22 * cellSize;
-  
+
   shadowWeight = 0.6 * cellSize;
   weight = 0.35 * cellSize;
 
@@ -420,8 +420,7 @@ function computeStretchers(inner, outer) {
   return stretchers;
 }
 
-function animation4()
-{
+function animation4() {
   let size = createVector(300, 400);
 
   weight = window.innerWidth / 200;
@@ -440,14 +439,13 @@ function animation4()
     let newSize = createVector(newX, newY);
 
     let offsetLeft = center + accumulatedWidth;
-    if (offsetLeft + newSize.x > 2640)
-    {
+    if (offsetLeft + newSize.x > 2640) {
       newSize.x = 2640 - (center + accumulatedWidth);
     }
     let offsetRight = center - (accumulatedWidth + newSize.x);
-    newMargin.y = newMargin.y + (size.y - newSize.y)* 0.5;
-    drawQuadPattern(createVector(offsetLeft, newMargin.y), i*0.5/count, 0.5/count, newSize, 17);
-    drawQuadPattern(createVector(offsetRight, newMargin.y), i*0.5/count, 0.5/count, newSize, 17);
+    newMargin.y = newMargin.y + (size.y - newSize.y) * 0.5;
+    drawQuadPattern(createVector(offsetLeft, newMargin.y), i * 0.5 / count, 0.5 / count, newSize, 17);
+    drawQuadPattern(createVector(offsetRight, newMargin.y), i * 0.5 / count, 0.5 / count, newSize, 17);
 
     accumulatedWidth += newSize.x;
   }
