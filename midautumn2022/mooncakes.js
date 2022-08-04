@@ -42,7 +42,7 @@ function Mooncakes() {
         // should we pass in the graphics element, instead of mutating global state?
         ctx.noStroke();
         ctx.background('rgba(0, 0, 0, 0)')
-        const numScallops = 30;
+        const numScallops = 36;
         const stepSize = TAU / numScallops;
         const ringRadius = patternSize / 2;
         ctx.fill(SHADOW_RGB);
@@ -67,18 +67,20 @@ function Mooncakes() {
     this.flower = function (ctx, frame) {
         t = utils.frameToTime(frame, 300, 0, 1);
         ctx.push();
-        eased = lerp(20, 40, 0.5 + 0.5 * sin(2 * TAU * t));
+        eased = lerp(50, 100, 0.5 + 0.3 * sin(2 * TAU * t) + 0.2 * sin(3 * TAU * t));
+        ctx.translate(100, 100);
+        ctx.rotate(TAU / 4 * utils.smoothstep(0.2, 0.8, t));
         ctx.strokeWeight(4);
 
-        scribble.scribbleEllipse(100, 100, 80, 80);
-        scribble.scribbleEllipse(100, 100, 60, 60);
-        scribble.scribbleEllipse(100, 100, 40, 40);
+        ctx.ellipse(0, 0, 80, 80);
+        ctx.ellipse(0, 0, 60, 60);
+        ctx.ellipse(0, 0, 40, 40);
 
         unit = () => {
-            scribble.scribbleEllipse(0, 75, eased, 50);
+            ctx.ellipse(0, 75, eased, 50);
         };
-        num = 32;
-        utils.gyrate(ctx, unit, [], createVector(100, 100), num, TAU / num);
+        num = 20;
+        utils.gyrate(ctx, unit, [], createVector(0, 0), num, TAU / num);
         ctx.pop();
     }
 
