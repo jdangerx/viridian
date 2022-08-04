@@ -16,6 +16,7 @@ function setup() {
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);
     mgr.addScene(Gates);
+    mgr.addScene(Phases);
 
     mgr.showNextScene();
 }
@@ -34,6 +35,10 @@ function keyPressed() {
         case '2':
             console.log('Switching to Gates.')
             mgr.showScene(Gates);
+            break;
+        case '3':
+            console.log('Switching to Phases.')
+            mgr.showScene(Phases);
             break;
     }
 
