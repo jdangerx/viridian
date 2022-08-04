@@ -1,3 +1,11 @@
-const gates = {
-    myFunc: () => { console.log("myfunc"); }
+function Gates() {
+    let contexts;
+    this.setup = () => {
+        contexts = mooncakes.setupContexts();
+
+    }
+
+    this.draw = () => {
+    }
+
 }
