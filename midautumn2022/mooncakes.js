@@ -20,9 +20,9 @@ function Mooncakes() {
     this.setup = function () {
         patternSize = 200;
 
-        DOUGH_RGB = color(210, 140, 50);
-        HIGHLIGHT_RGB = color(250, 180, 80);
-        SHADOW_RGB = color(150, 100, 30);
+        DOUGH_RGB = color(201,128,57);
+        HIGHLIGHT_RGB = color(248,185,118);
+        SHADOW_RGB = color(161,79,10);
         contexts = mooncakes.setupContexts(patternSize);
         const { pattern, mask, scallop } = contexts;
         scribble = new Scribble(pattern);
@@ -42,10 +42,10 @@ function Mooncakes() {
         // should we pass in the graphics element, instead of mutating global state?
         ctx.noStroke();
         ctx.background('rgba(0, 0, 0, 0)')
-        const numScallops = 36;
+        const numScallops = 18;
         const stepSize = TAU / numScallops;
         const ringRadius = patternSize / 2;
-        ctx.fill(SHADOW_RGB);
+        ctx.fill(HIGHLIGHT_RGB);
         for (let i = 0; i < numScallops; i++) {
             const diameter = TAU * ringRadius / numScallops * 1.5;
             x = cos(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
@@ -61,7 +61,8 @@ function Mooncakes() {
             ctx.circle(ctx.width / 2 + x, ctx.height / 2 + y, diameter);
         }
         ctx.pop();
-        ctx.circle(ctx.width / 2 + 3, ctx.height / 2 + 3, patternSize);
+        ctx.stroke(SHADOW_RGB);
+        ctx.circle(ctx.width / 2, ctx.height / 2, patternSize + 10);
     }
 
     this.flower = function (ctx, frame) {
@@ -70,7 +71,7 @@ function Mooncakes() {
         eased = lerp(50, 100, 0.5 + 0.3 * sin(2 * TAU * t) + 0.2 * sin(3 * TAU * t));
         ctx.translate(100, 100);
         ctx.rotate(TAU / 4 * utils.smoothstep(0.2, 0.8, t));
-        ctx.strokeWeight(4);
+        //ctx.strokeWeight(4);
 
         ctx.ellipse(0, 0, 80, 80);
         ctx.ellipse(0, 0, 60, 60);
@@ -86,18 +87,18 @@ function Mooncakes() {
 
     this.genMooncake = (pattern, frameCount) => {
         pattern.background(DOUGH_RGB);
-        pattern.strokeWeight(6);
         pattern.strokeCap(SQUARE);
         pattern.fill('rgba(0, 0, 0, 0)');
 
         pattern.push();
-        pattern.translate(3, 3);
+        pattern.translate(2, 2);
+        pattern.strokeWeight(12);
         pattern.stroke(SHADOW_RGB);
         this.flower(pattern, frameCount);
         pattern.pop();
 
         pattern.stroke(HIGHLIGHT_RGB);
-        pattern.circle(patternSize / 2, patternSize / 2, patternSize - 5);
+        pattern.strokeWeight(5);
         this.flower(pattern, frameCount);
     }
 
@@ -109,7 +110,7 @@ function Mooncakes() {
     }
 
     this.draw = function () {
-        background(200, 200, 240);
+        background(93,169,155);
         this.genMooncake(contexts.pattern, frameCount);
         this.drawMooncake(mouseX, mouseY);
     }
