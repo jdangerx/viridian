@@ -100,6 +100,6 @@ function Mooncakes() {
     this.draw = function () {
         background(93, 169, 155);
         this.genMooncake(this.contexts.pattern, frameCount);
-        this.drawMooncake(mouseX, mouseY, this.contexts);
+        this.drawMooncake(mouseX - width/2, mouseY - height/2, this.contexts);
     }
 }

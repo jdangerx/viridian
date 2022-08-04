@@ -32,7 +32,7 @@ function Phases()
         a -= 0.01;
         a %= -Math.PI*2;        
 
-        this.drawMoon(width/2, height/2, a);
+        this.drawMoon(0, 0, a);
     }
 
     this.drawMoon = function(x, y, a)
@@ -55,6 +55,7 @@ function Phases()
         let color3 = color(0,25,25,0); //blue
         let color4 = color(0,25,25,0); //green
 
+        /*
         if (-Math.PI/2 < a && a < 0) {
             color3 = light_color;
             color4 = light_color;
@@ -75,7 +76,12 @@ function Phases()
             color3 = light_color;
             color1 = bg_color;
             color2 = light_color;
-        }
+        }*/
+
+        color1 = color(0);
+        color2 = color(100);
+        color3 = color(200);
+        color4 = color(255);
 
         fill(color1);
         arc(x, y, d, d, PI/2, 3 * PI/2);
