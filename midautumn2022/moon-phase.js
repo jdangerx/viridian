@@ -8,6 +8,10 @@ function Phases()
     // d is the diameter 
     // a is the angle bewtween the center of the moon and the center of the earth
     let a = 0;
+    let d = width / 3;
+
+    let bg_color = color(62,114,135,255);
+    let light_color = color(246,196,66,255);
 
     var c;
 
@@ -20,25 +24,31 @@ function Phases()
     this.draw = function ()
     {
         // it's a while loop
-        let bg_color = color(62,114,135,255);
-        let light_color = color(246,196,66,255);
         background(bg_color);
         
-        let d = width / 3;
         noStroke();
         ellipseMode(CENTER);
-            
-        // moon
+
         a -= 0.01;
-        a %= -Math.PI*2;
-            
-        x = Math.cos(a) * d/2 * 5/2;
-        y = Math.sin(a) * d/2 * 5/2;
-        
-        // moon pahases
+        a %= -Math.PI*2;        
+
+        this.drawMoon(width/2, height/2, a);
+    }
+
+    this.drawMoon = function(x, y, a)
+    {
+        // moon
+        //a -= 0.01;
+        //a = -Math.PI/2 + 1;
+        /*
+        a = -Math.PI + 1;
+        a = -Math.PI + 1;
+        a = -Math.PI - 1;
+        a = -3*Math.PI/2 - 1;
+*/
+        //x = Math.cos(a) * d/2 * 5/2;
+        //y = Math.sin(a) * d/2 * 5/2;
         noStroke();
-        let phasex = width/2;
-        let phasey = height/2;
 
         let color1 = color(0,25,25,0); //red
         let color2 = color(0,25,25,0); //gray
@@ -68,17 +78,16 @@ function Phases()
         }
 
         fill(color1);
-        //let widthMoonPhase = map(Math.sin(a), -1, 1, -d2, d2);
-        arc(phasex, phasey, d, d, PI/2, 3 * PI/2);
+        arc(x, y, d, d, PI/2, 3 * PI/2);
         fill(color2);
-        arc(phasex, phasey, d+1, d+1, 3 * PI/2, PI/2);
+        arc(x, y, d+1, d+1, 3 * PI/2, PI/2);
 
         let heightPhase = d;
         let widthPhase = map(Math.cos(a), 0, 1, 0, d);
 
         fill(color3);
-        arc(phasex, phasey, widthPhase - 2, heightPhase + 1, PI/2, 3 * PI/2);
+        arc(x, y, widthPhase - 2, d + 1, PI/2, 3 * PI/2);
         fill(color4);
-        arc(phasex, phasey, widthPhase - 2, heightPhase + 1, 3 * PI/2, PI/2)
+        arc(x, y, widthPhase - 2, d + 1, 3 * PI/2, PI/2)
     }
 }
