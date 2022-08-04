@@ -11,7 +11,6 @@ let mgr;
 
 function setup() {
     createCanvas(800, 600);
-    patternSize = 200;
 
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);

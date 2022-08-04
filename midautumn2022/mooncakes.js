@@ -1,7 +1,11 @@
 function Mooncakes() {
     this.setup = () => {
-        this.patternSize = 200;
+        this._setup(200)
+    }
 
+    this._setup = (patternSize) => {
+        // the real setup function that we can initialize elsewhere
+        this.patternSize = patternSize;
         this.dough_rgb = color(201, 128, 57);
         this.highlight_rgb = color(248, 185, 118);
         this.shadow_rgb = color(161, 79, 10);
@@ -16,6 +20,7 @@ function Mooncakes() {
         mask.drawingContext.globalCompositeOperation = 'source-in';
 
         this.genMooncake(pattern, 1);
+
     }
 
     this.setupContexts = (size) => {
@@ -30,47 +35,42 @@ function Mooncakes() {
         // scallop could be done with gyrate
         // should we pass in the graphics element, instead of mutating global state?
         ctx.noStroke();
-        ctx.background('rgba(0, 0, 0, 0)')
+        ctx.background('rgba(0, 0, 0, 0)');
         const numScallops = 18;
-        const stepSize = TAU / numScallops;
-        const ringRadius = patternSize / 2;
+        const ringRadius = this.patternSize / 2;
         ctx.fill(this.highlight_rgb);
-        for (let i = 0; i < numScallops; i++) {
-            const diameter = TAU * ringRadius / numScallops * 1.5;
-            x = cos(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
-            y = sin(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
-            ctx.circle(ctx.width / 2 + x, ctx.height / 2 + y, diameter * 1.2);
-        }
+        const oneScallop = (diameterCoeff) => {
+            const diameter = TAU * ringRadius / numScallops * diameterCoeff;
+            ctx.circle(ringRadius - 2 * diameter / numScallops, 0, diameter);
+        };
+        const center = createVector(ctx.width / 2, ctx.height / 2)
+        utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
         ctx.push();
         ctx.fill(this.dough_rgb);
-        for (let i = 0; i < numScallops; i++) {
-            const diameter = TAU * ringRadius / numScallops * 1.5;
-            x = cos(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
-            y = sin(i * stepSize) * (ringRadius - 2 * diameter / numScallops);
-            ctx.circle(ctx.width / 2 + x, ctx.height / 2 + y, diameter);
-        }
+        utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
         ctx.pop();
         ctx.stroke(this.shadow_rgb);
-        ctx.circle(ctx.width / 2, ctx.height / 2, patternSize + 10);
+        ctx.circle(ctx.width / 2, ctx.height / 2, this.patternSize * 1.05);
     }
 
     this.flower = function (ctx, frame) {
-        t = utils.frameToTime(frame, 300, 0, 1);
+        const t = utils.frameToTime(frame, 300, 0, 1);
         ctx.push();
-        eased = lerp(50, 100, 0.5 + 0.3 * sin(2 * TAU * t) + 0.2 * sin(3 * TAU * t));
-        ctx.translate(100, 100);
+        const unit = ctx.width;
+        const eased = lerp(unit / 4, unit / 2, 0.5 + 0.3 * sin(2 * TAU * t) + 0.2 * sin(3 * TAU * t));
+        ctx.translate(unit / 2, unit / 2);
         ctx.rotate(TAU / 4 * utils.smoothstep(0.2, 0.8, t));
-        //ctx.strokeWeight(4);
+        ctx.strokeWeight(unit / 50);
 
-        ctx.ellipse(0, 0, 80, 80);
-        ctx.ellipse(0, 0, 60, 60);
-        ctx.ellipse(0, 0, 40, 40);
+        ctx.circle(0, 0, 0.4 * unit);
+        ctx.circle(0, 0, 0.3 * unit);
+        ctx.circle(0, 0, 0.2 * unit);
 
-        unit = () => {
-            ctx.ellipse(0, 75, eased, 50);
+        const petal = () => {
+            ctx.ellipse(0, 0.375 * unit, eased, 0.25 * unit);
         };
         num = 20;
-        utils.gyrate(ctx, unit, [], createVector(0, 0), num, TAU / num);
+        utils.gyrate(ctx, petal, [], createVector(0, 0), num, TAU / num);
         ctx.pop();
     }
 
@@ -81,7 +81,7 @@ function Mooncakes() {
 
         pattern.push();
         pattern.translate(2, 2);
-        pattern.strokeWeight(12);
+        pattern.strokeWeight(pattern.weight * 0.06);
         pattern.stroke(this.shadow_rgb);
         this.flower(pattern, frameCount);
         pattern.pop();

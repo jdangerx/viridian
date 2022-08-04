@@ -1,17 +1,22 @@
 function Gates() {
     // just testing importing of mooncakes stuff for now
     this.setup = () => {
+        this.size = 100;
         this.mc = new Mooncakes();
-        // this is kind of janky to keep a whole Mooncakes 
-        this.mc.setup();
+        this.mc._setup(this.size);
     }
 
     this.draw = () => {
         background(40);
-        this.mc.genMooncake(this.mc.contexts.pattern, frameCount);
-        this.mc.drawMooncake(mouseX, mouseY, this.mc.contexts);
 
-        this.mc.genMooncake(this.mc.contexts.pattern, frameCount * 2);
-        this.mc.drawMooncake(mouseX - 100, mouseY - 100, this.mc.contexts);
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 5; j++) {
+                const x = i * this.size * 1.5;
+                const y = j * this.size * 1.5;
+                const fc = frameCount + noise(x, y) * 100;
+                this.mc.genMooncake(this.mc.contexts.pattern, fc);
+                this.mc.drawMooncake(x, y, this.mc.contexts);
+            }
+        }
     }
 }
