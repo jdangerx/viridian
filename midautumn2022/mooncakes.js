@@ -19,16 +19,17 @@ function Mooncakes() {
         scallopSize = patternSize * 1.5;
         pattern = createGraphics(patternSize, patternSize);
         scribble = new Scribble(pattern);
-        scribble.bowing = 0.2;
-        scribble.roughness = 0.4;
-        mask = createGraphics(patternSize * 1.2, patternSize * 1.2);
+        mask = createGraphics(patternSize, patternSize);
         scallop = createGraphics(scallopSize, scallopSize);
         this.makeScallops();
         mask.background('rgba(0, 0, 0, 0)')
         mask.fill('rgba(0, 0, 0, 1)')
         mask.circle(patternSize / 2, patternSize / 2, patternSize);
         mask.drawingContext.globalCompositeOperation = 'source-in';
+
+        this.genMooncake(1);
     }
+
 
     this.makeScallops = function () {
         // scallop could be done with gyrate
@@ -75,9 +76,7 @@ function Mooncakes() {
         ctx.pop();
     }
 
-    this.draw = function () {
-        background(200, 200, 240);
-
+    this.genMooncake = (frameCount) => {
         pattern.background(DOUGH_RGB);
         pattern.strokeWeight(6);
         pattern.strokeCap(SQUARE);
@@ -92,9 +91,17 @@ function Mooncakes() {
         pattern.stroke(HIGHLIGHT_RGB);
         pattern.circle(patternSize / 2, patternSize / 2, patternSize - 5);
         this.flower(pattern, frameCount);
+    }
 
+    this.drawMooncake = (x, y) => {
         mask.image(pattern, 0, 0);
-        image(scallop, mouseX - scallopSize / 2, mouseY - scallopSize / 2);
-        image(mask, mouseX - patternSize / 2, mouseY - patternSize / 2);
+        image(scallop, x - scallop.width / 2, y - scallop.height / 2);
+        image(mask, x - mask.width / 2, y - mask.height / 2);
+    }
+
+    this.draw = function () {
+        background(200, 200, 240);
+        // this.genMooncake(frameCount);
+        this.drawMooncake(mouseX, mouseY);
     }
 }
