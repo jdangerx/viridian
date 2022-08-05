@@ -8,7 +8,7 @@ function Phases()
     // d is the diameter 
     // a is the angle bewtween the center of the moon and the center of the earth
     let a = 0;
-    let d = width / 10;
+    let d = width / 5;
     let increment = 0.01;
 
     let bg_color = color(62,114,135,255);
@@ -37,11 +37,8 @@ function Phases()
         noStroke();
         ellipseMode(CENTER);
 
-        if (a > 0 || a < -2*Math.PI)
-        {
-            increment *= -1;
-        }
-        a -= increment;        
+        a -= increment;    
+        a %= -2*Math.PI;    
 
         console.log(a);
         this.drawMoon(x, 0, a);
@@ -114,8 +111,8 @@ function Phases()
         color3 = color(200);
         color4 = color(255);
 */
-        //texture(paperTexture);
-        //textureMode(IMAGE);
+        texture(paperTexture);
+        textureMode(IMAGE);
 
         fill(color1);
         arc(x, y, d, d, PI/2, 3 * PI/2);
