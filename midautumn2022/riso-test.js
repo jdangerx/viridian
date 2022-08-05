@@ -1,4 +1,4 @@
-function RisoTestJohn() {
+function RisoTest() {
     // x and y to calculate the coordinates of the moon
     let x = 0;
     let y = 0;
