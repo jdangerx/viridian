@@ -15,7 +15,7 @@ function Mooncakes() {
         this.makeScallops(scallop);
         mask.background('rgba(0, 0, 0, 0)')
         mask.fill('rgba(0, 0, 0, 1)')
-        mask.circle(mask.width / 2, mask.height / 2, pattern.width);
+        mask.circle(mask.width / 2, mask.height / 2, pattern.width * 0.93);
         mask.drawingContext.globalCompositeOperation = 'source-in';
 
         this.genMooncake(pattern, 1);
@@ -49,7 +49,27 @@ function Mooncakes() {
         utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
         ctx.pop();
         ctx.stroke(this.shadow_rgb);
-        ctx.circle(ctx.width / 2, ctx.height / 2, this.patternSize * 1.05);
+        ctx.strokeWeight(3);
+        ctx.circle(ctx.width / 2, ctx.height / 2, this.patternSize * 1.02);
+    }
+
+    this.cross = function (ctx) {
+        ctx.push();
+        const unit = ctx.width;
+        ctx.translate(unit / 2, unit / 2);
+        ctx.strokeWeight(unit / 20);
+        ctx.strokeCap(ROUND);
+        ctx.rotate(TAU * 0.022);
+
+        const petal = () => {
+            ctx.arc(0, 0, 0.8 * unit, 0.8 * unit, 0.15, TAU / 4 - 0.15);
+            ctx.arc(0, 0, 0.5 * unit, 0.5 * unit, 0.3, TAU / 4 - 0.5);
+            ctx.line(0.24 * unit, 0.07 * unit, 0.39 * unit, 0.05 * unit);
+            ctx.line(0.0 * unit, 0.00 * unit, 0.05 * unit, 0.39 * unit);
+        };
+        num = 4;
+        utils.gyrate(ctx, petal, [], createVector(0, 0), num, TAU / num);
+        ctx.pop();
     }
 
     this.flower = function (ctx, frame) {
@@ -79,15 +99,17 @@ function Mooncakes() {
         pattern.fill('rgba(0, 0, 0, 0)');
 
         pattern.push();
-        pattern.translate(2, 2);
+        pattern.translate(3, 3);
         pattern.strokeWeight(pattern.weight * 0.06);
         pattern.stroke(this.shadow_rgb);
-        this.flower(pattern, frameCount);
+        //this.flower(pattern, frameCount);
+        this.cross(pattern);
         pattern.pop();
 
         pattern.stroke(this.highlight_rgb);
         pattern.strokeWeight(5);
-        this.flower(pattern, frameCount);
+        //this.flower(pattern, frameCount);
+        this.cross(pattern);
     }
 
     this.drawMooncake = (x, y, { mask, pattern, scallop }) => {
@@ -99,6 +121,6 @@ function Mooncakes() {
     this.draw = function () {
         background(93, 169, 155);
         this.genMooncake(this.contexts.pattern, frameCount);
-        this.drawMooncake(mouseX - width / 2, mouseY - height / 2, this.contexts);
+        this.drawMooncake(0, 0, this.contexts);
     }
 }
