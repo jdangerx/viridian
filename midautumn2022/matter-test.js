@@ -36,7 +36,7 @@ function MatterTest() {
 
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
-        this.mc.genMooncake(this.mc.contexts.pattern, 1);
+        //this.mc.genMooncake(this.mc.contexts.pattern, 1);
     }
     this.enter = () => {
         this.setup();

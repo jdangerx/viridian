@@ -21,6 +21,7 @@ function setup() {
     mgr.addScene(Mooncakes);
     mgr.addScene(MatterTest);
     mgr.addScene(Phases);
+    mgr.addScene(Riso);
 
     mgr.showNextScene();
 }
@@ -43,6 +44,11 @@ function keyPressed() {
             console.log('Switching to Phases.')
             mgr.showScene(Phases);
             break;
+        case '4':
+            console.log('Switching to Riso.')
+            mgr.showScene(Riso);
+            break;
+    
     }
 
     // ... then dispatch via the SceneManager.
