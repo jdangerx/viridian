@@ -8,6 +8,11 @@
  * 4. add a case in keyPressed so you can switch at leisure.
  */
 let mgr;
+P5Capture.setDefaultOptions({
+    format: "webm",
+    framerate: 60,
+    width: 400,
+});
 
 function setup() {
     createCanvas(800, 600, WEBGL);

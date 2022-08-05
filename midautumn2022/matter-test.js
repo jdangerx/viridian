@@ -38,15 +38,24 @@ function MatterTest() {
         this.mc._setup(2 * radius);
         this.mc.genMooncake(this.mc.contexts.pattern, 1);
     }
+    this.enter = () => {
+        this.setup();
+    }
 
     this.draw = () => {
         background(40);
+
+        /* all this time/millis math is so the engine uses the right delta to
+        update in realtime, but when we're recording, we just want the engine
+        to take 1/60 of a second no matter what.
 
         const newT = millis();
         const newDelta = newT - this.t;
         const correction = newDelta / this.delta;
         this.t = newT;
         this.delta = newDelta;
+        */
+
         Matter.Engine.update(this.engine, 1000 / 60);
         this.circles.forEach((circle, i) => {
             push();
