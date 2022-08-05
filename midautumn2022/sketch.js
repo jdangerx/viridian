@@ -14,7 +14,7 @@ function setup() {
 
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);
-    mgr.addScene(Gates);
+    mgr.addScene(MatterTest);
     mgr.addScene(Phases);
 
     mgr.showNextScene();
@@ -25,15 +25,14 @@ function draw() {
 }
 
 function keyPressed() {
-    // You can optionaly handle the key press at global level...
     switch (key) {
         case '1':
             console.log('Switching to Mooncakes.')
             mgr.showScene(Mooncakes);
             break;
         case '2':
-            console.log('Switching to Gates.')
-            mgr.showScene(Gates);
+            console.log('Switching to Matter Test.')
+            mgr.showScene(MatterTest);
             break;
         case '3':
             console.log('Switching to Phases.')

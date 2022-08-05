@@ -11,7 +11,6 @@ function Mooncakes() {
         this.shadow_rgb = color(161, 79, 10);
         this.setupContexts(patternSize);
         const { pattern, mask, scallop } = this.contexts;
-        scribble = new Scribble(pattern);
 
         this.makeScallops(scallop);
         mask.background('rgba(0, 0, 0, 0)')
@@ -100,6 +99,6 @@ function Mooncakes() {
     this.draw = function () {
         background(93, 169, 155);
         this.genMooncake(this.contexts.pattern, frameCount);
-        this.drawMooncake(mouseX - width/2, mouseY - height/2, this.contexts);
+        this.drawMooncake(mouseX - width / 2, mouseY - height / 2, this.contexts);
     }
 }
