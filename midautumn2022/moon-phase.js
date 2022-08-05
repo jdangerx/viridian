@@ -8,15 +8,23 @@ function Phases()
     // d is the diameter 
     // a is the angle bewtween the center of the moon and the center of the earth
     let a = 0;
-    let d = width / 3;
+    let d = width / 10;
+    let increment = 0.01;
 
     let bg_color = color(62,114,135,255);
-    let light_color = color(246,196,66,255);
+    let light_color = color(246,216,86,255);
+
+    let paperTexture;
 
     var c;
 
+    this.preload = function ()
+    {
+    }
+
     this.setup = function () 
     {
+        paperTexture = loadImage('grime.jpg');
         c = createCanvas(900, 600);
         angleMode(RADIANS);
     }
@@ -29,10 +37,28 @@ function Phases()
         noStroke();
         ellipseMode(CENTER);
 
-        a -= 0.01;
-        a %= -Math.PI*2;        
+        if (a > 0 || a < -2*Math.PI)
+        {
+            increment *= -1;
+        }
+        a -= increment;        
 
-        this.drawMoon(0, 0, a);
+        console.log(a);
+        this.drawMoon(x, 0, a);
+
+        for (let i=0; i < (width / (d * 1.5)); ++i)
+        {
+            var x = -width/2 + i * d*1.5 + d;
+            var newA = a - (i * 0.4);
+            var newHeight = cos(0.01 * frameCount + i) * height/3
+
+            fill(color(32,74,105,255));
+            rectMode(CORNERS);
+            rect(x-d/2, newHeight, x+d/2, height);
+
+            this.drawMoon(x, newHeight, newA);
+        }
+
     }
 
     this.drawMoon = function(x, y, a)
@@ -55,7 +81,6 @@ function Phases()
         let color3 = color(0,25,25,0); //blue
         let color4 = color(0,25,25,0); //green
 
-        /*
         if (-Math.PI/2 < a && a < 0) {
             color3 = light_color;
             color4 = light_color;
@@ -72,16 +97,25 @@ function Phases()
             color1 = bg_color;
             color3 = bg_color;
         } else if (-2*Math.PI < a && a < -3*Math.PI/2) {
-            color4 = color(0,255,0,0);
+            color4 = light_color;
             color3 = light_color;
             color1 = bg_color;
             color2 = light_color;
-        }*/
+        } else {
+            color3 = light_color;
+            color4 = light_color;
+            color1 = light_color;
+            color2 = bg_color;
+        }
 
+        /*
         color1 = color(0);
         color2 = color(100);
         color3 = color(200);
         color4 = color(255);
+*/
+        //texture(paperTexture);
+        //textureMode(IMAGE);
 
         fill(color1);
         arc(x, y, d, d, PI/2, 3 * PI/2);
