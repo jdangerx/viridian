@@ -24,7 +24,7 @@ function setup() {
     mgr.addScene(RisoTest);
     mgr.addScene(RisoTestJohn);
 
-    mgr.showNextScene();
+    mgr.showScene(RisoTestJohn);
 }
 
 function draw() {
