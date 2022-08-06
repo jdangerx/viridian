@@ -24,9 +24,8 @@ function MaskTest() {
     this.draw = () => {
         background(128);
         fill(51);
-        circle(200, 200, 126);
         const juggleMask = (mask, offset) => {
-            this.phaseMask(mask, (frameCount % 300 / 300 + offset) * TAU);
+            this.phaseMask(mask, (frameCount + offset * 300) % 300 / 300 * TAU);
             mask.push();
             // because we have to keep redrawing to the mask, we need to only use
             // this source-in composite operation when we're actually applying the
@@ -39,8 +38,8 @@ function MaskTest() {
             mask.pop();
         }
         juggleMask(this.mask, 0);
-        juggleMask(this.westTerminator, 0.02);
-        juggleMask(this.eastTerminator, -0.02);
+        juggleMask(this.westTerminator, 0.05);
+        juggleMask(this.eastTerminator, -0.05);
         tint(255, 255 / 3);
         image(this.mask, 136, 136, 128, 128);
         image(this.westTerminator, 136, 136, 128, 128);
