@@ -4,7 +4,6 @@ function MaskTest() {
         this.mask = createGraphics(128, 128);
         this.mask.noStroke();
         this.mask.fill('rgba(0, 0, 0, 1)');
-        this.mask.fill('rgba(0, 0, 0, 1)');
 
         myImage = loadImage('paper.jpg');
         createCanvas(400, 400);
@@ -16,20 +15,28 @@ function MaskTest() {
     this.draw = () => {
         background(128);
         this.phaseMask(this.mask, frameCount % 300 / 300 * TAU);
-        // this.mask.drawingContext.globalCompositeOperation = 'source-in';mask.arc(64, 64, 128, 128, -PI / 2, PI / 2);
-
+        fill(51);
+        circle(200, 200, 126);
         this.mask.push();
+        // because we have to keep redrawing to the mask, we need to only use
+        // this source-in composite operation when we're actually applying the
+        // reverse mask
         this.mask.drawingContext.globalCompositeOperation = 'source-in';
+
+        // because we keep editing the mask and re-applying, and Image.mask()
+        // is cumulative, we have to use a reverse mask.
         this.mask.image(myImage, 0, 0);
         this.mask.pop();
 
-        image(myImage, 136, 136, 128, 128);
-        image(this.mask, 136, 8, 128, 128);
+        image(this.mask, 136, 136, 128, 128);
     }
 
-    this.phaseMask = (ctx, a) => {
+    this.phaseMask = (ctx, a, color) => {
         const r = 64;
         const phase = a / (PI / 2) | 0;
+        if (color === undefined) {
+            color == 'rgba(0, 0, 0, 1)'
+        }
         ctx.push();
         switch (phase) {
             case 0: // waxing crescent
@@ -66,54 +73,5 @@ function MaskTest() {
                 break;
         }
         ctx.pop();
-    }
-
-    this.drawMoon = function (x, y, a, light_color, dark_color) {
-        noStroke();
-
-        let color1 = color(0, 25, 25, 0); //red
-        let color2 = color(0, 25, 25, 0); //gray
-        let color3 = color(0, 25, 25, 0); //blue
-        let color4 = color(0, 25, 25, 0); //green
-
-        if (-Math.PI / 2 < a && a < 0) {
-            color3 = light_color;
-            color4 = light_color;
-            color1 = light_color;
-            color2 = dark_color;
-        } else if (-Math.PI < a && a < -Math.PI / 2) {
-            color1 = light_color;
-            color3 = dark_color;
-            color4 = dark_color;
-            color2 = dark_color;
-        } else if (-3 * Math.PI / 2 < a && a < -Math.PI) {
-            color4 = dark_color;
-            color2 = light_color;
-            color1 = dark_color;
-            color3 = dark_color;
-        } else if (-2 * Math.PI < a && a < -3 * Math.PI / 2) {
-            color4 = light_color;
-            color3 = light_color;
-            color1 = dark_color;
-            color2 = light_color;
-        } else {
-            color3 = light_color;
-            color4 = light_color;
-            color1 = light_color;
-            color2 = dark_color;
-        }
-
-        fill(color1);
-        arc(x, y, d, d, PI / 2, 3 * PI / 2);
-        fill(color2);
-        arc(x, y, d + 1, d + 1, 3 * PI / 2, PI / 2);
-
-        let heightPhase = d;
-        let widthPhase = map(Math.cos(a), 0, 1, 0, d);
-
-        fill(color3);
-        arc(x, y, widthPhase - 2, d + 1, PI / 2, 3 * PI / 2);
-        fill(color4);
-        arc(x, y, widthPhase - 2, d + 1, 3 * PI / 2, PI / 2)
     }
 }
