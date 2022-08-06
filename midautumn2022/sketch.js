@@ -23,8 +23,9 @@ function setup() {
     mgr.addScene(Phases);
     mgr.addScene(RisoTest);
     mgr.addScene(RisoTestJohn);
+    mgr.addScene(MaskTest);
 
-    mgr.showScene(RisoTestJohn);
+    mgr.showScene(MaskTest);
 }
 
 function draw() {
@@ -52,6 +53,10 @@ function keyPressed() {
         case '5':
             console.log('Switching to Riso John.')
             mgr.showScene(RisoTestJohn);
+            break;
+        case '6':
+            console.log('Switching to Mask Test.')
+            mgr.showScene(MaskTest);
             break;
 
     }
