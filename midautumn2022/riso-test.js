@@ -23,7 +23,7 @@ function RisoTest() {
 
     this.setup = function () {
         //paperTexture = loadImage('paper.jpg');
-        c = createCanvas(900, 600);
+        // c = createCanvas(900, 600);
         angleMode(RADIANS);
         console.log("setup riso scene");
 
@@ -72,7 +72,7 @@ function RisoTest() {
         let color3 = color(0, 25, 25, 0); //blue
         let color4 = color(0, 25, 25, 0); //green
 
-        clearRiso();    
+        clearRiso();
 
         this.lightBuf.fill(255);
         this.darkBuf.fill(255);
@@ -93,9 +93,9 @@ function RisoTest() {
             color1 = light_color;
             color2 = bg_color;
         } else if (-Math.PI < a && a < -Math.PI / 2) {
-            
+
             this.lightBuf.arc(x, y, d, d, PI / 2, 3 * PI / 2);
-            
+
             this.darkBuf.arc(x, y, d + 1, d + 1, 3 * PI / 2, PI / 2);
             this.darkBuf.arc(x, y, widthPhase - 2, d + 1, PI / 2, 3 * PI / 2);
             this.darkBuf.arc(x, y, widthPhase - 2, d + 1, 3 * PI / 2, PI / 2)
@@ -105,19 +105,19 @@ function RisoTest() {
             color4 = bg_color;
             color2 = bg_color;
         } else if (-3 * Math.PI / 2 < a && a < -Math.PI) {
-            
+
             this.lightBuf.arc(x, y, d + 1, d + 1, 3 * PI / 2, PI / 2);
 
             this.darkBuf.arc(x, y, d, d, PI / 2, 3 * PI / 2);
             this.darkBuf.arc(x, y, widthPhase - 2, d + 1, PI / 2, 3 * PI / 2);
             this.darkBuf.arc(x, y, widthPhase - 2, d + 1, 3 * PI / 2, PI / 2)
- 
+
             color4 = bg_color;
             color2 = light_color;
             color1 = bg_color;
             color3 = bg_color;
         } else if (-2 * Math.PI < a && a < -3 * Math.PI / 2) {
-            
+
             this.lightBuf.arc(x, y, widthPhase - 2, d + 1, PI / 2, 3 * PI / 2);
             this.lightBuf.arc(x, y, widthPhase - 2, d + 1, 3 * PI / 2, PI / 2)
             this.lightBuf.arc(x, y, d + 1, d + 1, 3 * PI / 2, PI / 2);

@@ -22,7 +22,7 @@ function Phases() {
 
     this.setup = function () {
         paperTexture = loadImage('grime.jpg');
-        c = createCanvas(900, 600);
+        //c = createCanvas(900, 600);
         angleMode(RADIANS);
     }
 
@@ -31,7 +31,7 @@ function Phases() {
         let bg = color(62, 114, 135, 255);
         let light = color(246, 226, 106, 255);
 
-        
+
         // it's a while loop
         background(bg);
 

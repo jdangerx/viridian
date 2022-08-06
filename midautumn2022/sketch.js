@@ -15,7 +15,7 @@ P5Capture.setDefaultOptions({
 });
 
 function setup() {
-    createCanvas(800, 600, WEBGL);
+    createCanvas(800, 600);
 
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);

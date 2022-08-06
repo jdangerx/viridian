@@ -1,26 +1,71 @@
 function MaskTest() {
     let myImage;
     this.setup = () => {
+        this.mask = createGraphics(128, 128);
+        this.mask.noStroke();
+        this.mask.fill('rgba(0, 0, 0, 1)');
+        this.mask.fill('rgba(0, 0, 0, 1)');
 
         myImage = loadImage('paper.jpg');
-        createCanvas(400, 400);      
-        circleMask = createGraphics(128, 128);
+        createCanvas(400, 400);
     }
 
     this.enter = () => {
     }
-      
-    this.draw = () => {
-        background(0);
-      
-        circleMask.fill('rgba(0, 0, 0, 1)');
-      
-        circleMask.circle(64, 64, 128);
-      
-        myImage.mask(circleMask);
-      
-        image(myImage, -64, -64, 128, 128);
 
+    this.draw = () => {
+        background(128);
+        this.phaseMask(this.mask, frameCount % 300 / 300 * TAU);
+        // this.mask.drawingContext.globalCompositeOperation = 'source-in';mask.arc(64, 64, 128, 128, -PI / 2, PI / 2);
+
+        this.mask.push();
+        this.mask.drawingContext.globalCompositeOperation = 'source-in';
+        this.mask.image(myImage, 0, 0);
+        this.mask.pop();
+
+        image(myImage, 136, 136, 128, 128);
+        image(this.mask, 136, 8, 128, 128);
+    }
+
+    this.phaseMask = (ctx, a) => {
+        const r = 64;
+        const phase = a / (PI / 2) | 0;
+        ctx.push();
+        switch (phase) {
+            case 0: // waxing crescent
+                ctx.clear();
+                // light part
+                ctx.arc(r, r, 2 * r, 2 * r, - PI / 2, PI / 2);
+                // cut out dark part
+                ctx.blendMode(REMOVE);
+                ctx.fill('rgba(0, 0, 0, 1)');
+                ctx.arc(r, r, 2 * r * cos(a), 2 * r, -PI / 2, PI / 2);
+                break;
+            case 1: // waxing gibbous
+                ctx.clear();
+                // light east side
+                ctx.arc(r, r, 2 * r, 2 * r, - PI / 2, PI / 2);
+                // growing west side
+                ctx.arc(r, r, 2 * r * cos(a), 2 * r, PI / 2, 3 * PI / 2);
+                break;
+            case 2: // waning gibbous
+                ctx.clear();
+                // light west side
+                ctx.arc(r, r, 2 * r, 2 * r, PI / 2, 3 * PI / 2);
+                // shrinking east side
+                ctx.arc(r, r, 2 * r * cos(a), 2 * r, - PI / 2, PI / 2);
+                break;
+            case 3: // waning crescent
+                ctx.clear();
+                // light part
+                ctx.arc(r, r, 2 * r, 2 * r, PI / 2, 3 * PI / 2);
+                // cut out dark part
+                ctx.blendMode(REMOVE);
+                ctx.fill('rgba(0, 0, 0, 1)');
+                ctx.arc(r, r, 2 * r * cos(a), 2 * r, PI / 2, 3 * PI / 2);
+                break;
+        }
+        ctx.pop();
     }
 
     this.drawMoon = function (x, y, a, light_color, dark_color) {

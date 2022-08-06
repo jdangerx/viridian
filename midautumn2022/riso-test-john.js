@@ -2,9 +2,10 @@ function RisoTestJohn() {
     this.setup = () => {
         pixelDensity(1);
         // first draw stuff into a buffer
+        background(255);
         this.buf = createGraphics(200, 200);
         this.buf.noStroke()
-        this.buf.fill('rgba(0, 0, 0, 0)')
+        this.buf.fill('rgba(255, 255, 255, 1)')
         this.buf.fill(200, 120, 120);
         this.buf.circle(50, 50, 50);
         this.buf.fill(120, 240, 120);
@@ -12,40 +13,40 @@ function RisoTestJohn() {
         this.buf.fill(120, 120, 240);
         this.buf.circle(100, 100, 80);
 
-        // then dither it
-        threshold = 128;
-        justReds = extractRGBChannel(this.buf, 'r')
-        this.ditheredRed = ditherImage(justReds, 'atkinson', threshold);
-        // then make a Riso layer that uses this dithered image as its base
-        this.red = new Riso('red')
-        this.red.noStroke();
-        this.red.image(this.ditheredRed, 0, 0);
+        let fill = 160;
+        cyan = new Riso([0, 255, 255], 200, 200);
+        cyan.fill(fill);
+        cyan.image(extractCMYKChannel(this.buf, 'c'), 0, 0);
 
-        justGreens = extractRGBChannel(this.buf, 'g')
-        ditheredGreen = ditherImage(justGreens, 'atkinson', threshold);
-        // then make a Riso layer that uses this dithered image as its base
-        this.green = new Riso('green')
-        this.green.noStroke();
-        this.green.image(ditheredGreen, 0, 0);
+        this.cyan = cyan;
 
-        justBlues = extractRGBChannel(this.buf, 'b')
-        ditheredBlue = ditherImage(justBlues, 'atkinson', threshold);
-        // then make a Riso layer that uses this dithered image as its base
-        this.blue = new Riso('blue')
-        this.blue.noStroke();
-        this.blue.image(ditheredBlue, 0, 0);
+        magenta = new Riso([255, 0, 255], 200, 200);
+        magenta.fill(fill);
+        magenta.image(extractCMYKChannel(this.buf, 'm'), 3, 0);
 
-        // in theory, we can extract the CMYK/RGB layers from the buf, and then make individual dithered bufs there, and then print them to separate riso layers
+        yellow = new Riso([255, 255, 0], 200, 200);
+        yellow.fill(fill);
+        yellow.image(extractCMYKChannel(this.buf, 'y'), 0, 3);
+
+        black = new Riso([0, 0, 0], 200, 200);
+        black.fill(fill);
+        this.img = extractCMYKChannel(this.buf, 'k');
+        black.image(extractCMYKChannel(this.buf, 'k'), 3, 3);
+
+
 
     }
     this.enter = () => {
+        this.setup();
     }
 
     this.draw = () => {
-        background(240);
-        //image(this.ditheredRed, 0, 0)
-        image(this.red, 0, 0);
-        image(this.green, -200, -200);
-        image(this.blue, -200, 0)
+        background(200);
+        translate(200, 200);
+        drawRiso();
+        image(this.buf, 0, -200);
+        image(this.img, -200, -200);
+        image(this.cyan, -200, 0);
+        // image(this.blue, 0, -200);
     }
 }
