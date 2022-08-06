@@ -18,7 +18,7 @@ function Phases() {
         this.eastTerminator.noStroke();
         this.eastTerminator.fill('rgba(0, 0, 0, 1)');
 
-        myImage = loadImage('paper.jpg');
+        myImage = loadImage('moonRound.png');
     }
 
     this.enter = () => {
@@ -47,7 +47,7 @@ function Phases() {
             ellipseMode(CORNER);
             circle(x, y, moonSize);
 
-            this.drawMoon(x, y, moonSize/2, i*Math.PI);
+            this.drawMoon(x, y, moonSize/2, i*0.1);
         }
     }
 
@@ -63,7 +63,7 @@ function Phases() {
 
             // because we keep editing the mask and re-applying, and Image.mask()
             // is cumulative, we have to use a reverse mask.
-            mask.image(myImage, 0, 0);
+            mask.image(myImage, 0, 0, moonSize, moonSize);
             mask.pop();
         }
         juggleMask(this.mask, aOffset);
@@ -74,9 +74,21 @@ function Phases() {
         // maybe easiest to render all of these into one final buffer, then render that buffer to screen as a whole.
         tint(255, 255 / 3);
 
+        threshold = 128;
+
+        /*
         image(this.mask, x, y, moonSize, moonSize);
         image(this.westTerminator, x, y, moonSize, moonSize);
         image(this.eastTerminator, x, y, moonSize, moonSize);
+*/
+        
+        this.dithered1 = ditherImage(this.mask, 'atkinson', threshold);
+        this.dithered2 = ditherImage(this.westTerminator, 'atkinson', threshold);
+        this.dithered3 = ditherImage(this.eastTerminator, 'atkinson', threshold);
+
+        image(this.dithered1, x, y, moonSize, moonSize);
+        image(this.dithered2, x, y, moonSize, moonSize);
+        image(this.dithered2, x, y, moonSize, moonSize);
     }
 
     this.phaseMask = (ctx, a, r, color) => {
