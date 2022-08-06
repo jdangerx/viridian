@@ -14,10 +14,10 @@ function MatterTest() {
             const x = (i - 5) * 100;
             const y = 200 * noise(x) - 300
             this.circles.push(
-                Matter.Bodies.circle(x, y, radius * 1.2, circleOpts),
+                Matter.Bodies.circle(x, y, radius * 1.3, circleOpts),
             )
             this.circles.push(
-                Matter.Bodies.circle(x, y - 200, radius * 1.2, circleOpts),
+                Matter.Bodies.circle(x, y - 200, radius * 1.3, circleOpts),
             )
         }
         const floorOpts = { isStatic: true, restitution: 0.7 };

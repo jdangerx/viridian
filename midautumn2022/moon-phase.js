@@ -10,11 +10,6 @@ function Phases() {
     let d = width / 10;
     let increment = 0.01;
 
-    let bg_color = color(32, 74, 105, 255);
-    let bg = color(62, 114, 135, 255);
-
-    let light_color = color(246, 226, 106, 255);
-
     let paperTexture;
 
     var c;
@@ -32,6 +27,11 @@ function Phases() {
     }
 
     this.draw = function () {
+        let dark = color(32, 74, 105, 255);
+        let bg = color(62, 114, 135, 255);
+        let light = color(246, 226, 106, 255);
+
+        
         // it's a while loop
         background(bg);
 
@@ -41,35 +41,21 @@ function Phases() {
         a -= increment;
         a %= -2 * Math.PI;
 
-        console.log(a);
-        this.drawMoon(x, 0, a);
-
         for (let i = 0; i < (width / (d * 1.5)); ++i) {
-            var x = i * d * 1.5 + d;
+            var x = -width / 2 + i * d * 1.5 + d;
             var newA = a - (i * 0.4);
-            var newHeight = height/2 + cos(0.01 * frameCount + i) * height / 3
+            var newHeight = cos(0.01 * frameCount + i) * height / 3
 
             fill(color(32, 74, 105, 255));
             rectMode(CORNERS);
             rect(x - d / 2, newHeight, x + d / 2, height);
 
-            this.drawMoon(x, newHeight, newA);
+            this.drawMoon(x, newHeight, newA, light, dark);
         }
 
     }
 
-    this.drawMoon = function (x, y, a) {
-        // moon
-        //a -= 0.01;
-        //a = -Math.PI/2 + 1;
-        /*
-        a = -Math.PI + 1;
-        a = -Math.PI + 1;
-        a = -Math.PI - 1;
-        a = -3*Math.PI/2 - 1;
-*/
-        //x = Math.cos(a) * d/2 * 5/2;
-        //y = Math.sin(a) * d/2 * 5/2;
+    this.drawMoon = function (x, y, a, light_color, dark_color) {
         noStroke();
 
         let color1 = color(0, 25, 25, 0); //red
@@ -81,37 +67,28 @@ function Phases() {
             color3 = light_color;
             color4 = light_color;
             color1 = light_color;
-            color2 = bg_color;
+            color2 = dark_color;
         } else if (-Math.PI < a && a < -Math.PI / 2) {
             color1 = light_color;
-            color3 = bg_color;
-            color4 = bg_color;
-            color2 = bg_color;
+            color3 = dark_color;
+            color4 = dark_color;
+            color2 = dark_color;
         } else if (-3 * Math.PI / 2 < a && a < -Math.PI) {
-            color4 = bg_color;
+            color4 = dark_color;
             color2 = light_color;
-            color1 = bg_color;
-            color3 = bg_color;
+            color1 = dark_color;
+            color3 = dark_color;
         } else if (-2 * Math.PI < a && a < -3 * Math.PI / 2) {
             color4 = light_color;
             color3 = light_color;
-            color1 = bg_color;
+            color1 = dark_color;
             color2 = light_color;
         } else {
             color3 = light_color;
             color4 = light_color;
             color1 = light_color;
-            color2 = bg_color;
+            color2 = dark_color;
         }
-
-        /*
-        color1 = color(0);
-        color2 = color(100);
-        color3 = color(200);
-        color4 = color(255);
-*/
-        //texture(paperTexture);
-        //textureMode(IMAGE);
 
         fill(color1);
         arc(x, y, d, d, PI / 2, 3 * PI / 2);
