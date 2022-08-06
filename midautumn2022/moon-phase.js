@@ -7,15 +7,20 @@ function Phases() {
     // d is the diameter 
     // a is the angle bewtween the center of the moon and the center of the earth
     let a = 0;
-    let d = width / 5;
+    let d = width / 10;
     let increment = 0.01;
 
-    let bg_color = color(62, 114, 135, 255);
-    let light_color = color(246, 216, 86, 255);
+    let bg_color = color(32, 74, 105, 255);
+    let bg = color(62, 114, 135, 255);
+
+    let light_color = color(246, 226, 106, 255);
 
     let paperTexture;
 
     var c;
+
+    let buf1;
+    let buf2;
 
     this.preload = function () {
     }
@@ -28,7 +33,7 @@ function Phases() {
 
     this.draw = function () {
         // it's a while loop
-        background(bg_color);
+        background(bg);
 
         noStroke();
         ellipseMode(CENTER);
@@ -40,9 +45,9 @@ function Phases() {
         this.drawMoon(x, 0, a);
 
         for (let i = 0; i < (width / (d * 1.5)); ++i) {
-            var x = -width / 2 + i * d * 1.5 + d;
+            var x = i * d * 1.5 + d;
             var newA = a - (i * 0.4);
-            var newHeight = cos(0.01 * frameCount + i) * height / 3
+            var newHeight = height/2 + cos(0.01 * frameCount + i) * height / 3
 
             fill(color(32, 74, 105, 255));
             rectMode(CORNERS);
@@ -105,8 +110,8 @@ function Phases() {
         color3 = color(200);
         color4 = color(255);
 */
-        texture(paperTexture);
-        textureMode(IMAGE);
+        //texture(paperTexture);
+        //textureMode(IMAGE);
 
         fill(color1);
         arc(x, y, d, d, PI / 2, 3 * PI / 2);
@@ -122,3 +127,10 @@ function Phases() {
         arc(x, y, widthPhase - 2, d + 1, 3 * PI / 2, PI / 2)
     }
 }
+
+// get surface normal:
+// given a circle center, describe point within the 2d circle, in normalized coordinates OS,
+// derive a z, coming out of the screen, pos z,
+// scale factor for z, related to x, y, equation 1 = x2 + y2 + z2 
+// sqrt(1 - x2 - y2) = z;
+// now we have camera local normal, convert to polar coordinate

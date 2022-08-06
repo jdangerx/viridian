@@ -35,7 +35,7 @@ function Mooncakes() {
         // should we pass in the graphics element, instead of mutating global state?
         ctx.noStroke();
         ctx.background('rgba(0, 0, 0, 0)');
-        const numScallops = 18;
+        const numScallops = 12;
         const ringRadius = this.patternSize / 2;
         ctx.fill(this.highlight_rgb);
         const oneScallop = (diameterCoeff) => {
@@ -49,7 +49,7 @@ function Mooncakes() {
         utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
         ctx.pop();
         ctx.stroke(this.shadow_rgb);
-        ctx.strokeWeight(3);
+        ctx.strokeWeight(6);
         ctx.circle(ctx.width / 2, ctx.height / 2, this.patternSize * 1.02);
     }
 
