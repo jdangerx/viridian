@@ -5,6 +5,14 @@ function MaskTest() {
         this.mask.noStroke();
         this.mask.fill('rgba(0, 0, 0, 1)');
 
+        this.westTerminator = createGraphics(128, 128);
+        this.westTerminator.noStroke();
+        this.westTerminator.fill('rgba(0, 0, 0, 1)');
+
+        this.eastTerminator = createGraphics(128, 128);
+        this.eastTerminator.noStroke();
+        this.eastTerminator.fill('rgba(0, 0, 0, 1)');
+
         myImage = loadImage('paper.jpg');
         createCanvas(400, 400);
     }
@@ -12,23 +20,31 @@ function MaskTest() {
     this.enter = () => {
     }
 
+
     this.draw = () => {
         background(128);
-        this.phaseMask(this.mask, frameCount % 300 / 300 * TAU);
         fill(51);
         circle(200, 200, 126);
-        this.mask.push();
-        // because we have to keep redrawing to the mask, we need to only use
-        // this source-in composite operation when we're actually applying the
-        // reverse mask
-        this.mask.drawingContext.globalCompositeOperation = 'source-in';
+        const juggleMask = (mask, offset) => {
+            this.phaseMask(mask, (frameCount % 300 / 300 + offset) * TAU);
+            mask.push();
+            // because we have to keep redrawing to the mask, we need to only use
+            // this source-in composite operation when we're actually applying the
+            // reverse mask
+            mask.drawingContext.globalCompositeOperation = 'source-in';
 
-        // because we keep editing the mask and re-applying, and Image.mask()
-        // is cumulative, we have to use a reverse mask.
-        this.mask.image(myImage, 0, 0);
-        this.mask.pop();
-
+            // because we keep editing the mask and re-applying, and Image.mask()
+            // is cumulative, we have to use a reverse mask.
+            mask.image(myImage, 0, 0);
+            mask.pop();
+        }
+        juggleMask(this.mask, 0);
+        juggleMask(this.westTerminator, 0.02);
+        juggleMask(this.eastTerminator, -0.02);
+        tint(255, 255 / 3);
         image(this.mask, 136, 136, 128, 128);
+        image(this.westTerminator, 136, 136, 128, 128);
+        image(this.eastTerminator, 136, 136, 128, 128);
     }
 
     this.phaseMask = (ctx, a, color) => {
