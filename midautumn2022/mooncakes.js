@@ -12,11 +12,12 @@ function Mooncakes() {
         this.setupContexts(patternSize);
         const { pattern, mask, scallop } = this.contexts;
 
-        this.makeScallops(scallop);
+        this.makeScallops(scallop, this.scribble.scallop);
         mask.background('rgba(0, 0, 0, 0)')
-        mask.fill('rgba(0, 0, 0, 1)')
-        mask.circle(mask.width / 2, mask.height / 2, pattern.width * 0.93);
-        mask.drawingContext.globalCompositeOperation = 'source-in';
+        // mask.fill('rgba(0, 0, 0, 1)')
+        // this.scribble.mask.circle(mask.width / 2, mask.height / 2, pattern.width * 0.93);
+        // mask.circle(mask.width / 2, mask.height / 2, pattern.width * 0.93);
+        // mask.drawingContext.globalCompositeOperation = 'source-in';
 
         this.genMooncake(pattern, 1);
 
@@ -28,32 +29,52 @@ function Mooncakes() {
             mask: createGraphics(size, size),
             scallop: createGraphics(size * 1.5, size * 1.5)
         }
+        this.scribble = {
+            pattern: new Scribble(this.contexts.pattern),
+            mask: new Scribble(this.contexts.pattern),
+            scallop: new Scribble(this.contexts.scallop),
+        }
     }
 
-    this.makeScallops = function (ctx) {
-        // scallop could be done with gyrate
-        // should we pass in the graphics element, instead of mutating global state?
+    this.makeScallops = function (ctx, scribble) {
         ctx.noStroke();
+        ctx.push();
         ctx.background('rgba(0, 0, 0, 0)');
         const numScallops = 12;
         const ringRadius = this.patternSize / 2;
         ctx.fill(this.highlight_rgb);
         const oneScallop = (diameterCoeff) => {
             const diameter = TAU * ringRadius / numScallops * diameterCoeff;
-            ctx.circle(ringRadius - 2 * diameter / numScallops, 0, diameter);
+            scribble.scribbleEllipse(ringRadius - 2 * diameter / numScallops, 0, diameter, diameter);
         };
         const center = createVector(ctx.width / 2, ctx.height / 2)
         utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
-        ctx.push();
         ctx.fill(this.dough_rgb);
         utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
-        ctx.pop();
         ctx.stroke(this.shadow_rgb);
         ctx.strokeWeight(6);
-        ctx.circle(ctx.width / 2, ctx.height / 2, this.patternSize * 1.02);
+        ctx.fill(this.highlight_rgb);
+        // try (no fill // shadow stroke) and then (no fill / highlight stroke) on top?
+        shadowDiameter = this.patternSize * 1.02;
+        scribble.scribbleEllipse(
+            ctx.width / 2,
+            ctx.height / 2,
+            shadowDiameter,
+            shadowDiameter
+        );
+        ctx.fill(this.dough_rgb);
+
+        ctx.noStroke();
+        scribble.scribbleEllipse(
+            ctx.width / 2,
+            ctx.height / 2,
+            this.patternSize * 0.93,
+            this.patternSize * 0.93
+        );
+        ctx.pop();
     }
 
-    this.cross = function (ctx) {
+    this.cross = function (ctx, scribble) {
         ctx.push();
         const unit = ctx.width;
         ctx.translate(unit / 2, unit / 2);
@@ -94,7 +115,7 @@ function Mooncakes() {
     }
 
     this.genMooncake = (pattern, frameCount) => {
-        pattern.background(this.dough_rgb);
+        pattern.background('rgba(0, 0, 0, 0)');
         pattern.strokeCap(SQUARE);
         pattern.fill('rgba(0, 0, 0, 0)');
 
@@ -103,24 +124,25 @@ function Mooncakes() {
         pattern.strokeWeight(pattern.weight * 0.06);
         pattern.stroke(this.shadow_rgb);
         //this.flower(pattern, frameCount);
-        this.cross(pattern);
+        this.cross(pattern, this.scribble.pattern);
         pattern.pop();
 
         pattern.stroke(this.highlight_rgb);
         pattern.strokeWeight(5);
         //this.flower(pattern, frameCount);
-        this.cross(pattern);
+        this.cross(pattern, this.scribble.pattern);
     }
 
     this.drawMooncake = (x, y, { mask, pattern, scallop }) => {
         mask.image(pattern, 0, 0);
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
-        image(mask, x - mask.width / 2, y - mask.height / 2);
+        //image(mask, x - mask.width / 2, y - mask.height / 2);
+        // image(pattern, x - pattern.width / 2, y - pattern.height / 2);
     }
 
     this.draw = function () {
         background(93, 169, 155);
         this.genMooncake(this.contexts.pattern, frameCount);
-        this.drawMooncake(width/2, height/2, this.contexts);
+        this.drawMooncake(width / 2, height / 2, this.contexts);
     }
 }

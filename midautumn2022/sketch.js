@@ -25,7 +25,7 @@ function setup() {
     mgr.addScene(RisoTestJohn);
     mgr.addScene(MaskTest);
 
-    mgr.showScene(MaskTest);
+    mgr.showScene(Mooncakes);
 }
 
 function draw() {

@@ -43,10 +43,12 @@ function MaskTest() {
         // TODO: if we want to drop shadow this, or throw a dark circle behind it, we'll need to tint each layer darker, instead of using the whole opacity thing.
         // if we do that, we might want to adjust some angle so the light/dark remains equal.
         // maybe easiest to render all of these into one final buffer, then render that buffer to screen as a whole.
+        push();
         tint(255, 255 / 3);
         image(this.mask, 136, 136, 128, 128);
         image(this.westTerminator, 136, 136, 128, 128);
         image(this.eastTerminator, 136, 136, 128, 128);
+        pop();
     }
 
     this.phaseMask = (ctx, a, color) => {
