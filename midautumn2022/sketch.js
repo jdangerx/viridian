@@ -24,8 +24,9 @@ function setup() {
     mgr.addScene(RisoTest);
     mgr.addScene(RisoTestJohn);
     mgr.addScene(MaskTest);
+    mgr.addScene(GlowTest);
 
-    mgr.showScene(Mooncakes);
+    mgr.showScene(GlowTest);
 }
 
 function draw() {
@@ -58,7 +59,11 @@ function keyPressed() {
             console.log('Switching to Mask Test.')
             mgr.showScene(MaskTest);
             break;
-
+        case '7':
+            console.log('Switching to Glow Test.')
+            mgr.showScene(GlowTest);
+            break;
+    
     }
 
     // ... then dispatch via the SceneManager.
