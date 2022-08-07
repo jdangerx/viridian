@@ -7,6 +7,7 @@ function Phases() {
 
         moonSize = width/10;
         threshold = 128;
+        pixelDensity(1);
 
         this.moonBase = createGraphics(moonSize, moonSize);
         this.moonBase.noStroke();
@@ -24,8 +25,8 @@ function Phases() {
         this.eastTerminator.noStroke();
         this.eastTerminator.fill('rgba(0, 0, 0, 1)');
 
-        moonImage = loadImage('moonRound.png');
-        paperImage = loadImage('paper.jpg');
+        moonImage = loadImage('images/moonRound.png');
+        paperImage = loadImage('images/paper.jpg');
     }
 
     this.enter = () => {
@@ -46,6 +47,19 @@ function Phases() {
 
         noStroke();
 
+
+        this.buf = createGraphics(moonSize, moonSize);
+        this.buf.fill('rgba(255, 255, 255, 1)')
+        this.buf.stroke(2);
+        this.buf.circle(0, 0, 50);
+
+        black = new Riso([0, 0, 0], 200, 200);
+        black.fill(255);
+        this.img = extractCMYKChannel(this.buf, 'k');
+        black.image(extractCMYKChannel(this.buf, 'k'), 3, 3);
+        drawRiso();
+
+        return;
         for (let i = 0; i < (width / (moonSize * 1.5)); ++i) {
             var x = i * moonSize * 1.5;
             var y = height/2 - moonSize / 2 + cos(0.01 * frameCount + i) * moonSize;

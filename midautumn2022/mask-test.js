@@ -13,7 +13,7 @@ function MaskTest() {
         this.eastTerminator.noStroke();
         this.eastTerminator.fill('rgba(0, 0, 0, 1)');
 
-        myImage = loadImage('paper.jpg');
+        myImage = loadImage('images/paper.jpg');
         createCanvas(400, 400);
     }
 

@@ -22,8 +22,6 @@ function RisoTest() {
     var c;
 
     this.setup = function () {
-        //paperTexture = loadImage('paper.jpg');
-        // c = createCanvas(900, 600);
         angleMode(RADIANS);
         console.log("setup riso scene");
 
