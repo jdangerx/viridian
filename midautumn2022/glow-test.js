@@ -21,7 +21,8 @@ function GlowTest() {
         this.flower1.noStroke();
         this.flower1.fill('rgba(0, 0, 0, 1)');
 
-        flower1Image = loadImage('images/flower-sheet.png');
+//        flower1Image = loadImage('images/flower-sheet.png');
+        flower1Image = loadImage('images/flower1.png');
         moonImage = loadImage('images/moonRound.png');
     }
 
@@ -53,7 +54,7 @@ function GlowTest() {
 
         circle(width/2+50, height/2+50, 50);
 
-        //this.glow(color(200, 30, 100), 48, 0, 0);
+        this.glow(color(200, 30, 100), 48, 0, 0);
 
         
         this.moonBase.push();
@@ -64,10 +65,15 @@ function GlowTest() {
         this.moonBase.pop();
         image(this.moonBase, 100, 100, moonSize, moonSize);
 
+
+        this.glow(color(0), 48, 0, 0);
+
+
         this.flower1.push();
-        this.flower1.image(flower1Image, 0, 0, 1000, 1000);
+        this.flower1.image(flower1Image, 0, 0, 320, 320);
         this.flower1.pop();
-        image(this.flower1, 100, 100, 360, 360);
+        image(this.flower1, 500, 100, 360, 360);
+        image(this.flower1, 550, 150, 360, 360);
 
     }
 }
