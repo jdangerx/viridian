@@ -1,28 +1,40 @@
 function GlowTest() {
 
     let moonImage;
-    let flower1Image;
-    let flower1;
-    let moonSize = 100;
+    let flowerImage1;
+    let flowerImage2;
+    let flowerImage3;
+
+    let moonSize = 300;
 
     this.setup = () => {
         colorMode(HSB, 360, 100, 100)
 
         createCanvas(900, 400);
 
-        moonSize = width/10;
+        moonSize = width/5;
         threshold = 128;
 
         this.moonBase = createGraphics(moonSize, moonSize);
         this.moonBase.noStroke();
         this.moonBase.fill('rgba(0, 0, 0, 1)');
 
-        this.flower1 = createGraphics(1000, 1000);
+        this.flower1 = createGraphics(320, 320);
         this.flower1.noStroke();
         this.flower1.fill('rgba(0, 0, 0, 1)');
 
-//        flower1Image = loadImage('images/flower-sheet.png');
-        flower1Image = loadImage('images/flower1.png');
+        this.flower2 = createGraphics(320, 320);
+        this.flower2.noStroke();
+        this.flower2.fill('rgba(0, 0, 0, 1)');
+
+        this.flower3 = createGraphics(320, 320);
+        this.flower3.noStroke();
+        this.flower3.fill('rgba(0, 0, 0, 1)');
+
+        //flower1Image = loadImage('images/flower-sheet.png');
+        flowerImage1 = loadImage('images/flower1.png');
+        flowerImage2 = loadImage('images/flower2.png');
+        flowerImage3 = loadImage('images/flower3.png');
         moonImage = loadImage('images/moonRound.png');
     }
 
@@ -40,7 +52,7 @@ function GlowTest() {
     }
 
     this.draw = () => {
-        background(color(210, 70, 50));
+        background(color(200, 80, 50));
 
         fill(255);
         noStroke();
@@ -50,11 +62,11 @@ function GlowTest() {
 
         this.noGlow()
 
-        //this.glow(color(50), 0, 10, 10);
+        this.glow(color(50), 0, 10, 10);
 
-        circle(width/2+50, height/2+50, 50);
+        circle(width/2, height/2+ 100, 50);
 
-        this.glow(color(200, 30, 100), 48, 0, 0);
+        this.glow(color(200, 30, 100), 64, 0, 0);
 
         
         this.moonBase.push();
@@ -66,14 +78,25 @@ function GlowTest() {
         image(this.moonBase, 100, 100, moonSize, moonSize);
 
 
-        this.glow(color(0), 48, 0, 0);
+        this.glow(color(0), 48, 5, 5);
 
 
         this.flower1.push();
-        this.flower1.image(flower1Image, 0, 0, 320, 320);
+        this.flower1.image(flowerImage1, 0, 0, 320, 320);
         this.flower1.pop();
-        image(this.flower1, 500, 100, 360, 360);
-        image(this.flower1, 550, 150, 360, 360);
+
+        this.flower2.push();
+        this.flower2.image(flowerImage2, 0, 0, 320, 320);
+        this.flower2.pop();
+
+        this.flower3.push();
+        this.flower3.image(flowerImage3, 0, 0, 320, 320);
+        this.flower3.pop();
+
+
+        image(this.flower2, 620, 150, 200, 200);
+        image(this.flower1, 500, 100, 200, 200);
+        image(this.flower3, 720, 70, 200, 200);
 
     }
 }
