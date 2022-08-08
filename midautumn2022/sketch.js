@@ -15,7 +15,9 @@ P5Capture.setDefaultOptions({
 });
 
 function setup() {
-    createCanvas(800, 600);
+    push();
+    // createCanvas(800, 600);
+    createCanvas(900, 400);
 
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);
@@ -27,10 +29,13 @@ function setup() {
     mgr.addScene(GlowTest);
 
     mgr.showScene(GlowTest);
+    pop();
 }
 
 function draw() {
+    push();
     mgr.draw();
+    pop();
 }
 
 function keyPressed() {
@@ -63,7 +68,7 @@ function keyPressed() {
             console.log('Switching to Glow Test.')
             mgr.showScene(GlowTest);
             break;
-    
+
     }
 
     // ... then dispatch via the SceneManager.

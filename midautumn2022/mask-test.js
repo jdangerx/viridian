@@ -14,7 +14,7 @@ function MaskTest() {
         this.eastTerminator.fill('rgba(0, 0, 0, 1)');
 
         myImage = loadImage('images/paper.jpg');
-        createCanvas(400, 400);
+        // createCanvas(400, 400);
     }
 
     this.enter = () => {
