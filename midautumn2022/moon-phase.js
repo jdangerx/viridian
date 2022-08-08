@@ -9,9 +9,10 @@ function Phases() {
     let light = color(246, 226, 106, 255);
 
     this.setup = () => {
-        createCanvas(900, 400);
+        createCanvas(3840, 1080);
+        //createCanvas(1920, 540);
 
-        moonSize = width / 10;
+        moonSize = width / 12;
         threshold = 128;
         pixelDensity(1);
 
@@ -39,9 +40,9 @@ function Phases() {
 
         noStroke();
 
-        for (let i = 0; i < (width / (moonSize * 1.5)); ++i) {
-            var x = i * moonSize * 1.5;
-            var y = height / 2 - moonSize / 2 + cos(0.01 * frameCount + i) * moonSize;
+        for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
+            var x = (i+0.5) * moonSize * 1.5;
+            var y = height / 2 - moonSize/2 + cos(0.01 * frameCount + i) * moonSize / 2;
 
             fill(dark);
             rectMode(CORNERS);
@@ -53,7 +54,7 @@ function Phases() {
             circle(x, y, moonSize);
 
 
-            this.drawMoon(x, y, moonSize / 2, i * 0.1);
+            this.drawMoon(x, y, moonSize / 2, i * 0.145);
         }
     }
 
@@ -61,6 +62,7 @@ function Phases() {
     this.drawMoon = (x, y, r, aOffset) => {
         const juggleMask = (mask, offset) => {
             this.phaseMask(mask, (frameCount + offset * 300) % 300 / 300 * TAU, r);
+            //this.phaseMask(mask, 0, r);
 
             mask.push();
             // because we have to keep redrawing to the mask, we need to only use
@@ -88,11 +90,11 @@ function Phases() {
         maskedDithered = ditherImage(this.moonMasked, 'atkinson', threshold);
 
         push();
-        tint(255, 128);
-        image(baseDithered, x, y, moonSize, moonSize);
+        tint(255, 100);
+        image(this.moonBase, x, y, moonSize, moonSize);
         pop();
 
-        image(maskedDithered, x, y, moonSize, moonSize);
+        image(this.moonMasked, x, y, moonSize, moonSize);
     }
 
     this.phaseMask = (ctx, a, r, color) => {
