@@ -34,23 +34,10 @@ function Phases() {
 
 
         background(bg);
-        //image(paperImage, 0, 0, width, height);
 
         // it's a while loop
 
         noStroke();
-
-
-        this.buf = createGraphics(moonSize, moonSize);
-        this.buf.fill('rgba(255, 255, 255, 1)')
-        this.buf.stroke(2);
-        this.buf.circle(0, 0, 50);
-
-        black = new Riso([0, 0, 0], 200, 200);
-        black.fill(255);
-        this.img = extractCMYKChannel(this.buf, 'k');
-        black.image(extractCMYKChannel(this.buf, 'k'), 3, 3);
-        drawRiso();
 
         for (let i = 0; i < (width / (moonSize * 1.5)); ++i) {
             var x = i * moonSize * 1.5;

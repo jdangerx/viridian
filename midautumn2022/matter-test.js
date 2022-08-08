@@ -43,8 +43,8 @@ function MatterTest() {
     }
 
     this.draw = () => {
-        background(40);
-
+        background(150, 0, 0);
+        translate(450, 200);
         /* all this time/millis math is so the engine uses the right delta to
         update in realtime, but when we're recording, we just want the engine
         to take 1/60 of a second no matter what.

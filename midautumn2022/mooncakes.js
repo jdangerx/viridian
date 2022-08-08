@@ -12,6 +12,7 @@ function Mooncakes() {
         this.setupContexts(patternSize);
         const { pattern, mask, scallop } = this.contexts;
 
+
         this.makeScallops(scallop, this.scribble.scallop);
         mask.background('rgba(0, 0, 0, 0)')
         // mask.fill('rgba(0, 0, 0, 1)')
@@ -45,7 +46,8 @@ function Mooncakes() {
         ctx.fill(this.highlight_rgb);
         const oneScallop = (diameterCoeff) => {
             const diameter = TAU * ringRadius / numScallops * diameterCoeff;
-            scribble.scribbleEllipse(ringRadius - 2 * diameter / numScallops, 0, diameter, diameter);
+            //scribble.scribbleEllipse(ringRadius - 2 * diameter / numScallops, 0, diameter, diameter);
+            ctx.ellipse(ringRadius - 2 * diameter / numScallops, 0, diameter, diameter);
         };
         const center = createVector(ctx.width / 2, ctx.height / 2)
         utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
@@ -56,7 +58,8 @@ function Mooncakes() {
         ctx.fill(this.highlight_rgb);
         // try (no fill // shadow stroke) and then (no fill / highlight stroke) on top?
         shadowDiameter = this.patternSize * 1.02;
-        scribble.scribbleEllipse(
+        ctx.ellipse(
+            //scribble.scribbleEllipse(
             ctx.width / 2,
             ctx.height / 2,
             shadowDiameter,
@@ -65,7 +68,8 @@ function Mooncakes() {
         ctx.fill(this.dough_rgb);
 
         ctx.noStroke();
-        scribble.scribbleEllipse(
+        //scribble.scribbleEllipse(
+        ctx.ellipse(
             ctx.width / 2,
             ctx.height / 2,
             this.patternSize * 0.93,
@@ -135,9 +139,11 @@ function Mooncakes() {
 
     this.drawMooncake = (x, y, { mask, pattern, scallop }) => {
         mask.image(pattern, 0, 0);
+        utils.glow(color(50, 30, 0), 16, 0, 0);
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
+        utils.noGlow();
         //image(mask, x - mask.width / 2, y - mask.height / 2);
-        // image(pattern, x - pattern.width / 2, y - pattern.height / 2);
+        image(pattern, x - pattern.width / 2, y - pattern.height / 2);
     }
 
     this.draw = function () {

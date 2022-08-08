@@ -66,13 +66,14 @@ function GlowTest() {
 
         circle(width / 2, height / 2 + 100, 50);
 
-        this.glow(color(200, 30, 100), 64, 0, 0);
+        this.glow(color(50, 30, 100), 64, 0, 0);
 
 
         this.moonBase.push();
         this.moonBase.ellipseMode(CORNER);
         this.moonBase.circle(0, 0, moonSize);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
+        this.moonBase.tint(255, 245, 190, 255)
         this.moonBase.image(moonImage, 0, 0, moonSize, moonSize);
         this.moonBase.pop();
         image(this.moonBase, 100, 100, moonSize, moonSize);

@@ -79,5 +79,18 @@ const utils = {
          *   The actual input - usually your `t` value.
          */
         return utils.smoothstep(start, start + transition, x) - utils.smoothstep(end, end + transition, x);
+    },
+
+    glow: (glowColor, blurriness, x, y) => {
+        drawingContext.shadowBlur = blurriness;
+        drawingContext.shadowColor = glowColor;
+        drawingContext.shadowOffsetX = x;
+        drawingContext.shadowOffsetY = y;
+    },
+
+    noGlow: () => {
+        drawingContext.shadowBlur = 0;
+        drawingContext.shadowOffsetX = 0;
+        drawingContext.shadowOffsetY = 0;
     }
 };
