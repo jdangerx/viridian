@@ -18,7 +18,7 @@ function GlowTest() {
         this.moonBase.noStroke();
         this.moonBase.fill('rgba(0, 0, 0, 1)');
 
-        this.flower1 = createGraphics(320, 320);
+        this.flower1 = createGraphics(350, 350);
         this.flower1.noStroke();
         this.flower1.fill('rgba(0, 0, 0, 1)');
 
@@ -68,7 +68,6 @@ function GlowTest() {
 
         this.glow(color(50, 30, 100), 64, 0, 0);
 
-
         this.moonBase.push();
         this.moonBase.ellipseMode(CORNER);
         this.moonBase.circle(0, 0, moonSize);
@@ -78,22 +77,11 @@ function GlowTest() {
         this.moonBase.pop();
         image(this.moonBase, 100, 100, moonSize, moonSize);
 
-
         this.glow(color(0), 48, 5, 5);
 
-
-        this.flower1.push();
-        this.flower1.image(flowerImage1, 0, 0, 320, 320);
-        this.flower1.pop();
-
-        this.flower2.push();
-        this.flower2.image(flowerImage2, 0, 0, 320, 320);
-        this.flower2.pop();
-
-        this.flower3.push();
-        this.flower3.image(flowerImage3, 0, 0, 320, 320);
-        this.flower3.pop();
-
+        utils.addRotatedImage(this.flower1, flowerImage1, (frameCount/200));
+        utils.addRotatedImage(this.flower2, flowerImage2, -(frameCount/300));
+        utils.addRotatedImage(this.flower3, flowerImage3, (frameCount/400));
 
         image(this.flower2, 620, 150, 200, 200);
         image(this.flower1, 500, 100, 200, 200);

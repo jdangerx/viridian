@@ -92,5 +92,15 @@ const utils = {
         drawingContext.shadowBlur = 0;
         drawingContext.shadowOffsetX = 0;
         drawingContext.shadowOffsetY = 0;
+    },
+
+    addRotatedImage: (ctx, newImage, rotationAmt) => {
+        ctx.push();
+        ctx.clear();
+        var imageSize = ctx.width/2-10;
+        ctx.translate(ctx.width/2, ctx.height/2);
+        ctx.rotate(rotationAmt % TAU);
+        ctx.image(newImage, -imageSize, -imageSize, imageSize*2, imageSize*2);
+        ctx.pop();
     }
 };
