@@ -80,12 +80,12 @@ function GlowTest() {
         this.glow(color(0), 48, 5, 5);
 
         utils.addRotatedImage(this.flower1, flowerImage1, (frameCount/200));
-        utils.addRotatedImage(this.flower2, flowerImage2, -(frameCount/300));
-        utils.addRotatedImage(this.flower3, flowerImage3, (frameCount/400));
-
-        image(this.flower2, 620, 150, 200, 200);
+        image(this.flower1, 620, 150, 200, 200);
+        utils.addRotatedImage(this.flower1, flowerImage2, -(frameCount/300));
         image(this.flower1, 500, 100, 200, 200);
-        image(this.flower3, 720, 70, 200, 200);
+        utils.addRotatedImage(this.flower1, flowerImage3, (frameCount/400));
+        image(this.flower1, 720, 70, 200, 200);
 
+        return;
     }
 }
