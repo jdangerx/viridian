@@ -9,8 +9,6 @@ function Phases() {
     let light = color(246, 226, 106, 255);
 
     this.setup = () => {
-        createCanvas(900, 400);
-
         moonSize = width / 10;
         threshold = 128;
         pixelDensity(1);

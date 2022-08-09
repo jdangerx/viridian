@@ -24,7 +24,6 @@ let t = 0;
 //
 
 function setup() {
-  createCanvas(720, 400);
   ballMinSize = height * 0.2;
   ballMaxSize = height * 0.25;
   noStroke();
