@@ -88,7 +88,7 @@ function Mooncakes() {
         };
         const center = createVector(ctx.width / 2, ctx.height / 2)
 
-        ctx.fill(this.shadow_rgb);
+        ctx.fill(this.dough_rgb);
         utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
         ctx.pop();
     }
@@ -153,7 +153,7 @@ function Mooncakes() {
     }
 
     this.drawMooncake = (x, y, { pattern, scallop }) => {
-        utils.glow(color(50, 30, 0), 16, 0, 0);
+        utils.glow(color(50, 30, 0), this.patternSize / 12, 0, 0);
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
         utils.noGlow();
         image(pattern, x - pattern.width / 2, y - pattern.height / 2);
