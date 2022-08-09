@@ -153,14 +153,15 @@ function Mooncakes() {
     }
 
     this.drawMooncake = (x, y, { pattern, scallop }) => {
-        utils.glow(color(50, 30, 0), this.patternSize / 12, 0, 0);
+        // utils.glow(color(50, 30, 0), this.patternSize / 12, 0, 0);
+        utils.glow(this.dough_rgb, 0, this.patternSize * 0.1, this.patternSize * 0.25);
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
         utils.noGlow();
         image(pattern, x - pattern.width / 2, y - pattern.height / 2);
     }
 
     this.drawSide = (x, y, { side }) => {
-        image(side, x - side.width / 2, y - side.height / 2);
+        // image(side, x - side.width / 2, y - side.height / 2);
     }
 
     this.draw = function () {
