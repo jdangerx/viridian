@@ -28,7 +28,7 @@ function setup() {
     mgr.addScene(MaskTest);
     mgr.addScene(GlowTest);
 
-    mgr.showScene(GlowTest);
+    mgr.showScene(Mooncakes);
     pop();
 }
 

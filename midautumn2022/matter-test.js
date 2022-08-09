@@ -10,8 +10,8 @@ function MatterTest() {
             restitution: 0.9,
             friction: 0.8
         }
-        for (let i = 0; i < 10; i++) {
-            const x = (i - 5) * 100;
+        for (let i = 0; i < 5; i++) {
+            const x = (i - 2.5) * 100;
             const y = 200 * noise(x) - 300
             this.circles.push(
                 Matter.Bodies.circle(x, y, radius * 1.3, circleOpts),
@@ -57,6 +57,14 @@ function MatterTest() {
         */
 
         Matter.Engine.update(this.engine, 1000 / 60);
+        this.circles.forEach((circle, i) => {
+            push();
+            translate(circle.position.x, circle.position.y + this.mc.contexts.side.width / 10);
+            rotate(circle.angle);
+            this.mc.drawSide(0, 0, this.mc.contexts);
+            pop();
+        });
+
         this.circles.forEach((circle, i) => {
             push();
             translate(circle.position.x, circle.position.y);
