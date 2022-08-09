@@ -29,11 +29,11 @@ function MatterTest() {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * i + jitter * unit, y: grid * 8 + jitter * grid };
-            for (let j = 0; j < 8; j++) {
-                xSize = grid * (1 + random());
-                ratio = (0.4 + 0.2 * random());
+            for (let j = 0; j < 3; j++) {
+                xSize = grid * (1 + 0.5 * random());
+                ratio = (0.7 + 0.2 * random());
                 const cloud = this.matterEllipse(
-                    clusterCenter.x + random() * 2 * grid,
+                    clusterCenter.x + random() * 3 * grid,
                     clusterCenter.y + random() * grid,
                     xSize,
                     xSize * ratio,
@@ -47,11 +47,11 @@ function MatterTest() {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * (i + 0.5) + jitter * unit, y: grid * 5 + jitter * grid };
-            for (let j = 0; j < 8; j++) {
-                xSize = grid * (1 + random());
-                ratio = (0.4 + 0.2 * random());
+            for (let j = 0; j < 3; j++) {
+                xSize = grid * (1 + 0.5 * random());
+                ratio = (0.7 + 0.2 * random());
                 const cloud = this.matterEllipse(
-                    clusterCenter.x + random() * 2 * grid,
+                    clusterCenter.x + random() * 3 * grid,
                     clusterCenter.y + random() * grid,
                     xSize,
                     xSize * ratio,
