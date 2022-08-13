@@ -8,9 +8,13 @@ class Cloud {
     }
 }
 
+SAVE_CLOUDS = false;
+
 function MatterTest() {
     // just testing importing of mooncakes stuff for now
     this.setup = () => {
+        this.bgImage = loadImage('images/clouds.png')
+
         this.t = millis();
         this.delta = 1000 / 60;
         let radius = grid * 0.5;
@@ -32,17 +36,7 @@ function MatterTest() {
             )
         }
 
-        this.bgClouds = [];
         this.activeClouds = [];
-        const bgClusters = 5;
-
-        for (let i = 0; i < bgClusters; i++) {
-            const unit = width / bgClusters;
-            const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 6 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
-            this.bgClouds.push(...cluster);
-        }
 
         const nClusters = 3;
         for (let i = 0; i < nClusters; i++) {
@@ -71,6 +65,52 @@ function MatterTest() {
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
 
+        if (SAVE_CLOUDS) {
+            bgColor = color(200, 60, 60);
+            fillColor = color(200, 0, 0);
+            // (255, 255, 255) * 0.5 + (200, 0, 0) * 0.5 => (228, 128, 128)
+            // could maybe make a more robust alpha calculator
+            // just using rgba(255, 255, 255, 0.5)leads to lots of little intersections that have been double-drawn
+            strokeColor = color(228, 128, 128);
+            background(200, 60, 60);
+            bgClouds = this.newBackground();
+            bgClouds.forEach((cloud) => {
+                this.drawCloud(cloud, grid * 0.3, color(200, 0, 0), color(228, 128, 128));
+            });
+            // after saving, have to move 'clouds.png' to images subdir
+            save('clouds.png');
+            // need to toggle this because otherwise we double-save as a side-effect of this.enter();
+            SAVE_CLOUDS = false;
+        }
+    }
+
+    this.newBackground = () => {
+        const bgClusters = 5;
+        const bgClouds = [];
+
+        for (let i = 0; i < 2; i++) {
+            const unit = width / bgClusters;
+            const jitter = noise(unit * i);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 2 + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            bgClouds.push(...cluster);
+        }
+        for (let i = 0; i < 4; i++) {
+            const unit = width / bgClusters;
+            const jitter = noise(unit * i);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 4 + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            bgClouds.push(...cluster);
+        }
+
+        for (let i = 0; i < bgClusters; i++) {
+            const unit = width / bgClusters;
+            const jitter = noise(unit * i);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 6 + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            bgClouds.push(...cluster);
+        }
+        return bgClouds;
     }
 
     this.cloudCluster = (x, y, xRadius, yRadius, collisionGroup, nLevels) => {
@@ -134,14 +174,7 @@ function MatterTest() {
     }
 
     this.draw = () => {
-        background(200, 60, 60);
-
-        utils.gridLines();
-
-        this.bgClouds.forEach((cloud) => {
-            this.drawCloud(cloud, grid * 0.3, color(200, 0, 0), color('rgba(255, 255, 255, 0.5)'));
-        });
-
+        image(this.bgImage, 0, 0, width, height);
 
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
