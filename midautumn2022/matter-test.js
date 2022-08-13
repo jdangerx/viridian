@@ -8,6 +8,7 @@ class Cloud {
     }
 }
 
+NEW_CLOUDS = true;
 SAVE_CLOUDS = false;
 
 function MatterTest() {
@@ -65,17 +66,21 @@ function MatterTest() {
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
 
-        if (SAVE_CLOUDS) {
-            bgColor = color(200, 60, 60);
-            fillColor = color(200, 0, 0);
-            // (255, 255, 255) * 0.5 + (200, 0, 0) * 0.5 => (228, 128, 128)
-            // could maybe make a more robust alpha calculator
-            // just using rgba(255, 255, 255, 0.5)leads to lots of little intersections that have been double-drawn
-            strokeColor = color(228, 128, 128);
-            background(200, 60, 60);
+        this.bgColor = color(200, 60, 60);
+        this.bgCloudFillColor = color(200, 0, 0);
+        // (255, 255, 255) * 0.5 + (200, 0, 0) * 0.5 => (228, 128, 128)
+        // could maybe make a more robust alpha calculator
+        // just using rgba(255, 255, 255, 0.5)leads to lots of little intersections that have been double-drawn
+        this.bgCloudStrokeColor = color(228, 128, 128);
+
+        if (NEW_CLOUDS) {
             bgClouds = this.newBackground();
+            this.bgClouds = bgClouds;
+        }
+        if (SAVE_CLOUDS) {
+            background(this.bgColor);
             bgClouds.forEach((cloud) => {
-                this.drawCloud(cloud, grid * 0.3, color(200, 0, 0), color(228, 128, 128));
+                this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
             });
             // after saving, have to move 'clouds.png' to images subdir
             save('clouds.png');
@@ -174,7 +179,15 @@ function MatterTest() {
     }
 
     this.draw = () => {
-        image(this.bgImage, 0, 0, width, height);
+        if (NEW_CLOUDS) {
+            background(this.bgColor);
+            this.bgClouds.forEach((cloud) => {
+                this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
+            });
+        } else {
+            image(this.bgImage, 0, 0, width, height);
+        }
+
 
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
