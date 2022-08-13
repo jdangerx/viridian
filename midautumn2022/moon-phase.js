@@ -2,11 +2,12 @@ function Phases() {
     let moonImage;
     let paperImage;
     let moonSize;
-    let dark = color(32, 74, 105, 255);
-    let darker = color(12, 44, 75, 255);
+    let colorMoon = color(252, 246, 230, 255);
+    let colorMoonShadow = color(252, 246, 230, 70);
 
-    let bg = color(62, 114, 135, 255);
-    let light = color(246, 226, 106, 255);
+    let colorDark = color(32, 74, 105, 255);
+    let colorDarker = color(12, 44, 75, 255);
+    let colorBG = color(62, 114, 135, 255);
 
     this.setup = () => {
 
@@ -32,7 +33,7 @@ function Phases() {
     this.draw = function () {
 
 
-        background(bg);
+        background(colorBG);
 
         // it's a while loop
 
@@ -42,13 +43,13 @@ function Phases() {
             var x = (i+0.5) * moonSize * 1.5;
             var y = height / 2 - moonSize/2 + cos(0.01 * frameCount + i) * moonSize / 2;
 
-            fill(dark);
+            fill(colorDark);
             rectMode(CORNERS);
             rect(x, y + moonSize / 2, x + moonSize, height);
             ellipseMode(CORNER);
-            fill(darker);
+            fill(colorDarker);
             circle(x, y + moonSize / 7, moonSize);
-            fill(dark);
+            fill(colorDark);
             circle(x, y, moonSize);
 
 
@@ -89,12 +90,13 @@ function Phases() {
 
         push();
         // TODO: tint is mad slow, so maybe replace with a colored image89        
-        tint(255, 100);
+        tint(colorMoonShadow);
         image(baseDithered, x, y, moonSize, moonSize);
         //image(this.moonBase, x, y, moonSize, moonSize);
         pop();
 
         //image(this.moonMasked, x, y, moonSize, moonSize);
+        tint(colorMoon);
         image(maskedDithered, x, y, moonSize, moonSize);
 
     }
