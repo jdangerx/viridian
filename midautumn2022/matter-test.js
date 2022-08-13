@@ -13,7 +13,7 @@ function MatterTest() {
         }
         for (let i = 0; i < 10; i++) {
             const x = (i + 1) * width / 7;
-            const y = 200 * noise(x) - 300
+            const y = 20 * grid; // start below the world so we immediately reset with chaos
             this.orbs.push(
                 Matter.Bodies.circle(x, y, radius * 1.3, orbOpts),
             )
@@ -21,44 +21,16 @@ function MatterTest() {
                 Matter.Bodies.circle(x, y - 200, radius * 1.3, orbOpts),
             )
         }
-        const floorOpts = { isStatic: true, restitution: 0.7 };
 
         this.floor = [];
         const nClusters = 3;
-        for (let i = 0; i < nClusters; i++) {
-            const unit = width / nClusters;
-            const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 8 + jitter * grid };
-            for (let j = 0; j < 3; j++) {
-                xSize = grid * (1 + 0.5 * random());
-                ratio = (0.7 + 0.2 * random());
-                const cloud = this.matterEllipse(
-                    clusterCenter.x + random() * 3 * grid,
-                    clusterCenter.y + random() * grid,
-                    xSize,
-                    xSize * ratio,
-                    floorOpts
-                );
-                this.floor.push(cloud);
-            }
-        }
 
         for (let i = 0; i < nClusters; i++) {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * (i + 0.5) + jitter * unit, y: grid * 5 + jitter * grid };
-            for (let j = 0; j < 3; j++) {
-                xSize = grid * (1 + 0.5 * random());
-                ratio = (0.7 + 0.2 * random());
-                const cloud = this.matterEllipse(
-                    clusterCenter.x + random() * 3 * grid,
-                    clusterCenter.y + random() * grid,
-                    xSize,
-                    xSize * ratio,
-                    floorOpts
-                );
-                this.floor.push(cloud);
-            }
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 5 + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, 3);
+            this.floor.push(...cluster);
         }
         bodies = [...this.orbs, ...shuffle(this.floor)];
         Matter.Composite.add(this.engine.world, bodies);
@@ -66,6 +38,38 @@ function MatterTest() {
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
 
+    }
+
+    this.cloudCluster = (x, y, nLevels) => {
+        const cloudOpts = { isStatic: true, restitution: 0.7 };
+        // bigger clouds in back
+        // smaller clouds on side s.t. it will poke out a bit
+        xRadius = 2 * grid;
+        yRadius = 1.5 * grid;
+        decay = 0.9;
+        const clouds = [];
+        baseCloud = this.matterEllipse(
+            x,
+            y,
+            xRadius,
+            yRadius,
+            cloudOpts
+        );
+        clouds.push(baseCloud);
+        for (let i = 0; i < 2; i++) {
+            ratio = random(0.7, 0.9);
+            const xOffset = xRadius * random(0.4, 0.7) * Math.pow(-1, i);
+            const yOffset = yRadius * random(-0.2, 0.5);
+            const cloud = this.matterEllipse(
+                x + xOffset,
+                y + yOffset,
+                xRadius * Math.pow(decay, i + 2),
+                yRadius * ratio * Math.pow(decay, i + 1),
+                cloudOpts
+            );
+            clouds.push(cloud);
+        }
+        return clouds;
     }
 
     this.enter = () => {
@@ -82,12 +86,12 @@ function MatterTest() {
         return circ;
     }
 
-    this.cloud = (x, y, width, height, stepSize) => {
+    this.drawCloud = (x, y, width, height, stepSize) => {
         push();
         stroke(255);
         strokeWeight(stepSize * 0.1);
         fill(200, 0, 0);
-        const numIters = (min(width, height) / stepSize + 1) | 0;
+        const numIters = (min(width, height) / stepSize + 0.8) | 0;
         for (let i = 0; i < numIters; i++) {
             ellipse(x, y, width - i * stepSize, height - i * stepSize);
         }
@@ -96,24 +100,17 @@ function MatterTest() {
 
     this.draw = () => {
         background(200, 60, 60);
-        /* all this time/millis math is so the engine uses the right delta to
-        update in realtime, but when we're recording, we just want the engine
-        to take 1/60 of a second no matter what.
 
-        const newT = millis();
-        const newDelta = newT - this.t;
-        const correction = newDelta / this.delta;
-        this.t = newT;
-        this.delta = newDelta;
-        */
+        utils.gridLines('white');
 
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
             if (orb.position.y > 12 * grid) {
-                Matter.Body.setPosition(orb, createVector(random() * grid * 12 + 10 * grid, -4 * grid));
-                Matter.Body.applyForce(orb, createVector(grid * 16, 0), createVector(0.3 - random() * 0.6, 0));
+                Matter.Body.setPosition(orb, createVector(random() * grid * 32, (random() + 0.5) * -4 * grid));
+                Matter.Body.applyForce(orb, createVector(grid * 16, 0), createVector(0.4 * (random() - 0.5), 0));
             }
         })
+
         this.orbs.forEach((orb, i) => {
             push();
             translate(orb.position.x, orb.position.y + this.mc.contexts.side.width / 10);
@@ -132,7 +129,7 @@ function MatterTest() {
         });
 
         this.floor.forEach((cloud) => {
-            this.cloud(cloud.position.x, cloud.position.y, cloud._width, cloud._height, width * 0.02);
+            this.drawCloud(cloud.position.x, cloud.position.y, cloud._width, cloud._height, grid * 0.3);
         });
     }
 }

@@ -1,6 +1,6 @@
 function Mooncakes() {
     this.setup = () => {
-        this._setup(200)
+        this._setup(5 * grid)
     }
 
     this._setup = (patternSize) => {
@@ -9,6 +9,7 @@ function Mooncakes() {
         this.dough_rgb = color(201, 128, 57);
         this.highlight_rgb = color(248, 185, 118);
         this.shadow_rgb = color(161, 79, 10);
+        this.side_rgb = color(181, 100, 30);
         this.setupContexts(patternSize);
         const { pattern, side, scallop } = this.contexts;
 
@@ -149,8 +150,7 @@ function Mooncakes() {
     }
 
     this.drawMooncake = (x, y, { pattern, scallop }) => {
-        // utils.glow(color(50, 30, 0), this.patternSize / 12, 0, 0);
-        utils.glow(this.dough_rgb, 0, this.patternSize * 0.1, this.patternSize * 0.25);
+        utils.glow(this.side_rgb, 0, this.patternSize * 0.1, this.patternSize * 0.25);
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
         utils.noGlow();
         image(pattern, x - pattern.width / 2, y - pattern.height / 2);
@@ -162,7 +162,9 @@ function Mooncakes() {
 
     this.draw = function () {
         background(93, 169, 155);
+        translate(16 * grid, 4.5 * grid);
+        rotate(frameCount / 100);
         this.genMooncake(this.contexts.pattern, frameCount);
-        this.drawMooncake(width / 2, height / 2, this.contexts);
+        this.drawMooncake(0, 0, this.contexts);
     }
 }
