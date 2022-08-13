@@ -9,10 +9,8 @@ function Phases() {
     let light = color(246, 226, 106, 255);
 
     this.setup = () => {
-        createCanvas(3840, 1080);
-        //createCanvas(1920, 540);
 
-        moonSize = width / 12;
+        moonSize = grid * 2;
         threshold = 128;
         pixelDensity(1);
 
@@ -90,11 +88,15 @@ function Phases() {
         maskedDithered = ditherImage(this.moonMasked, 'atkinson', threshold);
 
         push();
+        // TODO: tint is mad slow, so maybe replace with a colored image89        
         tint(255, 100);
-        image(this.moonBase, x, y, moonSize, moonSize);
+        image(baseDithered, x, y, moonSize, moonSize);
+        //image(this.moonBase, x, y, moonSize, moonSize);
         pop();
 
-        image(this.moonMasked, x, y, moonSize, moonSize);
+        //image(this.moonMasked, x, y, moonSize, moonSize);
+        image(maskedDithered, x, y, moonSize, moonSize);
+
     }
 
     this.phaseMask = (ctx, a, r, color) => {
