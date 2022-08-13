@@ -94,13 +94,19 @@ const utils = {
         drawingContext.shadowOffsetY = 0;
     },
 
-    addRotatedImage: (ctx, newImage, rotationAmt) => {
-        ctx.push();
-        ctx.clear();
-        var imageSize = ctx.width/2-10;
-        ctx.translate(ctx.width/2, ctx.height/2);
-        ctx.rotate(rotationAmt % TAU);
-        ctx.image(newImage, -imageSize, -imageSize, imageSize*2, imageSize*2);
-        ctx.pop();
+    gridLines: (color) => {
+        push();
+        if (color === undefined) {
+            color = 'rgba(255, 255, 255, 0.5)';
+        }
+        stroke(color);
+        for (let i = 0; i < 32; i++) {
+            line(i * grid, 0, i * grid, height);
+        }
+        for (let i = 0; i < 9; i++) {
+            line(0, i * grid, width, i * grid);
+        }
+        pop();
     }
+
 };

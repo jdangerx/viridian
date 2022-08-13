@@ -16,8 +16,9 @@ P5Capture.setDefaultOptions({
 
 function setup() {
     push();
-    // createCanvas(800, 600);
-    createCanvas(900, 400);
+    const IS_PROD = false;
+    grid = IS_PROD ? 120 : window.innerWidth / 32;
+    createCanvas(grid * 32, grid * 9);
 
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);
@@ -28,7 +29,7 @@ function setup() {
     mgr.addScene(MaskTest);
     mgr.addScene(GlowTest);
 
-    mgr.showScene(GlowTest);
+    mgr.showScene(Mooncakes);
     pop();
 }
 
