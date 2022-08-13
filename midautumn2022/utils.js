@@ -96,6 +96,9 @@ const utils = {
 
     gridLines: (color) => {
         push();
+        if (color === undefined) {
+            color = 'rgba(255, 255, 255, 0.5)';
+        }
         stroke(color);
         for (let i = 0; i < 32; i++) {
             line(i * grid, 0, i * grid, height);

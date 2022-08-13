@@ -29,7 +29,7 @@ function MatterTest() {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * i + jitter * unit, y: grid * 5 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, 3);
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 1.5, grid * 1.0, 2);
             this.floor.push(...cluster);
         }
         bodies = [...this.orbs, ...shuffle(this.floor)];
@@ -40,13 +40,10 @@ function MatterTest() {
 
     }
 
-    this.cloudCluster = (x, y, nLevels) => {
+    this.cloudCluster = (x, y, xRadius, yRadius, nLevels) => {
         const cloudOpts = { isStatic: true, restitution: 0.7 };
         // bigger clouds in back
         // smaller clouds on side s.t. it will poke out a bit
-        xRadius = 2 * grid;
-        yRadius = 1.5 * grid;
-        decay = 0.9;
         const clouds = [];
         baseCloud = this.matterEllipse(
             x,
@@ -56,18 +53,21 @@ function MatterTest() {
             cloudOpts
         );
         clouds.push(baseCloud);
-        for (let i = 0; i < 2; i++) {
-            ratio = random(0.7, 0.9);
-            const xOffset = xRadius * random(0.4, 0.7) * Math.pow(-1, i);
-            const yOffset = yRadius * random(-0.2, 0.5);
-            const cloud = this.matterEllipse(
-                x + xOffset,
-                y + yOffset,
-                xRadius * Math.pow(decay, i + 2),
-                yRadius * ratio * Math.pow(decay, i + 1),
-                cloudOpts
-            );
-            clouds.push(cloud);
+        if (nLevels == 0) {
+            return clouds;
+        } else {
+            for (let i = 0; i < 2; i++) {
+                decay = random(0.7, 0.9);
+                const xOffset = xRadius * random(0.6, 0.9) * Math.pow(-1, i);
+                const yOffset = yRadius * random(-0.2, 0.5);
+                clouds.push(...this.cloudCluster(
+                    x + xOffset,
+                    y + yOffset,
+                    xRadius * decay,
+                    yRadius * decay,
+                    nLevels - 1
+                ));
+            }
         }
         return clouds;
     }
@@ -88,8 +88,8 @@ function MatterTest() {
 
     this.drawCloud = (x, y, width, height, stepSize) => {
         push();
-        stroke(255);
-        strokeWeight(stepSize * 0.1);
+        stroke(255, 220, 220);
+        strokeWeight(stepSize * 0.12);
         fill(200, 0, 0);
         const numIters = (min(width, height) / stepSize + 0.8) | 0;
         for (let i = 0; i < numIters; i++) {
@@ -101,7 +101,7 @@ function MatterTest() {
     this.draw = () => {
         background(200, 60, 60);
 
-        utils.gridLines('white');
+        utils.gridLines();
 
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
