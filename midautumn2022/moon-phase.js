@@ -5,9 +5,9 @@ function Phases() {
     let colorMoon = color(252, 246, 230, 255);
     let colorMoonShadow = color(252, 246, 230, 70);
 
-    let colorDark = color(32, 74, 105, 255);
-    let colorDarker = color(12, 44, 75, 255);
-    let colorBG = color(62, 114, 135, 255);
+    let colorDark = color(2, 70, 123, 255);
+    let colorDarker = color(29, 47, 87, 255);
+    let colorBG = color(8, 109, 157, 255);
 
     this.setup = () => {
 
@@ -22,6 +22,10 @@ function Phases() {
         this.moonMasked = createGraphics(moonSize, moonSize);
         this.moonMasked.noStroke();
         this.moonMasked.fill('rgba(0, 0, 0, 1)');
+
+        this.flowerLayer = createGraphics(350, 350);
+        this.flowerLayer.noStroke();
+        this.flowerLayer.fill('rgba(0, 0, 0, 1)');
 
         moonImage = loadImage('images/moonRound.png');
         paperImage = loadImage('images/paper.jpg');
@@ -48,7 +52,7 @@ function Phases() {
             rect(x, y + moonSize / 2, x + moonSize, height);
             ellipseMode(CORNER);
             fill(colorDarker);
-            circle(x, y + moonSize / 7, moonSize);
+            circle(x, y + moonSize / 6, moonSize);
             fill(colorDark);
             circle(x, y, moonSize);
 
