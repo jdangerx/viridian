@@ -3,17 +3,24 @@ function Phases() {
     let paperImage;
     let moonSize;
     let colorMoon = color(252, 246, 230, 255);
-    let colorMoonShadow = color(252, 246, 230, 70);
+    let colorMoonShadow = color(210, 210, 230, 70);
 
     let colorDark = color(2, 70, 123, 255);
+    let colorDarkTransparent = color(2, 40, 83, 105);
     let colorDarker = color(29, 47, 87, 255);
     let colorBG = color(8, 109, 157, 255);
+    let colorFlower = color(178, 68, 89);
 
     this.setup = () => {
 
         moonSize = grid * 2;
         threshold = 128;
         pixelDensity(1);
+
+        moonImage = loadImage('images/moonRound.png');
+        paperImage = loadImage('images/parchment.jpg');
+        flowerImage1 = loadImage('images/flower01.png');
+
 
         this.moonBase = createGraphics(moonSize, moonSize);
         this.moonBase.noStroke();
@@ -27,8 +34,8 @@ function Phases() {
         this.flowerLayer.noStroke();
         this.flowerLayer.fill('rgba(0, 0, 0, 1)');
 
-        moonImage = loadImage('images/moonRound.png');
-        paperImage = loadImage('images/paper.jpg');
+        this.backgroundLayer = createGraphics(width, height);
+        this.backgroundLayer.image(paperImage, 0, 0, paperImage.width, paperImage.height);
     }
 
     this.enter = () => {
@@ -38,6 +45,9 @@ function Phases() {
 
 
         background(colorBG);
+        tint(colorBG);
+        this.backgroundLayer.image(paperImage, 0, 0, width, width * (paperImage.height/paperImage.width));
+        image(this.backgroundLayer, 0, 0, width, height);
 
         // it's a while loop
 
@@ -47,7 +57,7 @@ function Phases() {
             var x = (i+0.5) * moonSize * 1.5;
             var y = height / 2 - moonSize/2 + cos(0.01 * frameCount + i) * moonSize / 2;
 
-            fill(colorDark);
+            fill(colorDarkTransparent);
             rectMode(CORNERS);
             rect(x, y + moonSize / 2, x + moonSize, height);
             ellipseMode(CORNER);
@@ -102,6 +112,16 @@ function Phases() {
         //image(this.moonMasked, x, y, moonSize, moonSize);
         tint(colorMoon);
         image(maskedDithered, x, y, moonSize, moonSize);
+
+        utils.glow(color(0), 48, 5, 5);
+
+        utils.addRotatedImage(this.flowerLayer, flowerImage1, (frameCount/200));
+        //utils.addRotatedImage(this.flowerLayer, flowerImage1, 0);
+        tint(colorFlower);
+        var flowerSize = grid * 3;
+        image(this.flowerLayer, 20, 50, flowerSize, flowerSize);
+
+        utils.noGlow();
 
     }
 
