@@ -34,12 +34,12 @@ function MatterTest() {
 
         this.bgClouds = [];
         this.activeClouds = [];
-        const bgClusters = 4;
+        const bgClusters = 5;
 
         for (let i = 0; i < bgClusters; i++) {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 2 + jitter * grid };
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 6 + jitter * grid };
             const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
             this.bgClouds.push(...cluster);
         }
@@ -48,8 +48,8 @@ function MatterTest() {
         for (let i = 0; i < nClusters; i++) {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 5 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 1.5, grid * 1.0, null, 2);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 7 + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 2.0, grid * 1.5, null, 2);
             this.activeClouds.push(...cluster);
         }
 
