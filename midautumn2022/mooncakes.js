@@ -42,7 +42,6 @@ function Mooncakes() {
         ctx.fill(this.highlight_rgb);
         const oneScallop = (diameterCoeff) => {
             const diameter = TAU * ringRadius / numScallops * diameterCoeff;
-            //scribble.scribbleEllipse(ringRadius - 2 * diameter / numScallops, 0, diameter, diameter);
             ctx.ellipse(ringRadius - 2 * diameter / numScallops, 0, diameter, diameter);
         };
         const center = createVector(ctx.width / 2, ctx.height / 2)
@@ -51,12 +50,10 @@ function Mooncakes() {
         utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
         ctx.fill(this.dough_rgb);
         utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
-        // utils.gyrate(ctx, oneScallop, [1.5], center + 2 * offset, numScallops, TAU / numScallops);
         ctx.stroke(this.shadow_rgb);
-        ctx.strokeWeight(6);
+        ctx.strokeWeight(this.patternSize * 0.015);
         ctx.fill(this.highlight_rgb);
-        shadowDiameter = this.patternSize * 1.02;
-        //scribble.scribbleEllipse(
+        shadowDiameter = this.patternSize * 1.03;
         ctx.ellipse(
             ctx.width / 2,
             ctx.height / 2,
@@ -139,8 +136,7 @@ function Mooncakes() {
         pattern.fill('rgba(0, 0, 0, 0)');
 
         pattern.push();
-        pattern.translate(3, 3);
-        pattern.strokeWeight(pattern.weight * 0.06);
+        pattern.translate(pattern.width * 0.015, pattern.width * 0.015);
         pattern.stroke(this.shadow_rgb);
         //this.flower(pattern, frameCount);
         this.cross(pattern, this.scribble.pattern);
