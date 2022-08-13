@@ -2,7 +2,7 @@ function Phases() {
     let moonImage;
     let paperImage;
     let moonSize;
-    let colorMoon = color(252, 246, 230, 255);
+    let colorMoon = color(252, 246, 200, 255);
     let colorMoonShadow = color(210, 210, 230, 70);
 
     let colorDark = color(2, 70, 123, 255);
@@ -13,13 +13,21 @@ function Phases() {
 
     this.setup = () => {
 
+        colorMode(HSB, 360, 100, 100, 255);
+
+        colorDark = color(206, 98.4, 48.2, 255);
+        colorDarkTransparent = color(212, 97.6, 32.5, 105);
+        colorDarker = color(221, 66.7, 34.1, 255);
+        colorBG = color(199, 94.9, 61.6, 255);
+        colorFlower = color(349, 61.8, 69.8);
+
         moonSize = grid * 2;
         threshold = 128;
         pixelDensity(1);
 
-        moonImage = loadImage('images/moonRound.png');
+        moonImage = loadImage('images/moon-dithered.png');
         paperImage = loadImage('images/parchment.jpg');
-        flowerImage1 = loadImage('images/flower01.png');
+        flowerImage1 = loadImage('images/flower01-white.png');
 
 
         this.moonBase = createGraphics(moonSize, moonSize);
@@ -53,7 +61,7 @@ function Phases() {
 
         noStroke();
 
-        for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
+        for (let i = 0; i < (width / (moonSize * 1.5) - 1.5); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
             var y = height / 2 - moonSize/2 + cos(0.01 * frameCount + i) * moonSize / 2;
 
@@ -99,24 +107,18 @@ function Phases() {
 
         juggleMask(this.moonMasked, aOffset);
 
-        baseDithered = ditherImage(this.moonBase, 'atkinson', threshold);
-        maskedDithered = ditherImage(this.moonMasked, 'atkinson', threshold);
-
         push();
         // TODO: tint is mad slow, so maybe replace with a colored image89        
         tint(colorMoonShadow);
-        image(baseDithered, x, y, moonSize, moonSize);
-        //image(this.moonBase, x, y, moonSize, moonSize);
+        image(this.moonBase, x, y, moonSize, moonSize);
         pop();
 
         //image(this.moonMasked, x, y, moonSize, moonSize);
         tint(colorMoon);
-        image(maskedDithered, x, y, moonSize, moonSize);
+        image(this.moonMasked, x, y, moonSize, moonSize);
 
-        utils.glow(color(0), 48, 5, 5);
-
-        utils.addRotatedImage(this.flowerLayer, flowerImage1, (frameCount/200));
-        //utils.addRotatedImage(this.flowerLayer, flowerImage1, 0);
+        utils.glow(colorDarkTransparent, 10, 0, 0);
+        this.flowerLayer.image(flowerImage1, 0, 0, this.flowerLayer.width, this.flowerLayer.height);
         tint(colorFlower);
         var flowerSize = grid * 3;
         image(this.flowerLayer, 20, 50, flowerSize, flowerSize);
