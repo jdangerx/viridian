@@ -1,3 +1,13 @@
+class Cloud {
+    constructor(x, y, xRadius, yRadius, collisionGroup) {
+        this.x = x;
+        this.y = y;
+        this.xRadius = xRadius;
+        this.yRadius = yRadius;
+        this.collisionGroup = collisionGroup;
+    }
+}
+
 function MatterTest() {
     // just testing importing of mooncakes stuff for now
     this.setup = () => {
@@ -22,17 +32,40 @@ function MatterTest() {
             )
         }
 
-        this.floor = [];
-        const nClusters = 3;
+        this.bgClouds = [];
+        this.activeClouds = [];
+        const bgClusters = 4;
 
+        for (let i = 0; i < bgClusters; i++) {
+            const unit = width / bgClusters;
+            const jitter = noise(unit * i);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 2 + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            this.bgClouds.push(...cluster);
+        }
+
+        const nClusters = 3;
         for (let i = 0; i < nClusters; i++) {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * i + jitter * unit, y: grid * 5 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 1.5, grid * 1.0, 2);
-            this.floor.push(...cluster);
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 1.5, grid * 1.0, null, 2);
+            this.activeClouds.push(...cluster);
         }
-        bodies = [...this.orbs, ...shuffle(this.floor)];
+
+        const cloudOpts = { isStatic: true, restitution: 0.7 };
+        const cloudBodies = this.activeClouds.map((cloud) =>
+            this.matterEllipse(
+                cloud.x,
+                cloud.y,
+                cloud.xRadius,
+                cloud.yRadius,
+                cloudOpts
+            )
+        );
+
+
+        bodies = [...this.orbs, ...cloudBodies];
         Matter.Composite.add(this.engine.world, bodies);
 
         this.mc = new Mooncakes();
@@ -40,17 +73,16 @@ function MatterTest() {
 
     }
 
-    this.cloudCluster = (x, y, xRadius, yRadius, nLevels) => {
-        const cloudOpts = { isStatic: true, restitution: 0.7 };
+    this.cloudCluster = (x, y, xRadius, yRadius, collisionGroup, nLevels) => {
         // bigger clouds in back
         // smaller clouds on side s.t. it will poke out a bit
         const clouds = [];
-        baseCloud = this.matterEllipse(
+        baseCloud = new Cloud(
             x,
             y,
             xRadius,
             yRadius,
-            cloudOpts
+            collisionGroup
         );
         clouds.push(baseCloud);
         if (nLevels == 0) {
@@ -65,6 +97,7 @@ function MatterTest() {
                     y + yOffset,
                     xRadius * decay,
                     yRadius * decay,
+                    collisionGroup,
                     nLevels - 1
                 ));
             }
@@ -86,14 +119,16 @@ function MatterTest() {
         return circ;
     }
 
-    this.drawCloud = (x, y, width, height, stepSize) => {
+    this.drawCloud = (cloud, stepSize, fillColor, strokeColor) => {
         push();
-        stroke(255, 220, 220);
+        stroke(strokeColor);
         strokeWeight(stepSize * 0.12);
-        fill(200, 0, 0);
-        const numIters = (min(width, height) / stepSize + 0.8) | 0;
+        fill(fillColor);
+        const cloudWidth = cloud.xRadius * 2;
+        const cloudHeight = cloud.yRadius * 2;
+        const numIters = (min(cloudWidth, cloudHeight) / stepSize + 0.8) | 0;
         for (let i = 0; i < numIters; i++) {
-            ellipse(x, y, width - i * stepSize, height - i * stepSize);
+            ellipse(cloud.x, cloud.y, cloudWidth - i * stepSize, cloudHeight - i * stepSize);
         }
         pop();
     }
@@ -102,6 +137,11 @@ function MatterTest() {
         background(200, 60, 60);
 
         utils.gridLines();
+
+        this.bgClouds.forEach((cloud) => {
+            this.drawCloud(cloud, grid * 0.3, color(200, 0, 0), color('rgba(255, 255, 255, 0.5)'));
+        });
+
 
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
@@ -128,8 +168,9 @@ function MatterTest() {
             pop();
         });
 
-        this.floor.forEach((cloud) => {
-            this.drawCloud(cloud.position.x, cloud.position.y, cloud._width, cloud._height, grid * 0.3);
+        this.activeClouds.forEach((cloud) => {
+            this.drawCloud(cloud, grid * 0.3, color(200, 0, 0), color('rgba(255, 255, 255, 0.9)'));
         });
+
     }
 }
