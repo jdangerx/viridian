@@ -2,6 +2,8 @@ function BigMoon() {
     let moonImage;
     let paperImage;
     let moonSize;
+    let bunnyImage1;
+    let bunnyImage2;
 
     let colorMoon;
     let colorMoonShadow = color(210, 210, 230, 70);
@@ -28,8 +30,10 @@ function BigMoon() {
 
         paperImage = loadImage('images/paper.jpg');
         flowerImage1 = loadImage('images/flower01.png');
+        bunnyImage1 = loadImage('images/Bunnies/PNG/bunny-ponder.png');
+        bunnyImage2 = loadImage('images/Bunnies/PNG/bunny-sit.png');
 
-        this.moonBase = createGraphics(moonSize+10, moonSize+10);
+        this.moonBase = createGraphics(moonSize*2+5, moonSize*2+5);
         this.moonBase.fill('rgba(0, 0, 0, 1)');
 
         this.flowerLayer = createGraphics(moonSize*4, moonSize*4);
@@ -54,9 +58,8 @@ function BigMoon() {
         image(this.backgroundLayer, 0, 0, width, height);
         pop();
 
-        // it's a while loop
-
         noStroke();
+        this.drawMoon(width/2, height/2);
 
         push();
         utils.glow(color(0, 0, 0), 12, 0, 0);
@@ -66,19 +69,47 @@ function BigMoon() {
         utils.noGlow();
         pop();
 
-        this.drawMoon(width/2-moonSize/2, height/2-moonSize/2);
+        push();
+        utils.glow(colorOutline, 0, 1, 1);
+        this.flowerLayer.clear();
 
+        this.flowerLayer.image(bunnyImage1, 0, 0, moonSize*5, moonSize*5);
+        var bunSize = moonSize * 0.6;
+        var bunX = width/2+grid*4;
+        var bunY = height/2-grid*1;
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+
+        utils.glow(colorOutline, 0, -1, -1);
+        
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+
+        this.flowerLayer.clear();
+        this.flowerLayer.image(bunnyImage2, 0, 0, moonSize*5, moonSize*5);
+        bunX = width/2-grid*12;
+        bunY = height/2-grid*1;
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+
+        utils.glow(colorOutline, 0, -1, -1);
+        
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+
+
+        utils.noGlow();
+        pop();
     }
 
 
     this.drawMoon = (x, y) => {
 
+        var size = moonSize + cos(frameCount * 0.01) * grid/2;
         // Create always circular moonbase, so the texture is visible even in shadow
+
         this.moonBase.push();
+        this.moonBase.clear();
         this.moonBase.fill(255);
-        this.moonBase.circle(0, 0, moonSize+1);
+        this.moonBase.circle(size/2, size/2, size+1);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
-        this.moonBase.image(paperImage, 0, 0, moonSize, moonSize);
+        this.moonBase.image(paperImage, 0, 0, moonSize*2, moonSize*2);
         this.moonBase.pop();
 
         this.moonBase.noFill();
@@ -86,17 +117,8 @@ function BigMoon() {
         this.moonBase.stroke(colorOutline);
         this.moonBase.strokeWeight(2);
 
-        this.moonBase.circle(0, 0, moonSize+3);
+        this.moonBase.circle(size/2, size/2, (size)+3);
 
-        push();
-        utils.glow(0, 0, 10, 10);
-        tint(colorMoon);
-        image(this.moonBase, x, y, moonSize, moonSize);
-        utils.noGlow();
-        pop();
-
-        
-        noFill();
-        circle(x, y, moonSize);
+        image(this.moonBase, x-size/2, y-size/2, moonSize, moonSize);
     }
 }
