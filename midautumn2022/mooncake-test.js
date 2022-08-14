@@ -6,15 +6,29 @@ function MooncakeTest() {
     this.setup = () => {
         this.bgImage = loadImage('images/clouds.png')
 
+        // pink ish palette
+        //this.bgColor = color(242, 201, 222);
+        //this.bgCloudFillColor = color(255);
+        //this.bgCloudStrokeColor = color(255, 210, 210);
+
+        // blue ish palette
+        this.bgColor = color(141, 208, 255);
+        this.bgCloudFillColor = color(255);
+        this.bgCloudStrokeColor = this.bgColor;
+
+        // (255, 255, 255) * 0.5 + (200, 0, 0) * 0.5 => (228, 128, 128)
+        // could maybe make a more robust alpha calculator
+        // just using rgba(255, 255, 255, 0.5)leads to lots of little intersections that have been double-drawn
+
         this.t = millis();
         this.delta = 1000 / 60;
-        let radius = grid * 0.5;
+        let radius = grid * 0.8;
         this.engine = Matter.Engine.create();
         this.orbs = [];
         const orbOpts = {
             restitution: 0.9,
             friction: 0.8,
-            frictionAir: 0.05
+            frictionAir: 0.15
         }
         for (let i = 0; i < 10; i++) {
             const x = (i + 1) * width / 7;
@@ -33,7 +47,7 @@ function MooncakeTest() {
         for (let i = 0; i < nClusters; i++) {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 7 + jitter * grid };
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 8 + jitter * grid };
             const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 2.0, grid * 1.5, null, 2);
             this.activeClouds.push(...cluster);
         }
@@ -56,13 +70,6 @@ function MooncakeTest() {
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
 
-        this.bgColor = color(200, 60, 60);
-        this.bgCloudFillColor = color(200, 0, 0);
-        // (255, 255, 255) * 0.5 + (200, 0, 0) * 0.5 => (228, 128, 128)
-        // could maybe make a more robust alpha calculator
-        // just using rgba(255, 255, 255, 0.5)leads to lots of little intersections that have been double-drawn
-        this.bgCloudStrokeColor = color(228, 128, 128);
-
         if (NEW_CLOUDS) {
             bgClouds = this.newBackground();
             this.bgClouds = bgClouds;
@@ -81,19 +88,19 @@ function MooncakeTest() {
 
     this.newBackground = () => {
         const bgClusters = 5;
-        const bgClouds = [];
+        const bgClouds = [];    
 
         for (let i = 0; i < 2; i++) {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 2 + jitter * grid };
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (3+i) + jitter * grid };
             const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
             bgClouds.push(...cluster);
         }
         for (let i = 0; i < 4; i++) {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 4 + jitter * grid };
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (4+i*2) + jitter * grid };
             const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
             bgClouds.push(...cluster);
         }
@@ -102,7 +109,7 @@ function MooncakeTest() {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * i + jitter * unit, y: grid * 6 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y+i, grid * 3, grid * 2, null, 2);
             bgClouds.push(...cluster);
         }
         return bgClouds;
@@ -205,7 +212,7 @@ function MooncakeTest() {
         });
 
         this.activeClouds.forEach((cloud) => {
-            this.drawCloud(cloud, grid * 0.3, color(200, 0, 0), color('rgba(255, 255, 255, 0.9)'));
+            this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
         });
 
     }
