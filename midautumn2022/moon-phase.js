@@ -85,6 +85,9 @@ function Phases() {
         utils.addRotatedImage(this.flowerLayer, branchImage4, -Math.PI*0.35);
         image(this.flowerLayer, grid*2.5, -grid*4, flowerSize, flowerSize);
 
+        flowerSize = grid * 8;
+        utils.addRotatedImage(this.flowerLayer, branchImage4, Math.PI*0.1);
+        image(this.flowerLayer, -grid*5, height-grid*2.5, flowerSize, flowerSize);
 
         flowerSize = grid * 1;
         utils.addRotatedImage(this.flowerLayer, branchImage3, -Math.PI*0.05);
@@ -99,7 +102,7 @@ function Phases() {
 
         for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
-            var y = height / 2 - moonSize/2 + cos(0.005 * frameCount + i) * moonSize * 0.5;
+            var y = height / 2 - moonSize/2 + cos(0.002 * frameCount + i) * moonSize * 0.5;
 
             fill(colorDarkTransparent);
             rectMode(CORNERS);
