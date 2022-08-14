@@ -29,12 +29,13 @@ function BigMoon() {
         moonImage = loadImage('images/moonRound.png');
 
         paperImage = loadImage('images/paper.jpg');
-        flowerImage1 = loadImage('images/flower01.png');
-        bunnyImage1 = loadImage('images/Bunnies/PNG/bunny-ponder.png');
-        bunnyImage2 = loadImage('images/Bunnies/PNG/bunny-sit.png');
+        flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-30.png');
+        bunnyImage1 = loadImage('images/rabbits/PNG/bunny-ponder.png');
+        bunnyImage2 = loadImage('images/rabbits/PNG/bunny-sit.png');
 
         this.moonBase = createGraphics(moonSize*2+5, moonSize*2+5);
         this.moonBase.fill('rgba(0, 0, 0, 1)');
+        this.moonBase.ellipseMode(CORNER);
 
         this.flowerLayer = createGraphics(moonSize*4, moonSize*4);
         this.flowerLayer.noStroke();
@@ -101,24 +102,25 @@ function BigMoon() {
 
     this.drawMoon = (x, y) => {
 
-        var size = moonSize + cos(frameCount * 0.01) * grid/2;
+        var size = moonSize;// + cos(frameCount * 0.01) * grid/2;
         // Create always circular moonbase, so the texture is visible even in shadow
 
         this.moonBase.push();
         this.moonBase.clear();
         this.moonBase.fill(255);
-        this.moonBase.circle(size/2, size/2, size+1);
+        this.moonBase.circle(0, 0, size+1);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
         this.moonBase.image(paperImage, 0, 0, moonSize*2, moonSize*2);
         this.moonBase.pop();
 
+        this.moonBase.push();
         this.moonBase.noFill();
-        this.moonBase.ellipseMode(CORNER);
         this.moonBase.stroke(colorOutline);
         this.moonBase.strokeWeight(2);
 
-        this.moonBase.circle(size/2, size/2, (size)+3);
+        this.moonBase.circle(0, 0, (size)+3);
+        this.moonBase.pop();
 
-        image(this.moonBase, x-size/2, y-size/2, moonSize, moonSize);
+        image(this.moonBase, x-size/2, y-size/2, size, size);
     }
 }
