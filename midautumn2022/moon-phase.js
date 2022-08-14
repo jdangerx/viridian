@@ -123,11 +123,9 @@ function Phases() {
         juggleMask(this.moonMasked, aOffset);
 
         push();
-        // TODO: tint is mad slow, so maybe replace with a colored image89        
         image(this.moonBase, x, y, moonSize, moonSize);
         pop();
 
-        //image(this.moonMasked, x, y, moonSize, moonSize);
         image(this.moonMasked, x, y, moonSize, moonSize);
     }
 
