@@ -22,7 +22,7 @@ function Phases() {
         colorBG = color(199, 94.9, 61.6, 255);
         colorFlower = color(349, 61.8, 69.8);
 
-        moonSize = grid * 2.75;
+        moonSize = utils.roundUpNearest10(grid * 2.75);
         threshold = 128;
         pixelDensity(1);
 
@@ -74,9 +74,9 @@ function Phases() {
 
         tint(colorFlower);
 
-        var flowerSize = grid * 6;
+        var flowerSize = grid * 7;
         utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.06);
-        image(this.flowerLayer, -grid*1.2, grid * 0.01, flowerSize, flowerSize);    
+        image(this.flowerLayer, -grid*1.7, grid * 0.005, flowerSize, flowerSize);    
 
         flowerSize = grid * 8;
         utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.55);
