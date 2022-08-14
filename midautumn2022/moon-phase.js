@@ -102,7 +102,7 @@ function Phases() {
 
         for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
-            var y = height / 2 - moonSize/2 + cos(0.0002 * frameCount + i) * moonSize * 0.5;
+            var y = height / 2 - moonSize/2 + cos(0.003 * frameCount + i - 1) * moonSize * 0.5;
 
             fill(colorDarkTransparent);
             rectMode(CORNERS);
