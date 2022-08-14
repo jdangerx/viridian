@@ -11,7 +11,7 @@ let mgr;
 P5Capture.setDefaultOptions({
     format: "webm",
     framerate: 60,
-    width: 400,
+    width: 2000,
 });
 
 function setup() {
@@ -28,8 +28,9 @@ function setup() {
     mgr.addScene(RisoTestJohn);
     mgr.addScene(MaskTest);
     mgr.addScene(GlowTest);
+    mgr.addScene(BigMoon);
 
-    mgr.showScene(Phases);
+    mgr.showScene(BigMoon);
     pop();
 }
 
@@ -69,6 +70,10 @@ function keyPressed() {
             console.log('Switching to Glow Test.')
             mgr.showScene(GlowTest);
             break;
+        case '8':
+        console.log('Switching to Big Moon.')
+        mgr.showScene(BigMoon);
+        break;
 
     }
 
