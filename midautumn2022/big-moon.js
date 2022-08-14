@@ -51,7 +51,7 @@ function BigMoon() {
 
     this.draw = function () {
 
-        randomSeed(99);
+        randomSeed(12);
         background(colorBG);
 
         push();
@@ -62,13 +62,18 @@ function BigMoon() {
 
         noStroke();
         
-        for (let j = 0; j < 1; ++j)
+        for (let j = -1; j < 1; ++j)
         {
             for (let i = 0; i < 20; ++i)
             {
+                var deleteRandomly = false;
+                if (j < 0)
+                {
+                    deleteRandomly = true;
+                }
                 var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
                 var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j);
+                this.drawFlower(flowerX, flowerY, i + j, deleteRandomly);
             }
         }
 
@@ -113,13 +118,24 @@ function BigMoon() {
         pop();
     }
 
-    this.drawFlower = (x, y, i) => {
+    this.drawFlower = (x, y, i, deleteRandomly=false) => {
         utils.noGlow();
+
         var ran = random(0, 1);
         var ranImage = flowerImage2;
-        if (ran > 0.3) {
+        if (ran > 0.35) {
             ranImage = flowerImage1;
         }
+
+        if (deleteRandomly)
+        {
+            ran = random(0, 1);
+            if (ran > 0.35)
+            {
+                return;
+            }
+        }
+
         this.flowerLayer.clear();
         utils.addRotatedImage(this.flowerLayer, ranImage, i); 
         image(this.flowerLayer, x, y, grid*3, grid*3);
