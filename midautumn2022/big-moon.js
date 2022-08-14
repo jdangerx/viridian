@@ -26,13 +26,15 @@ function BigMoon() {
         moonImage = loadImage('images/moonRound.png');
 
         paperImage = loadImage('images/paper.jpg');
-        //flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-30.png');
         //flowerImage2 = loadImage('images/flowers/PNG/GB_ELEMENT-30-3.png');
         flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-40-1.png');
         flowerImage2 = loadImage('images/flowers/PNG/GB_ELEMENT-40-2.png');
+        flowerImage3 = loadImage('images/flowers/PNG/GB_ELEMENT-30.png');
 
         bunnyImage1 = loadImage('images/rabbits/PNG/bunny-ponder.png');
         bunnyImage2 = loadImage('images/rabbits/PNG/bunny-sit.png');
+        bunnyImage3 = loadImage('images/rabbits/PNG/bunny-back.png');
+
 
         this.moonBase = createGraphics(moonSize+5, moonSize+5);
         this.moonBase.fill('rgba(0, 0, 0, 1)');
@@ -51,7 +53,7 @@ function BigMoon() {
 
     this.draw = function () {
 
-        randomSeed(12);
+        randomSeed(13);
         background(colorBG);
 
         push();
@@ -80,31 +82,62 @@ function BigMoon() {
         this.drawMoon(width/2, height/2);
 
         push();
-        utils.glow(colorOutline, 0, 1, 1);
         this.flowerLayer.clear();
 
         this.flowerLayer.image(bunnyImage1, 0, 0, grid*10, grid*10);
         var bunSize = grid * 8;
         var bunX = width/2+grid*4;
         var bunY = height/2-grid*2;
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
-        utils.glow(colorOutline, 0, -1, -1);
-        
+        utils.glow(colorOutline, 0, 2, 0);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, -2, 0);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, 0, 2);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, 0, -2);
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
         this.flowerLayer.clear();
-        this.flowerLayer.image(bunnyImage2, 0, 0, grid*10, grid*10);
-        bunX = width/2-grid*12;
-        bunY = height/2-grid*2;
+        this.flowerLayer.image(bunnyImage2, 0, 0, grid*12, grid*12);
+        bunX = width/2-grid*13;
+        bunY = height/2-grid*3;
+
+        utils.glow(colorOutline, 0, 2, 0);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, -2, 0);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, 0, 2);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, 0, -2);
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
-        utils.glow(colorOutline, 0, -1, -1);
-        
+        for (let j = 1; j < 2; ++j)
+        {
+            for (let i = 0; i < 20; ++i)
+            {
+                var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
+                var flowerY = height/2+grid*(j+1);
+                this.drawFlower(flowerX, flowerY, i + j);
+            }
+        }
+
+        this.flowerLayer.clear();
+        this.flowerLayer.image(bunnyImage3, 0, 0, grid*10, grid*10);
+        bunX = width/2-grid*2;
+        bunY = height/2-grid*0.7;
+
+        utils.glow(colorOutline, 0, 2, 0);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, -2, 0);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, 0, 2);
+        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        utils.glow(colorOutline, 0, 0, -2);
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
 
-        for (let j = 1; j < 3; ++j)
+        for (let j = 2; j < 3; ++j)
         {
             for (let i = 0; i < 20; ++i)
             {
