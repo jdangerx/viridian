@@ -118,6 +118,10 @@ const utils = {
             line(0, i * grid, width, i * grid);
         }
         pop();
+    },
+
+    roundUpNearest10: (num) => {
+        return Math.ceil(num / 10) * 10;
     }
 
 };

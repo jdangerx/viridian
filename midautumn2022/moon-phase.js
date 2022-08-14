@@ -22,16 +22,17 @@ function Phases() {
         colorBG = color(199, 94.9, 61.6, 255);
         colorFlower = color(349, 61.8, 69.8);
 
-        moonSize = grid * 2;
+        moonSize = grid * 2.75;
         threshold = 128;
         pixelDensity(1);
 
-        moonImage = loadImage('images/moon-dithered.png');
-        moonImageBlue = loadImage('images/moon-dithered-blue.png');
+        moonImage = loadImage('images/moon-dithered2.png');
+        moonImageBlue = loadImage('images/moon-dithered-blue2.png');
 
         paperImage = loadImage('images/parchment.jpg');
         flowerImage1 = loadImage('images/flower01-white.png');
 
+        branchImage1 = loadImage('images/leaves02.png');
 
         this.moonBase = createGraphics(moonSize, moonSize);
         this.moonBase.noStroke();
@@ -41,7 +42,7 @@ function Phases() {
         this.moonMasked.noStroke();
         this.moonMasked.fill('rgba(0, 0, 0, 1)');
 
-        this.flowerLayer = createGraphics(350, 350);
+        this.flowerLayer = createGraphics(moonSize*2, moonSize*2);
         this.flowerLayer.noStroke();
         this.flowerLayer.fill('rgba(0, 0, 0, 1)');
 
@@ -68,17 +69,25 @@ function Phases() {
         noStroke();
 
         push();
-        utils.glow(colorDarkTransparent, 10, 0, 0);
-        this.flowerLayer.image(flowerImage1, 0, 0, this.flowerLayer.width, this.flowerLayer.height);
+        utils.glow(color(0, 0, 0), 12, 0, 0);
+        this.flowerLayer.clear();
+
         tint(colorFlower);
-        var flowerSize = grid * 3;
-        image(this.flowerLayer, 20, 50, flowerSize, flowerSize);    
+
+        var flowerSize = grid * 6;
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.06);
+        image(this.flowerLayer, -grid*1.2, grid * 0.01, flowerSize, flowerSize);    
+
+        flowerSize = grid * 8;
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.55);
+        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.6, flowerSize, flowerSize);    
+
         utils.noGlow();
         pop();
 
-        for (let i = 0; i < (width / (moonSize * 1.5) - 1.5); ++i) {
+        for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
-            var y = height / 2 - moonSize/2 + cos(0.01 * frameCount + i) * moonSize / 2;
+            var y = height / 2 - moonSize/2 + cos(0.006 * frameCount + i) * moonSize * 0.5;
 
             fill(colorDarkTransparent);
             rectMode(CORNERS);
@@ -89,8 +98,8 @@ function Phases() {
             fill(colorDark);
             circle(x, y, moonSize);
 
-
-            this.drawMoon(x, y, moonSize / 2, i * 0.145);
+            this.drawMoon(x, y, moonSize / 2, i * 0.1445);
+            utils.noGlow();
         }
     }
 
@@ -123,7 +132,9 @@ function Phases() {
         juggleMask(this.moonMasked, aOffset);
 
         push();
+        utils.glow(colorDarker, 12, 0, 0);
         image(this.moonBase, x, y, moonSize, moonSize);
+        utils.noGlow();
         pop();
 
         image(this.moonMasked, x, y, moonSize, moonSize);
