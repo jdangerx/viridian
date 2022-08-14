@@ -1,3 +1,12 @@
+class Cloud {
+    constructor(x, y, xRadius, yRadius) {
+        this.x = x;
+        this.y = y;
+        this.xRadius = xRadius;
+        this.yRadius = yRadius;
+    }
+}
+
 NEW_CLOUDS = true;
 SAVE_CLOUDS = false;
 
@@ -48,7 +57,7 @@ function MooncakeTest() {
             const unit = width / nClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * i + jitter * unit, y: grid * 8 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 2.0, grid * 1.5, null, 2);
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 2.0, grid * 1.5, 2);
             this.activeClouds.push(...cluster);
         }
 
@@ -88,20 +97,20 @@ function MooncakeTest() {
 
     this.newBackground = () => {
         const bgClusters = 5;
-        const bgClouds = [];    
+        const bgClouds = [];
 
         for (let i = 0; i < 2; i++) {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (3+i) + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (3 + i) + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, 2);
             bgClouds.push(...cluster);
         }
         for (let i = 0; i < 4; i++) {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (4+i*2) + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, null, 2);
+            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (4 + i * 2) + jitter * grid };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, 2);
             bgClouds.push(...cluster);
         }
 
@@ -109,13 +118,13 @@ function MooncakeTest() {
             const unit = width / bgClusters;
             const jitter = noise(unit * i);
             const clusterCenter = { x: unit * i + jitter * unit, y: grid * 6 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y+i, grid * 3, grid * 2, null, 2);
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y + i, grid * 3, grid * 2, 2);
             bgClouds.push(...cluster);
         }
         return bgClouds;
     }
 
-    this.cloudCluster = (x, y, xRadius, yRadius, collisionGroup, nLevels) => {
+    this.cloudCluster = (x, y, xRadius, yRadius, nLevels) => {
         // bigger clouds in back
         // smaller clouds on side s.t. it will poke out a bit
         const clouds = [];
@@ -123,8 +132,7 @@ function MooncakeTest() {
             x,
             y,
             xRadius,
-            yRadius,
-            collisionGroup
+            yRadius
         );
         clouds.push(baseCloud);
         if (nLevels == 0) {
@@ -139,7 +147,6 @@ function MooncakeTest() {
                     y + yOffset,
                     xRadius * decay,
                     yRadius * decay,
-                    collisionGroup,
                     nLevels - 1
                 ));
             }
