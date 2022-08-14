@@ -1,5 +1,6 @@
 function Phases() {
     let moonImage;
+    let moonImageBlue;
     let paperImage;
     let moonSize;
     let colorMoon = color(252, 246, 200, 255);
@@ -26,6 +27,8 @@ function Phases() {
         pixelDensity(1);
 
         moonImage = loadImage('images/moon-dithered.png');
+        moonImageBlue = loadImage('images/moon-dithered-blue.png');
+
         paperImage = loadImage('images/parchment.jpg');
         flowerImage1 = loadImage('images/flower01-white.png');
 
@@ -53,13 +56,25 @@ function Phases() {
 
 
         background(colorBG);
+
+        push();
         tint(colorBG);
         this.backgroundLayer.image(paperImage, 0, 0, width, width * (paperImage.height/paperImage.width));
         image(this.backgroundLayer, 0, 0, width, height);
+        pop();
 
         // it's a while loop
 
         noStroke();
+
+        push();
+        utils.glow(colorDarkTransparent, 10, 0, 0);
+        this.flowerLayer.image(flowerImage1, 0, 0, this.flowerLayer.width, this.flowerLayer.height);
+        tint(colorFlower);
+        var flowerSize = grid * 3;
+        image(this.flowerLayer, 20, 50, flowerSize, flowerSize);    
+        utils.noGlow();
+        pop();
 
         for (let i = 0; i < (width / (moonSize * 1.5) - 1.5); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
@@ -102,29 +117,18 @@ function Phases() {
         this.moonBase.ellipseMode(CORNER);
         this.moonBase.circle(0, 0, moonSize);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
-        this.moonBase.image(moonImage, 0, 0, moonSize, moonSize);
+        this.moonBase.image(moonImageBlue, 0, 0, moonSize, moonSize);
         this.moonBase.pop();
 
         juggleMask(this.moonMasked, aOffset);
 
         push();
         // TODO: tint is mad slow, so maybe replace with a colored image89        
-        tint(colorMoonShadow);
         image(this.moonBase, x, y, moonSize, moonSize);
         pop();
 
         //image(this.moonMasked, x, y, moonSize, moonSize);
-        tint(colorMoon);
         image(this.moonMasked, x, y, moonSize, moonSize);
-
-        utils.glow(colorDarkTransparent, 10, 0, 0);
-        this.flowerLayer.image(flowerImage1, 0, 0, this.flowerLayer.width, this.flowerLayer.height);
-        tint(colorFlower);
-        var flowerSize = grid * 3;
-        image(this.flowerLayer, 20, 50, flowerSize, flowerSize);
-
-        utils.noGlow();
-
     }
 
     this.phaseMask = (ctx, a, r, color) => {
