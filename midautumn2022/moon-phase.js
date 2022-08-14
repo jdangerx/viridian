@@ -102,7 +102,7 @@ function Phases() {
 
         for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
-            var y = height / 2 - moonSize/2 + cos(0.002 * frameCount + i) * moonSize * 0.5;
+            var y = height / 2 - moonSize/2 + cos(0.0002 * frameCount + i) * moonSize * 0.5;
 
             fill(colorDarkTransparent);
             rectMode(CORNERS);
@@ -113,7 +113,7 @@ function Phases() {
             fill(colorDark);
             circle(x, y, moonSize);
 
-            this.drawMoon(x, y, moonSize / 2, i * 0.1445);
+            this.drawMoon(x, y, moonSize / 2, i * 0.13);
         }
 
         push();
@@ -136,7 +136,7 @@ function Phases() {
 
     this.drawMoon = (x, y, r, aOffset) => {
         const juggleMask = (mask, offset) => {
-            this.phaseMask(mask, (frameCount + offset * 300) % 300 / 300 * TAU, r);
+            this.phaseMask(mask, (frameCount * 0.1 + offset * 300) % 300 / 300 * TAU, r);
             //this.phaseMask(mask, 0, r);
 
             mask.push();
