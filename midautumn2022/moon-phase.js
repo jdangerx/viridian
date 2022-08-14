@@ -32,7 +32,9 @@ function Phases() {
         paperImage = loadImage('images/parchment.jpg');
         flowerImage1 = loadImage('images/flower01-white.png');
 
-        branchImage1 = loadImage('images/leaves02.png');
+        branchImage1 = loadImage('images/leaves07.png');
+        branchImage2 = loadImage('images/leaves01.png');
+        branchImage3 = loadImage('images/leaves03.png');
 
         this.moonBase = createGraphics(moonSize, moonSize);
         this.moonBase.noStroke();
@@ -71,23 +73,22 @@ function Phases() {
         push();
         utils.glow(color(0, 0, 0), 12, 0, 0);
         this.flowerLayer.clear();
-
         tint(colorFlower);
 
-        var flowerSize = grid * 7;
-        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.06);
-        image(this.flowerLayer, -grid*1.7, grid * 0.005, flowerSize, flowerSize);    
-
         flowerSize = grid * 8;
-        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.55);
-        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.6, flowerSize, flowerSize);    
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI);
+        image(this.flowerLayer, width-grid*5.8, -grid*5, flowerSize, flowerSize);
+
+        flowerSize = grid * 2.5;
+        utils.addRotatedImage(this.flowerLayer, branchImage2, Math.PI*0.95);
+        image(this.flowerLayer, grid*3.5, -grid*0.65, flowerSize, flowerSize);        
 
         utils.noGlow();
         pop();
 
         for (let i = 0; i < (width / (moonSize * 1.5) - 1); ++i) {
             var x = (i+0.5) * moonSize * 1.5;
-            var y = height / 2 - moonSize/2 + cos(0.006 * frameCount + i) * moonSize * 0.5;
+            var y = height / 2 - moonSize/2 + cos(0.005 * frameCount + i) * moonSize * 0.5;
 
             fill(colorDarkTransparent);
             rectMode(CORNERS);
@@ -101,6 +102,26 @@ function Phases() {
             this.drawMoon(x, y, moonSize / 2, i * 0.1445);
             utils.noGlow();
         }
+
+        push();
+        utils.glow(color(0, 0, 0), 12, 0, 0);
+        this.flowerLayer.clear();
+        tint(colorFlower);
+
+        var flowerSize = grid * 7;
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.06);
+        image(this.flowerLayer, -grid*1.7, grid * 0.005, flowerSize, flowerSize);   
+
+        flowerSize = grid * 8;
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.55);
+        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.55, flowerSize, flowerSize);    
+
+        flowerSize = grid * 1.2;
+        utils.addRotatedImage(this.flowerLayer, branchImage3, Math.PI*0.55);
+        image(this.flowerLayer, width-flowerSize*0.8, flowerSize*2, flowerSize, flowerSize);    
+
+        utils.noGlow();
+        pop();
     }
 
 
