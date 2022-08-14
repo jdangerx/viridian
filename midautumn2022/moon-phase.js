@@ -73,7 +73,7 @@ function Phases() {
         noStroke();
 
         push();
-        utils.glow(color(0, 0, 0), 12, 0, 0);
+        utils.glow(colorDarker, 0, 2, 2);
         this.flowerLayer.clear();
         tint(colorFlower);
 
@@ -117,7 +117,7 @@ function Phases() {
         }
 
         push();
-        utils.glow(color(0, 0, 0), 12, 0, 0);
+        utils.glow(colorDarker, 0, 2, 2);
         this.flowerLayer.clear();
         tint(colorFlower);
 
@@ -162,9 +162,9 @@ function Phases() {
         juggleMask(this.moonMasked, aOffset);
 
         push();
-        utils.glow(colorDarker, 12, 0, 0);
+        //utils.glow(colorDarker, 12, 0, 0);
         image(this.moonBase, x, y, moonSize, moonSize);
-        utils.noGlow();
+        //utils.noGlow();
         pop();
 
         image(this.moonMasked, x, y, moonSize, moonSize);
