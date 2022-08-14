@@ -29,8 +29,9 @@ function setup() {
     mgr.addScene(MaskTest);
     mgr.addScene(GlowTest);
     mgr.addScene(BigMoon);
+    mgr.addScene(MooncakeTest);
 
-    mgr.showScene(BigMoon);
+    mgr.showScene(MooncakeTest);
     pop();
 }
 
@@ -71,9 +72,13 @@ function keyPressed() {
             mgr.showScene(GlowTest);
             break;
         case '8':
-        console.log('Switching to Big Moon.')
-        mgr.showScene(BigMoon);
-        break;
+            console.log('Switching to Big Moon.')
+            mgr.showScene(BigMoon);
+            break;
+        case '9':
+            console.log('Switching to Mooncake Test.')
+            mgr.showScene(MooncakeTest);
+            break;
 
     }
 
