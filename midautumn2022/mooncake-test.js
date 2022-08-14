@@ -1,7 +1,6 @@
 class Cloud {
     constructor(x, y, xRadius, yRadius) {
-        this.x = x;
-        this.y = y;
+        this.position = { x: x, y: y };
         this.xRadius = xRadius;
         this.yRadius = yRadius;
     }
@@ -28,8 +27,14 @@ function MooncakeTest() {
         this.orbs = [];
         const orbOpts = {
             restitution: 0.9,
-            friction: 0.8,
-            frictionAir: 0.15
+            friction: 0.5,
+            frictionAir: 0.15,
+            collisionFilter: {
+                category: 0x10,
+                mask: 0x11,
+            },
+            label: 'mooncake',
+            density: 0.003,
         }
         for (let i = 0; i < 3; i++) {
             const x = (i + 1) * width / 7;
@@ -47,27 +52,42 @@ function MooncakeTest() {
         clusterX = (t) => 5 * grid + 10 * grid * t + noise(t) * grid;
         clusterY = (t) => 4 * grid + grid * t + 0.5 * noise(t) * grid;
         const nClusters = 3;
+        const cloudOpts = {
+            restitution: 0.7,
+            friction: 0.7,
+            collisionFilter: { category: 0x01, mask: 0x10 },
+            label: 'cloud'
+        };
         for (let i = 0; i < nClusters; i++) {
             const clusterCenter = { x: clusterX(i), y: clusterY(i) };
             const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 2.0, grid * 1.5, 2);
-            this.activeClusters.push(cluster);
-        }
-
-        const cloudOpts = { isStatic: true, restitution: 0.7 };
-        const cloudBodies = this.activeClusters.flatMap((cluster) =>
-            cluster.map((cloud) =>
-                this.matterEllipse(cloud.x,
-                    cloud.y,
+            const bodies = cluster.map((cloud) =>
+                this.matterEllipse(cloud.position.x,
+                    cloud.position.y,
                     cloud.xRadius,
                     cloud.yRadius,
                     cloudOpts
                 )
-            )
-        );
+            );
+            this.activeClusters.push(bodies);
+        }
+
+        cloudBodies = this.activeClusters.flatMap((x) => x);
+
+        const cloudSprings = cloudBodies.map((body) =>
+            Matter.Constraint.create({
+                bodyA: body,
+                pointB: Matter.Vector.create(body.position.x, body.position.y),
+                stiffness: 0.01,
+                damping: 0.1
+            })
+        )
 
 
         bodies = [...this.orbs, ...cloudBodies];
+
         Matter.Composite.add(this.engine.world, bodies);
+        Matter.Composite.add(this.engine.world, cloudSprings);
 
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
@@ -138,8 +158,8 @@ function MooncakeTest() {
 
     this.matterEllipse = (x, y, xRad, yRad, opts) => {
         const circ = Matter.Bodies.circle(x, y, xRad, opts);
-        circ._width = xRad * 2;
-        circ._height = yRad * 2;
+        circ.xRadius = xRad;
+        circ.yRadius = yRad;
         const yscale = yRad / xRad;
         Matter.Body.scale(circ, 1, yscale);
         return circ;
@@ -154,7 +174,7 @@ function MooncakeTest() {
         const cloudHeight = cloud.yRadius * 2;
         const numIters = (min(cloudWidth, cloudHeight) / stepSize + 0.8) | 0;
         for (let i = 0; i < numIters; i++) {
-            ellipse(cloud.x, cloud.y, cloudWidth - i * stepSize, cloudHeight - i * stepSize);
+            ellipse(cloud.position.x, cloud.position.y, cloudWidth - i * stepSize, cloudHeight - i * stepSize);
         }
         pop();
     }
@@ -162,7 +182,7 @@ function MooncakeTest() {
     this.drawCluster = (cluster) => {
         cluster.forEach((cloud) => {
             // pull the shadow into its own forEach if you want to do the shadow on a per-cluster basis
-            const shadow = new Cloud(cloud.x + grid * 0.08, cloud.y + grid * 0.05, cloud.xRadius, cloud.yRadius);
+            const shadow = new Cloud(cloud.position.x + grid * 0.08, cloud.position.y + grid * 0.05, cloud.xRadius, cloud.yRadius);
             this.drawCloud(shadow, grid * 0.3, color('rgba(160, 160, 200, 0.5)'), color('rgba(160, 160, 200, 0.5)'));
             this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
         });
