@@ -29,15 +29,19 @@ function BigMoon() {
         moonImage = loadImage('images/moonRound.png');
 
         paperImage = loadImage('images/paper.jpg');
-        flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-30.png');
+        //flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-30.png');
+        //flowerImage2 = loadImage('images/flowers/PNG/GB_ELEMENT-30-3.png');
+        flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-40-1.png');
+        flowerImage2 = loadImage('images/flowers/PNG/GB_ELEMENT-40-2.png');
+
         bunnyImage1 = loadImage('images/rabbits/PNG/bunny-ponder.png');
         bunnyImage2 = loadImage('images/rabbits/PNG/bunny-sit.png');
 
-        this.moonBase = createGraphics(moonSize*2+5, moonSize*2+5);
+        this.moonBase = createGraphics(moonSize+5, moonSize+5);
         this.moonBase.fill('rgba(0, 0, 0, 1)');
         this.moonBase.ellipseMode(CORNER);
 
-        this.flowerLayer = createGraphics(moonSize*4, moonSize*4);
+        this.flowerLayer = createGraphics(grid*10, grid*10);
         this.flowerLayer.noStroke();
         this.flowerLayer.fill('rgba(0, 0, 0, 1)');
 
@@ -60,24 +64,27 @@ function BigMoon() {
         pop();
 
         noStroke();
+        
+        for (let j = 0; j < 1; ++j)
+        {
+            for (let i = 0; i < 20; ++i)
+            {
+                var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
+                var flowerY = height/2+grid*(j+1);
+                this.drawFlower(flowerX, flowerY, i + j);
+            }
+        }
+
         this.drawMoon(width/2, height/2);
-
-        push();
-        utils.glow(color(0, 0, 0), 12, 0, 0);
-        this.flowerLayer.clear();
-        tint(colorFlower);
-
-        utils.noGlow();
-        pop();
 
         push();
         utils.glow(colorOutline, 0, 1, 1);
         this.flowerLayer.clear();
 
-        this.flowerLayer.image(bunnyImage1, 0, 0, moonSize*5, moonSize*5);
-        var bunSize = moonSize * 0.6;
+        this.flowerLayer.image(bunnyImage1, 0, 0, grid*10, grid*10);
+        var bunSize = grid * 8;
         var bunX = width/2+grid*4;
-        var bunY = height/2-grid*1;
+        var bunY = height/2-grid*2;
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
         utils.glow(colorOutline, 0, -1, -1);
@@ -85,9 +92,9 @@ function BigMoon() {
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
         this.flowerLayer.clear();
-        this.flowerLayer.image(bunnyImage2, 0, 0, moonSize*5, moonSize*5);
+        this.flowerLayer.image(bunnyImage2, 0, 0, grid*10, grid*10);
         bunX = width/2-grid*12;
-        bunY = height/2-grid*1;
+        bunY = height/2-grid*2;
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
         utils.glow(colorOutline, 0, -1, -1);
@@ -95,8 +102,30 @@ function BigMoon() {
         image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
 
 
+        for (let j = 1; j < 3; ++j)
+        {
+            for (let i = 0; i < 20; ++i)
+            {
+                var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
+                var flowerY = height/2+grid*(j+1);
+                this.drawFlower(flowerX, flowerY, i + j);
+            }
+        }
+
         utils.noGlow();
         pop();
+    }
+
+    this.drawFlower = (x, y, i) => {
+        utils.noGlow();
+        var ran = 1;//random(0, 1);
+        var ranImage = flowerImage2;
+        if (ran > 0.5) {
+            ranImage = flowerImage1;
+        }
+        this.flowerLayer.clear();
+        utils.addRotatedImage(this.flowerLayer, ranImage, i); 
+        image(this.flowerLayer, x, y, grid*3, grid*3);
     }
 
 
@@ -110,7 +139,7 @@ function BigMoon() {
         this.moonBase.fill(255);
         this.moonBase.circle(0, 0, size+1);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
-        this.moonBase.image(paperImage, 0, 0, moonSize*2, moonSize*2);
+        this.moonBase.image(paperImage, 0, 0, size, size);
         this.moonBase.pop();
 
         this.moonBase.push();
@@ -121,6 +150,6 @@ function BigMoon() {
         this.moonBase.circle(0, 0, (size)+3);
         this.moonBase.pop();
 
-        image(this.moonBase, x-size/2, y-size/2, size, size);
+        image(this.moonBase, x-size/2, y-size*0.2, size, size);
     }
 }
