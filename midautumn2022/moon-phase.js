@@ -35,6 +35,8 @@ function Phases() {
         branchImage1 = loadImage('images/leaves07.png');
         branchImage2 = loadImage('images/leaves01.png');
         branchImage3 = loadImage('images/leaves03.png');
+        branchImage4 = loadImage('images/leaves08.png');
+
 
         this.moonBase = createGraphics(moonSize, moonSize);
         this.moonBase.noStroke();
@@ -44,7 +46,7 @@ function Phases() {
         this.moonMasked.noStroke();
         this.moonMasked.fill('rgba(0, 0, 0, 1)');
 
-        this.flowerLayer = createGraphics(moonSize*2, moonSize*2);
+        this.flowerLayer = createGraphics(moonSize*4, moonSize*4);
         this.flowerLayer.noStroke();
         this.flowerLayer.fill('rgba(0, 0, 0, 1)');
 
@@ -79,9 +81,18 @@ function Phases() {
         utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI);
         image(this.flowerLayer, width-grid*5.8, -grid*5, flowerSize, flowerSize);
 
-        flowerSize = grid * 2.5;
-        utils.addRotatedImage(this.flowerLayer, branchImage2, Math.PI*0.95);
-        image(this.flowerLayer, grid*3.5, -grid*0.65, flowerSize, flowerSize);        
+        flowerSize = grid * 8;
+        utils.addRotatedImage(this.flowerLayer, branchImage4, -Math.PI*0.35);
+        image(this.flowerLayer, grid*2.5, -grid*4, flowerSize, flowerSize);
+
+
+        flowerSize = grid * 1;
+        utils.addRotatedImage(this.flowerLayer, branchImage3, -Math.PI*0.05);
+        image(this.flowerLayer, grid*8, -grid*0.2, flowerSize, flowerSize);
+
+        flowerSize = grid * 10;
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.53);
+        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.52, flowerSize, flowerSize);    
 
         utils.noGlow();
         pop();
@@ -100,7 +111,6 @@ function Phases() {
             circle(x, y, moonSize);
 
             this.drawMoon(x, y, moonSize / 2, i * 0.1445);
-            utils.noGlow();
         }
 
         push();
@@ -110,11 +120,7 @@ function Phases() {
 
         var flowerSize = grid * 7;
         utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.06);
-        image(this.flowerLayer, -grid*1.7, grid * 0.005, flowerSize, flowerSize);   
-
-        flowerSize = grid * 8;
-        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.55);
-        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.55, flowerSize, flowerSize);    
+        image(this.flowerLayer, -grid*1.7, grid * 0.004, flowerSize, flowerSize);   
 
         flowerSize = grid * 1.2;
         utils.addRotatedImage(this.flowerLayer, branchImage3, Math.PI*0.55);
