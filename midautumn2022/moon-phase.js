@@ -32,7 +32,6 @@ function Phases() {
         moonImageBlue = loadImage('images/moon-dithered-blue2.png');
 
         paperImage = loadImage('images/parchment.jpg');
-        flowerImage1 = loadImage('images/flower01-white.png');
 
         branchImage1 = loadImage('images/leaves07.png');
         branchImage2 = loadImage('images/leaves01.png');

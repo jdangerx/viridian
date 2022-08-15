@@ -24,7 +24,6 @@ function setup() {
     mgr.addScene(Mooncakes);
     mgr.addScene(Phases);
     mgr.addScene(Squigglies);
-    mgr.addScene(RisoTest);
     mgr.addScene(RisoTestJohn);
     mgr.addScene(MaskTest);
     mgr.addScene(GlowTest);
@@ -56,8 +55,8 @@ function keyPressed() {
             mgr.showScene(Phases);
             break;
         case '4':
-            console.log('Switching to Riso.')
-            mgr.showScene(RisoTest);
+            console.log('Switching to Mountains.')
+            mgr.showScene(Mountains);
             break;
         case '5':
             console.log('Switching to Riso John.')
