@@ -3,6 +3,7 @@ function Phases() {
     let moonImageBlue;
     let paperImage;
     let moonSize;
+    let strokeWidth;
     let colorMoon = color(252, 246, 200, 255);
     let colorMoonShadow = color(210, 210, 230, 70);
 
@@ -20,8 +21,9 @@ function Phases() {
         colorDarkTransparent = color(212, 97.6, 32.5, 105);
         colorDarker = color(221, 66.7, 34.1, 255);
         colorBG = color(199, 94.9, 61.6, 255);
-        colorFlower = color(349, 61.8, 69.8);
+        colorFlower = color(206, 97.8, 47);
 
+        strokeWidth = 5;
         moonSize = utils.roundUpNearest10(grid * 2.75);
         threshold = 128;
         pixelDensity(1);
@@ -73,7 +75,7 @@ function Phases() {
         noStroke();
 
         push();
-        utils.glow(colorDarker, 0, 2, 2);
+        utils.glow(colorDarker, 0, strokeWidth, strokeWidth);
         this.flowerLayer.clear();
         tint(colorFlower);
 
@@ -92,10 +94,6 @@ function Phases() {
         flowerSize = grid * 1;
         utils.addRotatedImage(this.flowerLayer, branchImage3, -Math.PI*0.05);
         image(this.flowerLayer, grid*8, -grid*0.2, flowerSize, flowerSize);
-
-        flowerSize = grid * 10;
-        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.53);
-        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.52, flowerSize, flowerSize);    
 
         utils.noGlow();
         pop();
@@ -117,7 +115,7 @@ function Phases() {
         }
 
         push();
-        utils.glow(colorDarker, 0, 2, 2);
+        utils.glow(colorDarker, 0, strokeWidth, strokeWidth);
         this.flowerLayer.clear();
         tint(colorFlower);
 
@@ -127,7 +125,11 @@ function Phases() {
 
         flowerSize = grid * 1.2;
         utils.addRotatedImage(this.flowerLayer, branchImage3, Math.PI*0.55);
-        image(this.flowerLayer, width-flowerSize*0.8, flowerSize*2, flowerSize, flowerSize);    
+        image(this.flowerLayer, width-flowerSize*0.8, flowerSize*2, flowerSize, flowerSize);
+        
+        flowerSize = grid * 10;
+        utils.addRotatedImage(this.flowerLayer, branchImage1, Math.PI*0.53);
+        image(this.flowerLayer, width-flowerSize, height - flowerSize*0.52, flowerSize, flowerSize);    
 
         utils.noGlow();
         pop();
