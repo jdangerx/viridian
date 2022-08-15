@@ -34,17 +34,15 @@ function MooncakeTest() {
                 mask: 0x11,
             },
             label: 'mooncake',
-            density: 0.003,
+            density: 0.01,
         }
-        for (let i = 0; i < 3; i++) {
-            const x = (i + 1) * width / 7;
-            const y = 20 * grid; // start below the world so we immediately reset with chaos
-            this.orbs.push(
-                Matter.Bodies.circle(x, y, radius * 1.3, orbOpts),
-            )
-            this.orbs.push(
-                Matter.Bodies.circle(x, y - 200, radius * 1.3, orbOpts),
-            )
+        nOrbs = 18;
+        for (let i = 0; i < nOrbs; i++) {
+            const x = random(2 * grid, 30 * grid);
+            const y = -i * 5 * grid; // line em up so we come in in a stream
+            orb = Matter.Bodies.circle(x, y, radius * 1.3, orbOpts);
+            orb.resets = 0;
+            this.orbs.push(orb);
         }
 
         this.activeClusters = [];
@@ -78,8 +76,8 @@ function MooncakeTest() {
             Matter.Constraint.create({
                 bodyA: body,
                 pointB: Matter.Vector.create(body.position.x, body.position.y),
-                stiffness: 0.01,
-                damping: 0.1
+                stiffness: 0.2,
+                damping: 0.5,
             })
         )
 
@@ -200,6 +198,10 @@ function MooncakeTest() {
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
             if (orb.position.y > 12 * grid) {
+                orb.resets += 1;
+                if (orb.resets > 8) {
+                    Matter.Composite.remove(this.engine.world, orb);
+                }
                 Matter.Body.setPosition(orb, createVector(random() * grid * 32, (random() + 0.5) * -4 * grid));
                 Matter.Body.applyForce(orb, createVector(grid * 16, 0), createVector(0.4 * (random() - 0.5), 0));
             }
