@@ -1,14 +1,32 @@
+class FallingFlower {
+    constructor(x, y, radius, rotation, rotationScale) {
+        this.x = x;
+        this.y = y;
+        this.velocityY = 0.03;
+        this.radius = radius;
+        this.rotation = rotation
+
+        var x = random(0, 1);
+        this.rotationScale = rotationScale;
+    }
+}
+
 function BigMoon() {
     let moonImage;
     let paperImage;
-    let moonSize;
     let bunnyImage1;
     let bunnyImage2;
+
+    let moonSize;
 
     let colorMoon;
     let colorDeepRed;
     let colorBG;
     let colorFlower = color(178, 68, 89);
+
+    let numFlowers = 18;
+    let flowerRadius = grid * 3;
+    let fallingFlowers = [];
 
     this.setup = () => {
 
@@ -22,6 +40,19 @@ function BigMoon() {
         moonSize = utils.roundUpNearest10(grid * 10);
         threshold = 128;
         pixelDensity(1);
+
+        for (let i = 0; i < numFlowers; ++i)
+        {
+            var rotationScale = random(-1, 1);
+    
+            var newFlower = new FallingFlower(
+                (i+random(-0.2, 0.2))*(flowerRadius * 1.1), 
+                random(-height*2, 0), 
+                flowerRadius,
+                i * 0.7, 
+                rotationScale);
+            fallingFlowers[i] = newFlower;
+        }
 
         moonImage = loadImage('images/moonRound.png');
 
@@ -75,18 +106,23 @@ function BigMoon() {
                 }
                 var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
                 var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j, deleteRandomly);
+                this.drawFlower(flowerX, flowerY, i + j, grid*3, deleteRandomly);
             }
         }
 
-        this.drawMoon(width/2, height/2);
+        this.drawMoon(width/2, height/2-grid*.5);
+
+        for (let i = 0; i < numFlowers; ++i)
+        {
+            this.updateFlower(fallingFlowers[i]);
+        }
 
         push();
         this.flowerLayer.clear();
 
         this.flowerLayer.image(bunnyImage1, 0, 0, grid*10, grid*10);
-        var bunSize = grid * 8;
-        var bunX = width/2+grid*4;
+        var bunSize = grid * 7;
+        var bunX = width/2+grid*3.8;
         var bunY = height/2-grid*2;
 
         utils.glow(colorOutline, 0, 2, 0);
@@ -100,6 +136,7 @@ function BigMoon() {
 
         this.flowerLayer.clear();
         this.flowerLayer.image(bunnyImage2, 0, 0, grid*12, grid*12);
+        bunSize = grid * 8;
         bunX = width/2-grid*13;
         bunY = height/2-grid*3;
 
@@ -118,7 +155,7 @@ function BigMoon() {
             {
                 var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
                 var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j);
+                this.drawFlower(flowerX, flowerY, i + j, grid*3);
             }
         }
 
@@ -143,7 +180,7 @@ function BigMoon() {
             {
                 var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
                 var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j);
+                this.drawFlower(flowerX, flowerY, i + j, grid*3);
             }
         }
 
@@ -151,7 +188,20 @@ function BigMoon() {
         pop();
     }
 
-    this.drawFlower = (x, y, i, deleteRandomly=false) => {
+    this.updateFlower = () => {
+        for (let i=0; i < numFlowers; ++i)
+        {
+            var f = fallingFlowers[i];
+            f.y += f.velocityY;
+            if (f.y > height) {
+                f.y -= height * 2;
+            }
+            f.rotation += 0.001 * f.rotationScale;
+            this.drawFlower(f.x, f.y, f.rotation, f.radius, false);
+        }
+    }
+
+    this.drawFlower = (x, y, rotation, size, deleteRandomly=false) => {
         utils.noGlow();
 
         var ran = random(0, 1);
@@ -170,8 +220,8 @@ function BigMoon() {
         }
 
         this.flowerLayer.clear();
-        utils.addRotatedImage(this.flowerLayer, ranImage, i); 
-        image(this.flowerLayer, x, y, grid*3, grid*3);
+        utils.addRotatedImage(this.flowerLayer, ranImage, rotation); 
+        image(this.flowerLayer, x, y, size, size);
     }
 
 
