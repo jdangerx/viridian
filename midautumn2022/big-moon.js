@@ -18,6 +18,7 @@ function BigMoon() {
     let bunnyImage2;
 
     let moonSize;
+    let strokeWidth = 8;
 
     let colorMoon;
     let colorDeepRed;
@@ -38,6 +39,7 @@ function BigMoon() {
         colorMoon = (23, 44.2, 94.1, 255);
 
         moonSize = utils.roundUpNearest10(grid * 10);
+        this.strokeWidth = 4;
         threshold = 128;
         pixelDensity(1);
 
@@ -66,8 +68,7 @@ function BigMoon() {
         bunnyImage2 = loadImage('images/rabbits/PNG/bunny-sit.png');
         bunnyImage3 = loadImage('images/rabbits/PNG/bunny-back.png');
 
-
-        this.moonBase = createGraphics(moonSize+5, moonSize+5);
+        this.moonBase = createGraphics(moonSize+this.strokeWidth+2, moonSize+this.strokeWidth+2);
         this.moonBase.fill('rgba(0, 0, 0, 1)');
         this.moonBase.ellipseMode(CORNER);
 
@@ -118,36 +119,21 @@ function BigMoon() {
         }
 
         push();
-        this.flowerLayer.clear();
+        var glowStrokeWidth = this.strokeWidth + 3;
 
+        this.flowerLayer.clear();
         this.flowerLayer.image(bunnyImage1, 0, 0, grid*10, grid*10);
         var bunSize = grid * 7;
         var bunX = width/2+grid*3.8;
         var bunY = height/2-grid*2;
-
-        utils.glow(colorOutline, 0, 2, 0);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, -2, 0);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, 0, 2);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, 0, -2);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
         this.flowerLayer.clear();
         this.flowerLayer.image(bunnyImage2, 0, 0, grid*12, grid*12);
         bunSize = grid * 8;
         bunX = width/2-grid*13;
         bunY = height/2-grid*3;
-
-        utils.glow(colorOutline, 0, 2, 0);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, -2, 0);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, 0, 2);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, 0, -2);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
+        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
         for (let j = 1; j < 2; ++j)
         {
@@ -163,16 +149,7 @@ function BigMoon() {
         this.flowerLayer.image(bunnyImage3, 0, 0, grid*10, grid*10);
         bunX = width/2-grid*2;
         bunY = height/2-grid*0.7;
-
-        utils.glow(colorOutline, 0, 2, 0);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, -2, 0);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, 0, 2);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-        utils.glow(colorOutline, 0, 0, -2);
-        image(this.flowerLayer, bunX, bunY, bunSize, bunSize);
-
+        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
         for (let j = 2; j < 3; ++j)
         {
@@ -186,6 +163,17 @@ function BigMoon() {
 
         utils.noGlow();
         pop();
+    }
+
+    this.drawWithOutline = (ctx, x, y, color, glowStrokeWidth, size) => {
+        utils.glow(color, 0, glowStrokeWidth, 0);
+        image(ctx, x, y, size, size);
+        utils.glow(color, 0, -glowStrokeWidth, 0);
+        image(ctx, x, y, size, size);
+        utils.glow(color, 0, 0, glowStrokeWidth);
+        image(ctx, x, y, size, size);
+        utils.glow(color, 0, 0, -glowStrokeWidth);
+        image(ctx, x, y, size, size);
     }
 
     this.updateFlower = () => {
@@ -233,17 +221,17 @@ function BigMoon() {
         this.moonBase.push();
         this.moonBase.clear();
         this.moonBase.fill(255);
-        this.moonBase.circle(0, 0, moonSize+1);
+        this.moonBase.circle(this.strokeWidth, this.strokeWidth, moonSize+1);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
-        this.moonBase.image(paperImage, 0, 0, moonSize*2, moonSize*2);
+        this.moonBase.image(paperImage, strokeWidth, strokeWidth, moonSize*2, moonSize*2);
         this.moonBase.pop();
 
         this.moonBase.push();
         this.moonBase.noFill();
         this.moonBase.stroke(colorOutline);
-        this.moonBase.strokeWeight(2);
+        this.moonBase.strokeWeight(strokeWidth);
 
-        this.moonBase.circle(0, 0, (moonSize)+3);
+        this.moonBase.circle(this.strokeWidth, this.strokeWidth, (moonSize));
         this.moonBase.pop();
 
         image(this.moonBase, x-size/2, y-size*0.3, size, size);
