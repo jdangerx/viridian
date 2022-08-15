@@ -1,13 +1,13 @@
 class Cloud {
     constructor(x, y, xRadius, yRadius) {
-        this.x = x;
-        this.y = y;
+        this.position = { x: x, y: y };
         this.xRadius = xRadius;
         this.yRadius = yRadius;
     }
 }
 
-NEW_CLOUDS = true;
+NEW_CLOUDS = false;
+// set SAVE_CLOUDS to true in the console and re-enter the scene to trigger cloud-save
 SAVE_CLOUDS = false;
 
 function MooncakeTest() {
@@ -15,19 +15,10 @@ function MooncakeTest() {
     this.setup = () => {
         this.bgImage = loadImage('images/clouds.png')
 
-        // pink ish palette
-        //this.bgColor = color(242, 201, 222);
-        //this.bgCloudFillColor = color(255);
-        //this.bgCloudStrokeColor = color(255, 210, 210);
-
         // blue ish palette
         this.bgColor = color(141, 208, 255);
-        this.bgCloudFillColor = color(255);
+        this.bgCloudFillColor = color(240, 240, 255);
         this.bgCloudStrokeColor = this.bgColor;
-
-        // (255, 255, 255) * 0.5 + (200, 0, 0) * 0.5 => (228, 128, 128)
-        // could maybe make a more robust alpha calculator
-        // just using rgba(255, 255, 255, 0.5)leads to lots of little intersections that have been double-drawn
 
         this.t = millis();
         this.delta = 1000 / 60;
@@ -36,58 +27,75 @@ function MooncakeTest() {
         this.orbs = [];
         const orbOpts = {
             restitution: 0.9,
-            friction: 0.8,
-            frictionAir: 0.15
+            friction: 0.5,
+            frictionAir: 0.15,
+            collisionFilter: {
+                category: 0x10,
+                mask: 0x11,
+            },
+            label: 'mooncake',
+            density: 0.01,
         }
-        for (let i = 0; i < 10; i++) {
-            const x = (i + 1) * width / 7;
-            const y = 20 * grid; // start below the world so we immediately reset with chaos
-            this.orbs.push(
-                Matter.Bodies.circle(x, y, radius * 1.3, orbOpts),
-            )
-            this.orbs.push(
-                Matter.Bodies.circle(x, y - 200, radius * 1.3, orbOpts),
-            )
+        nOrbs = 18;
+        for (let i = 0; i < nOrbs; i++) {
+            const x = random(2 * grid, 30 * grid);
+            const y = -i * 5 * grid; // line em up so we come in in a stream
+            orb = Matter.Bodies.circle(x, y, radius * 1.3, orbOpts);
+            orb.resets = 0;
+            this.orbs.push(orb);
         }
 
-        this.activeClouds = [];
+        this.activeClusters = [];
 
+        clusterX = (t) => 5 * grid + 10 * grid * t + noise(t) * grid;
+        clusterY = (t) => 4 * grid + grid * t + 0.5 * noise(t) * grid;
         const nClusters = 3;
+        const cloudOpts = {
+            restitution: 0.7,
+            friction: 0.7,
+            collisionFilter: { category: 0x01, mask: 0x10 },
+            label: 'cloud'
+        };
         for (let i = 0; i < nClusters; i++) {
-            const unit = width / nClusters;
-            const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 8 + jitter * grid };
+            const clusterCenter = { x: clusterX(i), y: clusterY(i) };
             const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 2.0, grid * 1.5, 2);
-            this.activeClouds.push(...cluster);
+            const bodies = cluster.map((cloud) =>
+                this.matterEllipse(cloud.position.x,
+                    cloud.position.y,
+                    cloud.xRadius,
+                    cloud.yRadius,
+                    cloudOpts
+                )
+            );
+            this.activeClusters.push(bodies);
         }
 
-        const cloudOpts = { isStatic: true, restitution: 0.7 };
-        const cloudBodies = this.activeClouds.map((cloud) =>
-            this.matterEllipse(
-                cloud.x,
-                cloud.y,
-                cloud.xRadius,
-                cloud.yRadius,
-                cloudOpts
-            )
-        );
+        cloudBodies = this.activeClusters.flatMap((x) => x);
+
+        const cloudSprings = cloudBodies.map((body) =>
+            Matter.Constraint.create({
+                bodyA: body,
+                pointB: Matter.Vector.create(body.position.x, body.position.y),
+                stiffness: 0.2,
+                damping: 0.5,
+            })
+        )
 
 
         bodies = [...this.orbs, ...cloudBodies];
+
         Matter.Composite.add(this.engine.world, bodies);
+        Matter.Composite.add(this.engine.world, cloudSprings);
 
         this.mc = new Mooncakes();
         this.mc._setup(2 * radius);
 
         if (NEW_CLOUDS) {
-            bgClouds = this.newBackground();
-            this.bgClouds = bgClouds;
+            this.bgClusters = this.newBackground();
         }
         if (SAVE_CLOUDS) {
             background(this.bgColor);
-            bgClouds.forEach((cloud) => {
-                this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
-            });
+            this.bgClusters.forEach(this.drawCluster);
             // after saving, have to move 'clouds.png' to images subdir
             save('clouds.png');
             // need to toggle this because otherwise we double-save as a side-effect of this.enter();
@@ -96,32 +104,18 @@ function MooncakeTest() {
     }
 
     this.newBackground = () => {
-        const bgClusters = 5;
-        const bgClouds = [];
+        const bgClusters = [];
 
-        for (let i = 0; i < 2; i++) {
-            const unit = width / bgClusters;
-            const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (3 + i) + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, 2);
-            bgClouds.push(...cluster);
-        }
-        for (let i = 0; i < 4; i++) {
-            const unit = width / bgClusters;
-            const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * (4 + i * 2) + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, 2);
-            bgClouds.push(...cluster);
-        }
+        clusterX = (t) => 3 * grid + 8 * grid * t + noise(t) * grid;
+        clusterY = (t) => 2 * grid + grid * t + 0.5 * noise(t) * grid;
 
-        for (let i = 0; i < bgClusters; i++) {
-            const unit = width / bgClusters;
-            const jitter = noise(unit * i);
-            const clusterCenter = { x: unit * i + jitter * unit, y: grid * 6 + jitter * grid };
-            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y + i, grid * 3, grid * 2, 2);
-            bgClouds.push(...cluster);
+        const nClusters = 4;
+        for (let i = 0; i < nClusters; i++) {
+            const clusterCenter = { x: clusterX(i), y: clusterY(i) };
+            const cluster = this.cloudCluster(clusterCenter.x, clusterCenter.y, grid * 3, grid * 2, 2);
+            bgClusters.push(cluster);
         }
-        return bgClouds;
+        return bgClusters;
     }
 
     this.cloudCluster = (x, y, xRadius, yRadius, nLevels) => {
@@ -138,12 +132,12 @@ function MooncakeTest() {
         if (nLevels == 0) {
             return clouds;
         } else {
+            const xOffset = xRadius * random(0.6, 0.9);
+            const yOffset = yRadius * (random(-0.2, 0.3) + nLevels * 0.15);
             for (let i = 0; i < 2; i++) {
-                decay = random(0.7, 0.9);
-                const xOffset = xRadius * random(0.6, 0.9) * Math.pow(-1, i);
-                const yOffset = yRadius * random(-0.2, 0.5);
+                decay = random(0.8, 0.9);
                 clouds.push(...this.cloudCluster(
-                    x + xOffset,
+                    x + xOffset * Math.pow(-1, i),
                     y + yOffset,
                     xRadius * decay,
                     yRadius * decay,
@@ -151,6 +145,7 @@ function MooncakeTest() {
                 ));
             }
         }
+        clouds.sort((c1, c2) => c1.y - c2.y);
         return clouds;
     }
 
@@ -161,8 +156,8 @@ function MooncakeTest() {
 
     this.matterEllipse = (x, y, xRad, yRad, opts) => {
         const circ = Matter.Bodies.circle(x, y, xRad, opts);
-        circ._width = xRad * 2;
-        circ._height = yRad * 2;
+        circ.xRadius = xRad;
+        circ.yRadius = yRad;
         const yscale = yRad / xRad;
         Matter.Body.scale(circ, 1, yscale);
         return circ;
@@ -177,17 +172,24 @@ function MooncakeTest() {
         const cloudHeight = cloud.yRadius * 2;
         const numIters = (min(cloudWidth, cloudHeight) / stepSize + 0.8) | 0;
         for (let i = 0; i < numIters; i++) {
-            ellipse(cloud.x, cloud.y, cloudWidth - i * stepSize, cloudHeight - i * stepSize);
+            ellipse(cloud.position.x, cloud.position.y, cloudWidth - i * stepSize, cloudHeight - i * stepSize);
         }
         pop();
+    }
+
+    this.drawCluster = (cluster) => {
+        cluster.forEach((cloud) => {
+            // pull the shadow into its own forEach if you want to do the shadow on a per-cluster basis
+            const shadow = new Cloud(cloud.position.x + grid * 0.08, cloud.position.y + grid * 0.05, cloud.xRadius, cloud.yRadius);
+            this.drawCloud(shadow, grid * 0.3, color('rgba(160, 160, 200, 0.5)'), color('rgba(160, 160, 200, 0.5)'));
+            this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
+        });
     }
 
     this.draw = () => {
         if (NEW_CLOUDS) {
             background(this.bgColor);
-            this.bgClouds.forEach((cloud) => {
-                this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
-            });
+            this.bgClusters.forEach(this.drawCluster)
         } else {
             image(this.bgImage, 0, 0, width, height);
         }
@@ -196,6 +198,10 @@ function MooncakeTest() {
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
             if (orb.position.y > 12 * grid) {
+                orb.resets += 1;
+                if (orb.resets > 8) {
+                    Matter.Composite.remove(this.engine.world, orb);
+                }
                 Matter.Body.setPosition(orb, createVector(random() * grid * 32, (random() + 0.5) * -4 * grid));
                 Matter.Body.applyForce(orb, createVector(grid * 16, 0), createVector(0.4 * (random() - 0.5), 0));
             }
@@ -218,9 +224,7 @@ function MooncakeTest() {
             pop();
         });
 
-        this.activeClouds.forEach((cloud) => {
-            this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
-        });
+        this.activeClusters.forEach(this.drawCluster);
 
     }
 }
