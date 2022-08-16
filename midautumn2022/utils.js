@@ -105,6 +105,18 @@ const utils = {
         ctx.pop();
     },
 
+    addRotatedImageOffset: (ctx, newImage, rotationAmt, pivotY) => 
+    {
+        ctx.push();
+        var imageSize = ctx.width/5;
+        ctx.translate(ctx.width/2, ctx.height/2);
+        ctx.fill(255, 0, 0);
+        ctx.circle(0, 0, 5);
+        ctx.rotate(rotationAmt % TAU);
+        ctx.image(newImage, -imageSize, -imageSize+pivotY, imageSize*2, imageSize*2);
+        ctx.pop();
+    },
+
     gridLines: (color) => {
         push();
         if (color === undefined) {

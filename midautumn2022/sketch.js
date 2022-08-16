@@ -29,8 +29,9 @@ function setup() {
     mgr.addScene(GlowTest);
     mgr.addScene(BigMoon);
     mgr.addScene(MooncakeTest);
+    mgr.addScene(Mountains);
 
-    mgr.showScene(Squigglies);
+    mgr.showScene(Mountains);
     pop();
 }
 
