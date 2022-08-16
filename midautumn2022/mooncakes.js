@@ -151,7 +151,7 @@ function Mooncakes() {
 
     this.drawMooncake = (x, y, { pattern, scallop }) => {
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
-        image(pattern, x - pattern.width / 2, y - pattern.height / 2);
+        //image(pattern, x - pattern.width / 2, y - pattern.height / 2);
     }
 
     this.drawSide = (x, y, { side }) => {

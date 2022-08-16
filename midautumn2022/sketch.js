@@ -12,6 +12,7 @@ P5Capture.setDefaultOptions({
     format: "webm",
     framerate: 60,
     width: 2000,
+    disableUi: true
 });
 
 function setup() {
@@ -31,7 +32,7 @@ function setup() {
     mgr.addScene(MooncakeTest);
     mgr.addScene(Mountains);
 
-    mgr.showScene(Mountains);
+    mgr.showScene(MooncakeTest);
     pop();
 }
 
