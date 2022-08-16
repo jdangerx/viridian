@@ -126,14 +126,14 @@ function BigMoon() {
         var bunSize = grid * 7;
         var bunX = width/2+grid*3.8;
         var bunY = height/2-grid*2;
-        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
+        utils.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
         this.flowerLayer.clear();
         this.flowerLayer.image(bunnyImage2, 0, 0, grid*12, grid*12);
         bunSize = grid * 8;
         bunX = width/2-grid*13;
         bunY = height/2-grid*3;
-        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
+        utils.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
         for (let j = 1; j < 2; ++j)
         {
@@ -149,7 +149,7 @@ function BigMoon() {
         this.flowerLayer.image(bunnyImage3, 0, 0, grid*10, grid*10);
         bunX = width/2-grid*2;
         bunY = height/2-grid*0.7;
-        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
+        utils.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
         for (let j = 2; j < 3; ++j)
         {
@@ -163,17 +163,6 @@ function BigMoon() {
 
         utils.noGlow();
         pop();
-    }
-
-    this.drawWithOutline = (ctx, x, y, color, glowStrokeWidth, size) => {
-        utils.glow(color, 0, glowStrokeWidth, 0);
-        image(ctx, x, y, size, size);
-        utils.glow(color, 0, -glowStrokeWidth, 0);
-        image(ctx, x, y, size, size);
-        utils.glow(color, 0, 0, glowStrokeWidth);
-        image(ctx, x, y, size, size);
-        utils.glow(color, 0, 0, -glowStrokeWidth);
-        image(ctx, x, y, size, size);
     }
 
     this.updateFlower = () => {

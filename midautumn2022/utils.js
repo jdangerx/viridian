@@ -134,6 +134,17 @@ const utils = {
 
     roundUpNearest10: (num) => {
         return Math.ceil(num / 10) * 10;
+    },
+
+    drawWithOutline: (ctx, x, y, color, glowStrokeWidth, size) => {
+        utils.glow(color, 0, glowStrokeWidth, 0);
+        image(ctx, x, y, size, size);
+        utils.glow(color, 0, -glowStrokeWidth, 0);
+        image(ctx, x, y, size, size);
+        utils.glow(color, 0, 0, glowStrokeWidth);
+        image(ctx, x, y, size, size);
+        utils.glow(color, 0, 0, -glowStrokeWidth);
+        image(ctx, x, y, size, size);
     }
 
 };

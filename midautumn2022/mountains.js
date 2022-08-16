@@ -104,10 +104,10 @@ function Mountains() {
         {
             for (let i = 0; i < 20; ++i)
             {
-                var mountainSizeX = grid * 8;
-                var flowerX = ((i-1) - (j*0.7)) * mountainSizeX * 0.9;
-                var flowerY = grid * 3.3 + grid*(j+1)*1.1;
-                this.drawMountain(flowerX, flowerY, 0, mountainSizeX);
+                var mountainSizeX = grid * 6;
+                var x = ((i-1+cos(frameCount/200)*0.5*Math.pow(-1, j)) - (j*0.7)) * mountainSizeX * 1.4;
+                var y = grid * 3.5 + grid*(j+1)*1.3;
+                this.drawMountain(x, y, 0, mountainSizeX);
             }
         }
 
@@ -166,8 +166,8 @@ function Mountains() {
 
         this.mountainLayer.clear();
         utils.addRotatedImage(this.mountainLayer, ranImage, rotation); 
-        tint(colorMountain);
-        image(this.mountainLayer, x, y, size*1.4, size);
+        //tint(colorMountain);
+        image(this.mountainLayer, x, y, size*2, size);
 
         utils.noGlow();
         pop();
