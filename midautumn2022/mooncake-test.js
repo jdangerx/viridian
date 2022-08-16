@@ -13,7 +13,8 @@ SAVE_CLOUDS = false;
 function MooncakeTest() {
     // just testing importing of mooncakes stuff for now
     this.setup = () => {
-        this.bgImage = loadImage('images/clouds.png')
+        this.bgImage = loadImage('images/clouds.png');
+        this.bgTexture = loadImage('images/parchment.jpg');
 
         // blue ish palette
         this.bgColor = color(141, 208, 255);
@@ -53,9 +54,9 @@ function MooncakeTest() {
         };
 
         const activeClusterCenters = [
-            { x: 3, y: 5.5, w: 2.9, h: 1.9 },
-            { x: 15.5, y: 7.5, w: 3.1, h: 2.2 },
-            { x: 28, y: 6.5, w: 2.8, h: 1.7 },
+            { x: 1.5, y: 4.5, w: 3.1, h: 2.1 },
+            { x: 14, y: 8.0, w: 3.3, h: 2.4 },
+            { x: 28, y: 7.5, w: 3.0, h: 1.9 },
         ]
         const activeClusters = this.genClusters(activeClusterCenters);
         this.activeClusters = activeClusters.map((cluster) =>
@@ -79,7 +80,7 @@ function MooncakeTest() {
                     bodyA: body,
                     pointA: Matter.Vector.create(dx, 0),
                     pointB: Matter.Vector.create(body.position.x + dx, body.position.y),
-                    stiffness: 0.05,
+                    stiffness: 0.02,
                     damping: 0.5,
                 }))
         });
@@ -107,7 +108,7 @@ function MooncakeTest() {
 
         // debug renderer
 
-        const render = Matter.Render.create({
+        this.render = Matter.Render.create({
             element: document.body,
             engine: this.engine,
             options: {
@@ -115,7 +116,8 @@ function MooncakeTest() {
                 height: 9 * grid
             }
         });
-        Matter.Render.run(render);
+        Matter.Render.run(this.render);
+        console.log(this.render);
 
     }
 
@@ -126,7 +128,14 @@ function MooncakeTest() {
 
     this.newBackground = () => {
         clusterCenters = [
-            // { x: 2, y: 5, w: 2, h: 1.5 },
+            { x: 1, y: 3, w: 3, h: 2.5 },
+            { x: 2, y: 7, w: 3, h: 2.5 },
+            { x: 7, y: 6, w: 3, h: 2.5 },
+            { x: 7, y: 9, w: 3, h: 2.5 },
+            { x: 15, y: 7, w: 3.5, h: 2.7 },
+            { x: 23, y: 7, w: 3, h: 2.0 },
+            { x: 29, y: 6, w: 3, h: 2.0 },
+            { x: 29, y: 9, w: 3, h: 2.0 },
         ];
         return this.genClusters(clusterCenters);
     }
@@ -154,6 +163,10 @@ function MooncakeTest() {
 
     this.enter = () => {
         Matter.Composite.clear(this.engine.world);
+        if (this.render) {
+            this.render.canvas.remove();
+
+        }
         this.setup();
     }
 
@@ -166,10 +179,11 @@ function MooncakeTest() {
         return circ;
     }
 
-    this.drawCloud = (cloud, stepSize, fillColor, strokeColor) => {
+    this.drawCloud = (cloud, stepSize, fillColor, strokeColor, weightRatio) => {
         push();
         stroke(strokeColor);
-        strokeWeight(stepSize * 0.12);
+        weight = weightRatio !== undefined ? stepSize * weightRatio : stepSize * 0.12;
+        strokeWeight(weight);
         fill(fillColor);
         const cloudWidth = cloud.xRadius * 2;
         const cloudHeight = cloud.yRadius * 2;
@@ -182,18 +196,34 @@ function MooncakeTest() {
 
     this.drawCluster = (cluster) => {
         cluster.forEach((cloud) => {
-            this.drawCloud(cloud, grid * 0.3, this.bgCloudFillColor, this.bgCloudStrokeColor);
+            this.drawCloud(cloud, grid * 0.5, this.bgCloudFillColor, this.bgCloudStrokeColor, 0.14);
         });
+    }
+
+    this.orientalTexture = (radius) => {
+        const rowHeight = radius * sin(TAU / 12);
+        const nRows = height / rowHeight + 1;
+        const nCols = width / radius + 1;
+        for (let i = 0; i < nRows; i++) {
+            for (let j = 0; j < nCols; j += 2) {
+                const y = i * rowHeight;
+                const x = (j + i % 2) * radius;
+                const cloud = new Cloud(x, y, radius, radius);
+                this.drawCloud(cloud, 0.4 * radius, this.bgColor, color(138, 205, 252), 0.2);
+            }
+        }
     }
 
     this.draw = () => {
         if (NEW_CLOUDS) {
             background(this.bgColor);
+            this.orientalTexture(1.0 * grid);
+            // utils.gridLines();
+
             this.bgClusters.forEach(this.drawCluster);
         } else {
-            image(this.bgImage, 0, 3 * grid, width, height);
+            image(this.bgImage, 0, 0, width, height);
         }
-
 
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
