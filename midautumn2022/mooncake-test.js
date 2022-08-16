@@ -19,7 +19,7 @@ function MooncakeTest() {
         // blue ish palette
         this.bgColor = color(141, 208, 255);
         this.bgCloudFillColor = color(240, 240, 255);
-        this.bgCloudStrokeColor = color(171, 198, 245);
+        this.bgCloudStrokeColor = color(211, 218, 255);
 
         this.t = millis();
         this.delta = 1000 / 60;
@@ -81,7 +81,7 @@ function MooncakeTest() {
                     pointA: Matter.Vector.create(dx, 0),
                     pointB: Matter.Vector.create(body.position.x + dx, body.position.y),
                     stiffness: 0.02,
-                    damping: 0.5,
+                    damping: 1.0,
                 }))
         });
 
@@ -196,7 +196,13 @@ function MooncakeTest() {
 
     this.drawCluster = (cluster) => {
         cluster.forEach((cloud) => {
-            this.drawCloud(cloud, grid * 0.5, this.bgCloudFillColor, this.bgCloudStrokeColor, 0.14);
+            this.drawCloud(
+                cloud,
+                grid * 0.7,
+                this.bgCloudFillColor,
+                this.bgCloudStrokeColor,
+                0.12
+            );
         });
     }
 
