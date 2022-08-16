@@ -12,6 +12,7 @@ P5Capture.setDefaultOptions({
     format: "webm",
     framerate: 60,
     width: 2000,
+    disableUi: true
 });
 
 function setup() {
@@ -30,7 +31,7 @@ function setup() {
     mgr.addScene(BigMoon);
     mgr.addScene(MooncakeTest);
 
-    mgr.showScene(Squigglies);
+    mgr.showScene(MooncakeTest);
     pop();
 }
 
