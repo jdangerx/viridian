@@ -1,15 +1,17 @@
 function Mountains() {
     let moonImage;
     let paperImage;
+    let mountainImage1;
     let bunnyImage1;
     let bunnyImage2;
 
     let moonSize;
-    let strokeWidth = 8;
+    let strokeWidth = 0;
 
     let colorMoon;
     let colorDeepRed;
     let colorBG;
+    let colorMountain;
     let colorFlower = color(178, 68, 89);
 
     let numFlowers = 18;
@@ -21,47 +23,38 @@ function Mountains() {
         colorMode(HSB, 360, 100, 100, 255);
 
         colorDeepRed = color(356, 81.8, 64.7, 255);
-        colorBG = color(23, 44.2, 94.1, 255);
+        colorBG = color(195, 56, 74, 255);
         colorOutline = color(17, 90, 42.7);
-        colorMoon = (23, 44.2, 94.1, 255);
+        colorMoon = color(38, 50, 98, 255);
+        colorMountain = color(119, 10, 69);
 
-        moonSize = utils.roundUpNearest10(grid * 10);
-        this.strokeWidth = 4;
+        moonSize = utils.roundUpNearest10(grid * 4.5);
+        this.strokeWidth = 0;
         threshold = 128;
         pixelDensity(1);
 
-        for (let i = 0; i < numFlowers; ++i)
-        {
-            var rotationScale = random(-1, 1);
-    
-            var newFlower = new FallingFlower(
-                (i+random(-0.2, 0.2))*(flowerRadius * 1.1), 
-                random(-height*2, 0), 
-                flowerRadius,
-                i * 0.7, 
-                rotationScale);
-            fallingFlowers[i] = newFlower;
-        }
+        //moonImage = loadImage('images/moonRound.png');
+        moonImage = loadImage("images/watercolor_texture_pack/10-1.jpg");
+        paperImage = loadImage("images/watercolor_texture_pack/10.jpg");
+        mountainImage1 = loadImage('images/water_color_mountains/background_6.png');
+        mountainImage2 = loadImage('images/water_color_mountains/background_7.png');
+        mountainImage3 = loadImage('images/water_color_mountains/background_2.png');
+        mountainImage4 = loadImage('images/water_color_mountains/background_2.png');
 
-        moonImage = loadImage('images/moonRound.png');
-
-        paperImage = loadImage('images/paper.jpg');
-        //flowerImage2 = loadImage('images/flowers/PNG/GB_ELEMENT-30-3.png');
-        flowerImage1 = loadImage('images/flowers/PNG/GB_ELEMENT-40-1.png');
-        flowerImage2 = loadImage('images/flowers/PNG/GB_ELEMENT-40-2.png');
-        flowerImage3 = loadImage('images/flowers/PNG/GB_ELEMENT-30.png');
-
-        bunnyImage1 = loadImage('images/rabbits/PNG/bunny-ponder.png');
+        bunnyImage1 = loadImage('images/rabbits/PNG/bunny-hop.png');
         bunnyImage2 = loadImage('images/rabbits/PNG/bunny-sit.png');
-        bunnyImage3 = loadImage('images/rabbits/PNG/bunny-back.png');
 
         this.moonBase = createGraphics(moonSize+this.strokeWidth+2, moonSize+this.strokeWidth+2);
         this.moonBase.fill('rgba(0, 0, 0, 1)');
         this.moonBase.ellipseMode(CORNER);
 
-        this.flowerLayer = createGraphics(grid*10, grid*10);
-        this.flowerLayer.noStroke();
-        this.flowerLayer.fill('rgba(0, 0, 0, 1)');
+        this.bunnyLayer = createGraphics(height, height);
+        this.bunnyLayer.noStroke();
+        this.bunnyLayer.fill('rgba(0, 0, 0, 1)');
+
+        this.mountainLayer = createGraphics(grid*10, grid*10);
+        this.mountainLayer.noStroke();
+        this.mountainLayer.fill('rgba(0, 0, 0, 1)');
 
         this.backgroundLayer = createGraphics(width, height);
         this.backgroundLayer.image(paperImage, 0, 0, paperImage.width, paperImage.height);
@@ -72,7 +65,7 @@ function Mountains() {
 
     this.draw = function () {
 
-        randomSeed(13);
+        randomSeed(12);
         background(colorBG);
 
         push();
@@ -82,69 +75,39 @@ function Mountains() {
         pop();
 
         noStroke();
-        
-        for (let j = -1; j < 1; ++j)
-        {
-            for (let i = 0; i < 20; ++i)
-            {
-                var deleteRandomly = false;
-                if (j < 0)
-                {
-                    deleteRandomly = true;
-                }
-                var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
-                var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j, grid*3, deleteRandomly);
-            }
-        }
+      
+        this.drawMoon(width/2, height/2);
 
-        this.drawMoon(width/2, height/2-grid*.5);
-
+        /*
         for (let i = 0; i < numFlowers; ++i)
         {
-            this.updateFlower(fallingFlowers[i]);
-        }
+            this.updateMountain(fallingFlowers[i]);
+        }*/
 
         push();
         var glowStrokeWidth = this.strokeWidth + 3;
 
-        this.flowerLayer.clear();
-        this.flowerLayer.image(bunnyImage1, 0, 0, grid*10, grid*10);
-        var bunSize = grid * 7;
-        var bunX = width/2+grid*3.8;
-        var bunY = height/2-grid*2;
-        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
+        
+        this.bunnyLayer.clear();
+        utils.addRotatedImageOffset(this.bunnyLayer, bunnyImage1, frameCount/100, -grid*3.5);
 
-        this.flowerLayer.clear();
-        this.flowerLayer.image(bunnyImage2, 0, 0, grid*12, grid*12);
-        bunSize = grid * 8;
-        bunX = width/2-grid*13;
-        bunY = height/2-grid*3;
-        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
+        utils.glow(color(0), 12, 0, 0);
+        var bunSize = grid * 5;
+        var bunX = width/2;
+        var bunY = height/2;
+        imageMode(CENTER);
+        image(this.bunnyLayer, bunX, bunY, this.bunnyLayer.width, this.bunnyLayer.height);
+        //this.drawWithOutline(this.bunnyLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
-        for (let j = 1; j < 2; ++j)
+
+        for (let j = 2; j < 4; ++j)
         {
             for (let i = 0; i < 20; ++i)
             {
-                var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
-                var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j, grid*3);
-            }
-        }
-
-        this.flowerLayer.clear();
-        this.flowerLayer.image(bunnyImage3, 0, 0, grid*10, grid*10);
-        bunX = width/2-grid*2;
-        bunY = height/2-grid*0.7;
-        this.drawWithOutline(this.flowerLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
-
-        for (let j = 2; j < 3; ++j)
-        {
-            for (let i = 0; i < 20; ++i)
-            {
-                var flowerX = ((i-1) + (j*0.5)) * grid*2.1;
-                var flowerY = height/2+grid*(j+1);
-                this.drawFlower(flowerX, flowerY, i + j, grid*3);
+                var mountainSizeX = grid * 8;
+                var flowerX = ((i-1) - (j*0.7)) * mountainSizeX * 0.9;
+                var flowerY = grid * 3.3 + grid*(j+1)*1.1;
+                this.drawMountain(flowerX, flowerY, 0, mountainSizeX);
             }
         }
 
@@ -163,7 +126,7 @@ function Mountains() {
         image(ctx, x, y, size, size);
     }
 
-    this.updateFlower = () => {
+    this.updateMountain = () => {
         for (let i=0; i < numFlowers; ++i)
         {
             var f = fallingFlowers[i];
@@ -172,17 +135,24 @@ function Mountains() {
                 f.y -= height * 2;
             }
             f.rotation += 0.001 * f.rotationScale;
-            this.drawFlower(f.x, f.y, f.rotation, f.radius, false);
+            this.drawMountain(f.x, f.y, f.rotation, f.radius, false);
         }
     }
 
-    this.drawFlower = (x, y, rotation, size, deleteRandomly=false) => {
-        utils.noGlow();
+    this.drawMountain = (x, y, rotation, size, deleteRandomly=false) => {
+        push();
+        utils.glow(color(0), 12, -2, 2);
 
-        var ran = random(0, 1);
-        var ranImage = flowerImage2;
-        if (ran > 0.35) {
-            ranImage = flowerImage1;
+        var ran = random(0, 4);
+        var ranImage = mountainImage1;
+        if (ran > 1) {
+            ranImage = mountainImage2;
+        }
+        if (ran > 2) {
+            ranImage = mountainImage3;
+        }
+        if (ran > 3) {
+            ranImage = mountainImage4;
         }
 
         if (deleteRandomly)
@@ -194,14 +164,21 @@ function Mountains() {
             }
         }
 
-        this.flowerLayer.clear();
-        utils.addRotatedImage(this.flowerLayer, ranImage, rotation); 
-        image(this.flowerLayer, x, y, size, size);
+        this.mountainLayer.clear();
+        utils.addRotatedImage(this.mountainLayer, ranImage, rotation); 
+        tint(colorMountain);
+        image(this.mountainLayer, x, y, size*1.4, size);
+
+        utils.noGlow();
+        pop();
     }
 
 
     this.drawMoon = (x, y) => {
+        push();
+        utils.glow(color(0), 12, -2, 2);
 
+        tint(colorMoon);
         var size = moonSize + cos(frameCount * 0.005) * grid/2;
         // Create always circular moonbase, so the texture is visible even in shadow
 
@@ -210,17 +187,12 @@ function Mountains() {
         this.moonBase.fill(255);
         this.moonBase.circle(this.strokeWidth, this.strokeWidth, moonSize+1);
         this.moonBase.drawingContext.globalCompositeOperation = 'source-in';
-        this.moonBase.image(paperImage, strokeWidth, strokeWidth, moonSize*2, moonSize*2);
+        this.moonBase.image(moonImage, 0, 0, moonSize*2, moonSize*2);
         this.moonBase.pop();
 
-        this.moonBase.push();
-        this.moonBase.noFill();
-        this.moonBase.stroke(colorOutline);
-        this.moonBase.strokeWeight(strokeWidth);
+        image(this.moonBase, x-size/2, y-size/2, size, size);
 
-        this.moonBase.circle(this.strokeWidth, this.strokeWidth, (moonSize));
-        this.moonBase.pop();
-
-        image(this.moonBase, x-size/2, y-size*0.3, size, size);
+        utils.noGlow();
+        pop();
     }
 }
