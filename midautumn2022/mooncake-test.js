@@ -38,7 +38,7 @@ function MooncakeTest() {
             label: 'mooncake',
             density: 0.01,
         }
-        nOrbs = 18;
+        nOrbs = 8;
         for (let i = 0; i < nOrbs; i++) {
             const x = random(2 * grid, 30 * grid);
             const y = -i * 5 * grid; // line em up so we come in in a stream
@@ -49,7 +49,7 @@ function MooncakeTest() {
 
         const cloudOpts = {
             restitution: 0.7,
-            friction: 10,
+            friction: 100,
             collisionFilter: { category: 0x01, mask: 0x10 },
             label: 'cloud'
         };
