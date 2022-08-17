@@ -48,13 +48,14 @@ function Mooncakes() {
         const center = createVector(ctx.width / 2, ctx.height / 2)
 
         ctx.fill(this.highlight_rgb);
-        utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
+        utils.gyrate(ctx, oneScallop, [2.1], center, numScallops, TAU / numScallops);
         ctx.fill(this.dough_rgb);
         utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
         ctx.stroke(this.shadow_rgb);
-        ctx.strokeWeight(this.patternSize * 0.015);
+        // ctx.strokeWeight(this.patternSize * 0.050);
+        ctx.noStroke();
         ctx.fill(this.highlight_rgb);
-        shadowDiameter = this.patternSize * 1.03;
+        shadowDiameter = this.patternSize * 1.05;
         ctx.ellipse(
             ctx.width / 2,
             ctx.height / 2,
@@ -64,13 +65,14 @@ function Mooncakes() {
         ctx.fill(this.dough_rgb);
 
         ctx.noStroke();
-        //scribble.scribbleEllipse(
         ctx.ellipse(
             ctx.width / 2,
             ctx.height / 2,
             this.patternSize * 0.93,
             this.patternSize * 0.93
         );
+
+
         ctx.pop();
     }
 
@@ -91,24 +93,43 @@ function Mooncakes() {
         ctx.pop();
     }
 
-    this.cross = function (ctx, scribble) {
+    this.twist = function (ctx, scribble) {
         ctx.push();
         const unit = ctx.width;
         ctx.translate(unit / 2, unit / 2);
-        ctx.strokeWeight(unit / 20);
+        ctx.strokeWeight(unit * 0.06);
         ctx.strokeCap(ROUND);
         ctx.rotate(TAU * 0.022);
 
         const petal = () => {
-            ctx.arc(0, 0, 0.8 * unit, 0.8 * unit, 0.15, TAU / 4 - 0.15);
-            ctx.arc(0, 0, 0.5 * unit, 0.5 * unit, 0.3, TAU / 4 - 0.5);
-            ctx.line(0.24 * unit, 0.07 * unit, 0.39 * unit, 0.05 * unit);
-            ctx.line(0.0 * unit, 0.00 * unit, 0.05 * unit, 0.39 * unit);
+            ctx.arc(0, 0, 0.75 * unit, 0.75 * unit, 0.15, TAU / 4 - 0.21);
+            ctx.arc(0, 0, 0.45 * unit, 0.45 * unit, 0.47, TAU / 4 - 0.8);
+            ctx.line(0.21 * unit, 0.085 * unit, 0.37 * unit, 0.05 * unit);
+            ctx.line(0.0 * unit, 0.00 * unit, 0.08 * unit, 0.36 * unit);
         };
         num = 4;
         utils.gyrate(ctx, petal, [], createVector(0, 0), num, TAU / num);
         ctx.pop();
     }
+
+    this.cross = (ctx) => {
+        ctx.push();
+        const unit = ctx.width;
+        ctx.translate(unit / 2, unit / 2);
+        ctx.strokeWeight(unit * 0.06);
+        ctx.strokeCap(ROUND);
+
+        const gap = 0.15 * unit;
+        const petal = () => {
+            ctx.line(gap / 2, gap / 2, gap / 2, 0.4 * unit);
+            ctx.line(gap / 2, gap / 2, 0.4 * unit, gap / 2);
+            ctx.line(3 * gap / 2, 3 * gap / 2, 0.33 * unit, 3 * gap / 2);
+            ctx.line(3 * gap / 2, 3 * gap / 2, 3 * gap / 2, 0.33 * unit);
+        };
+        num = 4;
+        utils.gyrate(ctx, petal, [], createVector(0, 0), num, TAU / num);
+        ctx.pop();
+    };
 
     this.flower = function (ctx, frame) {
         const t = utils.frameToTime(frame, 300, 0, 1);
@@ -136,22 +157,16 @@ function Mooncakes() {
         pattern.strokeCap(SQUARE);
         pattern.fill('rgba(0, 0, 0, 0)');
 
-        pattern.push();
-        pattern.translate(pattern.width * 0.015, pattern.width * 0.015);
-        pattern.stroke(this.shadow_rgb);
-        //this.flower(pattern, frameCount);
-        this.cross(pattern, this.scribble.pattern);
-        pattern.pop();
-
         pattern.stroke(this.highlight_rgb);
         pattern.strokeWeight(5);
-        //this.flower(pattern, frameCount);
-        this.cross(pattern, this.scribble.pattern);
+        // this.flower(pattern, frameCount);
+        // this.twist(pattern, this.scribble.pattern);
+        this.cross(pattern);
     }
 
     this.drawMooncake = (x, y, { pattern, scallop }) => {
         image(scallop, x - scallop.width / 2, y - scallop.height / 2);
-        //image(pattern, x - pattern.width / 2, y - pattern.height / 2);
+        image(pattern, x - pattern.width / 2, y - pattern.height / 2);
     }
 
     this.drawSide = (x, y, { side }) => {

@@ -17,9 +17,10 @@ function MooncakeTest() {
         this.bgTexture = loadImage('images/parchment.jpg');
 
         // blue ish palette
-        this.bgColor = color(141, 208, 255);
-        this.bgCloudFillColor = color(240, 240, 255);
-        this.bgCloudStrokeColor = color(211, 218, 255);
+        this.bgFill = color(141, 208, 255);
+        this.bgStroke = color(138, 205, 252);
+        this.cloudFill = color(230, 240, 255);
+        this.cloudStroke = color(191, 218, 255);
 
         this.t = millis();
         this.delta = 1000 / 60;
@@ -28,7 +29,7 @@ function MooncakeTest() {
         this.orbs = [];
         const orbOpts = {
             restitution: 0.9,
-            friction: 10,
+            friction: 100,
             frictionAir: 0.15,
             collisionFilter: {
                 category: 0x10,
@@ -37,11 +38,11 @@ function MooncakeTest() {
             label: 'mooncake',
             density: 0.01,
         }
-        nOrbs = 8;
+        nOrbs = 18;
         for (let i = 0; i < nOrbs; i++) {
             const x = random(2 * grid, 30 * grid);
             const y = -i * 5 * grid; // line em up so we come in in a stream
-            orb = Matter.Bodies.circle(x, y, radius * 1.3, orbOpts);
+            orb = Matter.Bodies.polygon(x, y, 12, radius * 1.30, orbOpts);
             orb.resets = 0;
             this.orbs.push(orb);
         }
@@ -97,7 +98,7 @@ function MooncakeTest() {
             this.bgClusters = this.newBackground();
         }
         if (SAVE_CLOUDS) {
-            background(this.bgColor);
+            background(this.bgFill);
             this.bgClusters.forEach(this.drawCluster);
             // after saving, have to move 'clouds.png' to images subdir
             save('clouds.png');
@@ -199,8 +200,8 @@ function MooncakeTest() {
             this.drawCloud(
                 cloud,
                 grid * 0.7,
-                this.bgCloudFillColor,
-                this.bgCloudStrokeColor,
+                this.cloudFill,
+                this.cloudStroke,
                 0.12
             );
         });
@@ -215,14 +216,14 @@ function MooncakeTest() {
                 const y = i * rowHeight;
                 const x = (j + i % 2) * radius;
                 const cloud = new Cloud(x, y, radius, radius);
-                this.drawCloud(cloud, 0.4 * radius, this.bgColor, color(138, 205, 252), 0.2);
+                this.drawCloud(cloud, 0.4 * radius, this.bgFill, this.bgStroke, 0.2);
             }
         }
     }
 
     this.draw = () => {
         if (NEW_CLOUDS) {
-            background(this.bgColor);
+            background(this.bgFill);
             this.orientalTexture(1.0 * grid);
             // utils.gridLines();
 
@@ -245,7 +246,7 @@ function MooncakeTest() {
 
         this.orbs.forEach((orb, i) => {
             push();
-            translate(orb.position.x, orb.position.y + this.mc.contexts.side.width / 10);
+            translate(orb.position.x + this.mc.contexts.side.width * 0.03, orb.position.y + this.mc.contexts.side.width * 0.05);
             rotate(orb.angle);
             this.mc.drawSide(0, 0, this.mc.contexts);
             pop();
