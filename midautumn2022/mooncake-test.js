@@ -41,7 +41,7 @@ function MooncakeTest() {
         nOrbs = 8;
         for (let i = 0; i < nOrbs; i++) {
             const x = random(2 * grid, 30 * grid);
-            const y = -i * 5 * grid; // line em up so we come in in a stream
+            const y = -(i - 1) * 2 * grid; // line em up so we come in in a stream
             orb = Matter.Bodies.polygon(x, y, 12, radius * 1.30, orbOpts);
             orb.resets = 0;
             this.orbs.push(orb);

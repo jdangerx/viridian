@@ -32,7 +32,7 @@ function setup() {
     mgr.addScene(MooncakeTest);
     mgr.addScene(Mountains);
 
-    mgr.showScene(Mooncakes);
+    mgr.showScene(MooncakeTest);
     pop();
 }
 

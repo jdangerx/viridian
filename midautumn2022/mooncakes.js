@@ -6,10 +6,11 @@ function Mooncakes() {
     this._setup = (patternSize) => {
         // the real setup function that we can initialize elsewhere
         this.patternSize = patternSize;
-        this.dough_rgb = color(201, 128, 57);
-        this.highlight_rgb = color(248, 185, 118);
-        this.shadow_rgb = color(161, 79, 10);
-        this.side_rgb = color(181, 100, 30);
+        this.dough_rgb = color(221, 130, 70);
+        //this.dough_rgb = color(201, 128, 57);
+        this.highlight_rgb = color(248, 180, 118);
+        this.shadow_rgb = color(181, 100, 10);
+        this.side_rgb = color(200, 110, 50);
         this.setupContexts(patternSize);
         const { pattern, side, scallop } = this.contexts;
 
@@ -48,9 +49,10 @@ function Mooncakes() {
         const center = createVector(ctx.width / 2, ctx.height / 2)
 
         ctx.fill(this.highlight_rgb);
-        utils.gyrate(ctx, oneScallop, [2.1], center, numScallops, TAU / numScallops);
+        const gyrateOpts = { angularOffset: TAU / 24 }
+        utils.gyrate(ctx, oneScallop, [2.1], center, numScallops, TAU / numScallops, gyrateOpts);
         ctx.fill(this.dough_rgb);
-        utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops);
+        utils.gyrate(ctx, oneScallop, [1.5], center, numScallops, TAU / numScallops, gyrateOpts);
         ctx.stroke(this.shadow_rgb);
         // ctx.strokeWeight(this.patternSize * 0.050);
         ctx.noStroke();
@@ -88,8 +90,9 @@ function Mooncakes() {
         };
         const center = createVector(ctx.width / 2, ctx.height / 2)
 
-        ctx.fill(this.dough_rgb);
-        utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops);
+        ctx.fill(this.side_rgb);
+        const gyrateOpts = { angularOffset: TAU / 24 }
+        utils.gyrate(ctx, oneScallop, [1.8], center, numScallops, TAU / numScallops, gyrateOpts);
         ctx.pop();
     }
 

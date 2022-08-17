@@ -16,22 +16,21 @@ const utils = {
         return t;
     },
 
-    gyrate: (ctx, unitFunc, args, center, iterations, stepSize, callback) => {
+    gyrate: (ctx, unitFunc, args, center, iterations, stepSize, opts) => {
         // ctx: a graphics context from createGraphics
         // unitFunc: the func that draws something you want gyrated
         // args: list of any additional args you want to pass to unitFunc
         // center: vector representing where the center of the gyration should be
         // iterations: num iterations
         // stepSize (radians): how big the step size is
-        // callback: any post-processing you need to do to args? (TODO: add 
-        //   iterations + stepSize to the args before hitting callback)
+        // opts: so far the only opt is 'angularOffset'
         ctx.push()
         ctx.translate(center);
+        if (opts && opts.angularOffset) {
+            ctx.rotate(opts.angularOffset);
+        }
         for (let i = 0; i < iterations; i++) {
             ctx.rotate(stepSize);
-            if (callback) {
-                args = callback(args);
-            }
             unitFunc.apply(null, args);
         }
         ctx.pop()
@@ -94,26 +93,24 @@ const utils = {
         drawingContext.shadowOffsetY = 0;
     },
 
-    addRotatedImage: (ctx, newImage, rotationAmt) => 
-    {
+    addRotatedImage: (ctx, newImage, rotationAmt) => {
         ctx.push();
         ctx.clear();
-        var imageSize = ctx.width/2-10;
-        ctx.translate(ctx.width/2, ctx.height/2);
+        var imageSize = ctx.width / 2 - 10;
+        ctx.translate(ctx.width / 2, ctx.height / 2);
         ctx.rotate(rotationAmt % TAU);
-        ctx.image(newImage, -imageSize, -imageSize, imageSize*2, imageSize*2);
+        ctx.image(newImage, -imageSize, -imageSize, imageSize * 2, imageSize * 2);
         ctx.pop();
     },
 
-    addRotatedImageOffset: (ctx, newImage, rotationAmt, pivotY) => 
-    {
+    addRotatedImageOffset: (ctx, newImage, rotationAmt, pivotY) => {
         ctx.push();
-        var imageSize = ctx.width/5;
-        ctx.translate(ctx.width/2, ctx.height/2);
+        var imageSize = ctx.width / 5;
+        ctx.translate(ctx.width / 2, ctx.height / 2);
         ctx.fill(255, 0, 0);
         ctx.circle(0, 0, 5);
         ctx.rotate(rotationAmt % TAU);
-        ctx.image(newImage, -imageSize, -imageSize+pivotY, imageSize*2, imageSize*2);
+        ctx.image(newImage, -imageSize, -imageSize + pivotY, imageSize * 2, imageSize * 2);
         ctx.pop();
     },
 
