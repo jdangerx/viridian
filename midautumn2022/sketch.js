@@ -8,18 +8,22 @@
  * 4. add a case in keyPressed so you can switch at leisure.
  */
 let mgr;
+const IS_PROD = false;
 P5Capture.setDefaultOptions({
     format: "webm",
     framerate: 60,
-    width: 2000,
-    disableUi: true
+    disableUi: false,
+    autoSaveDuration: 240,
+    disablePixelScaling: true
 });
 
 function setup() {
     push();
-    const IS_PROD = false;
     grid = IS_PROD ? 120 : Math.floor(window.innerWidth / 32);
     createCanvas(grid * 32, grid * 9);
+    if (IS_PROD) {
+        pixelDensity(1);
+    }
 
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);

@@ -30,7 +30,7 @@ function MooncakeTest() {
         const orbOpts = {
             restitution: 0.9,
             friction: 100,
-            frictionAir: 0.15,
+            frictionAir: 0.7,
             collisionFilter: {
                 category: 0x10,
                 mask: 0x11,
@@ -109,17 +109,17 @@ function MooncakeTest() {
 
         // debug renderer
 
-        this.render = Matter.Render.create({
-            element: document.body,
-            engine: this.engine,
-            options: {
-                width: 32 * grid,
-                height: 9 * grid
-            }
-        });
-        Matter.Render.run(this.render);
-        console.log(this.render);
-
+        if (!IS_PROD) {
+            this.render = Matter.Render.create({
+                element: document.body,
+                engine: this.engine,
+                options: {
+                    width: 32 * grid,
+                    height: 9 * grid
+                }
+            });
+            Matter.Render.run(this.render);
+        }
     }
 
     this.genClusters = (clusterCenters) =>
