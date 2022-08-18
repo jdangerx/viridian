@@ -28,7 +28,7 @@ function setup() {
     mgr = new SceneManager();
     mgr.addScene(Mooncakes);
     mgr.addScene(Phases);
-    mgr.addScene(Squigglies);
+    mgr.addScene(HoleyMoley);
     mgr.addScene(RisoTestJohn);
     mgr.addScene(MaskTest);
     mgr.addScene(GlowTest);
@@ -36,7 +36,7 @@ function setup() {
     mgr.addScene(MooncakeTest);
     mgr.addScene(Mountains);
 
-    mgr.showScene(MooncakeTest);
+    mgr.showScene(HoleyMoley);
     pop();
 }
 
@@ -53,8 +53,8 @@ function keyPressed() {
             mgr.showScene(Mooncakes);
             break;
         case '2':
-            console.log('Switching to Phases.')
-            mgr.showScene(Squigglies);
+            console.log('Switching to Holey Moley.')
+            mgr.showScene(HoleyMoley);
             break;
         case '3':
             console.log('Switching to Phases.')
