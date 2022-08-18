@@ -24,35 +24,15 @@ function MooncakeTest() {
 
         this.t = millis();
         this.delta = 1000 / 60;
-        let radius = grid * 0.8;
+        this.radius = grid * 0.8;
         this.engine = Matter.Engine.create();
-        this.orbs = [];
-        const orbOpts = {
-            restitution: 0.9,
-            friction: 100,
-            frictionAir: 0.7,
-            collisionFilter: {
-                category: 0x10,
-                mask: 0x11,
-            },
-            label: 'mooncake',
-            density: 0.01,
-        }
-        nOrbs = 8;
-        for (let i = 0; i < nOrbs; i++) {
-            const x = random(2 * grid, 30 * grid);
-            const y = -(i - 1) * 2 * grid; // line em up so we come in in a stream
-            orb = Matter.Bodies.polygon(x, y, 12, radius * 1.30, orbOpts);
-            orb.resets = 0;
-            this.orbs.push(orb);
-        }
-
         const cloudOpts = {
             restitution: 0.7,
             friction: 100,
             collisionFilter: { category: 0x01, mask: 0x10 },
             label: 'cloud'
         };
+        this.orbs = [];
 
         const activeClusterCenters = [
             { x: 1.5, y: 4.5, w: 3.1, h: 2.1 },
@@ -86,13 +66,11 @@ function MooncakeTest() {
                 }))
         });
 
-        bodies = [...this.orbs, ...cloudBodies];
-
-        Matter.Composite.add(this.engine.world, bodies);
+        Matter.Composite.add(this.engine.world, cloudBodies);
         Matter.Composite.add(this.engine.world, cloudSprings);
 
         this.mc = new Mooncakes();
-        this.mc._setup(2 * radius);
+        this.mc._setup(2 * this.radius);
 
         if (NEW_CLOUDS) {
             this.bgClusters = this.newBackground();
@@ -122,6 +100,35 @@ function MooncakeTest() {
         }
     }
 
+    this.spawnOrbs = (nOrbs) => {
+        const orbOpts = {
+            restitution: 0.9,
+            friction: 100,
+            frictionAir: 0.3,
+            collisionFilter: {
+                category: 0x10,
+                mask: 0x11,
+            },
+            label: 'mooncake',
+            density: 0.01,
+        }
+
+        const margin = random(1, 4);
+        console.log(margin);
+        const orbs = []
+        for (let i = 0; i < nOrbs; i++) {
+            const x = (margin + (32 - 2 * margin) / nOrbs * (i + 0.5)) * grid;
+            const y = -i * 3 * grid; // line em up so we come in in a stream
+            orb = Matter.Bodies.polygon(x, y, 12, this.radius * 1.30, orbOpts);
+            orb.resets = 0;
+            orbs.push(orb);
+        }
+
+        Matter.Composite.add(this.engine.world, orbs);
+
+        this.orbs = [...this.engine.world.bodies.filter(b => b.label === 'mooncake'), ...orbs];
+    }
+
     this.genClusters = (clusterCenters) =>
         clusterCenters.map(({ x, y, w, h }) =>
             this.cloudCluster(grid * x, grid * y, grid * w, grid * h, 3)
@@ -130,9 +137,9 @@ function MooncakeTest() {
     this.newBackground = () => {
         clusterCenters = [
             { x: 1, y: 3, w: 3, h: 2.5 },
+            { x: 7, y: 9, w: 3, h: 2.5 },
             { x: 2, y: 7, w: 3, h: 2.5 },
             { x: 7, y: 6, w: 3, h: 2.5 },
-            { x: 7, y: 9, w: 3, h: 2.5 },
             { x: 15, y: 7, w: 3.5, h: 2.7 },
             { x: 23, y: 7, w: 3, h: 2.0 },
             { x: 29, y: 6, w: 3, h: 2.0 },
@@ -145,19 +152,19 @@ function MooncakeTest() {
         const clouds = [];
         let yOffset = 0;
         for (let i = 0; i < nLevels; i++) {
-            let xOffset = xRadius * random(0.6, 0.8);
+            let xOffset = xRadius * 0.75;
             for (let j = 0; j <= i; j++) {
-                const decay = random(0.86, 0.91) ** i;
+                const decay = 0.9 ** i;
                 const xStart = x - xOffset * i * decay;
                 cloud = new Cloud(
                     xStart + xOffset * 2 * j * decay,
-                    y + yOffset * random(0.9, 1.1),
+                    y + yOffset,
                     xRadius * decay,
                     yRadius * decay
                 );
                 clouds.push(cloud);
             }
-            yOffset += yRadius * (random(0.2, 0.25));
+            yOffset += yRadius * 0.23;
         }
         return clouds;
     }
@@ -232,15 +239,15 @@ function MooncakeTest() {
             image(this.bgImage, 0, 0, width, height);
         }
 
+        if (this.orbs.length < 4) {
+            this.spawnOrbs(8);
+        }
+
         Matter.Engine.update(this.engine, 1000 / 60);
         this.orbs.forEach((orb) => {
-            if (orb.position.y > 12 * grid) {
-                orb.resets += 1;
-                if (orb.resets > Infinity) {
-                    Matter.Composite.remove(this.engine.world, orb);
-                }
-                Matter.Body.setPosition(orb, createVector(random() * grid * 32, (random() + 0.5) * -4 * grid));
-                Matter.Body.applyForce(orb, createVector(grid * 16, 0), createVector(0.4 * (random() - 0.5), 0));
+            if (orb.position.y > 10 * grid) {
+                Matter.Composite.remove(this.engine.world, orb);
+                this.orbs = this.engine.world.bodies.filter(b => b.label === 'mooncake');
             }
         })
 
