@@ -104,7 +104,7 @@ function MooncakeTest() {
         const orbOpts = {
             restitution: 0.9,
             friction: 100,
-            frictionAir: 0.3,
+            frictionAir: 0.15,
             collisionFilter: {
                 category: 0x10,
                 mask: 0x11,
@@ -118,7 +118,7 @@ function MooncakeTest() {
         const orbs = []
         for (let i = 0; i < nOrbs; i++) {
             const x = (margin + (32 - 2 * margin) / nOrbs * (i + 0.5)) * grid;
-            const y = -i * 3 * grid; // line em up so we come in in a stream
+            const y = -(i + 1) * 3 * grid; // line em up so we come in in a stream
             orb = Matter.Bodies.polygon(x, y, 12, this.radius * 1.30, orbOpts);
             orb.resets = 0;
             orbs.push(orb);
