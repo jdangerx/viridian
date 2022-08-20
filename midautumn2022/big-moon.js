@@ -2,7 +2,7 @@ class FallingFlower {
     constructor(x, y, radius, rotation, rotationScale) {
         this.x = x;
         this.y = y;
-        this.velocityY = 0.03;
+        this.velocityY = 0.8 + random(0, 1);
         this.radius = radius;
         this.rotation = rotation
 
@@ -25,7 +25,7 @@ function BigMoon() {
     let colorBG;
     let colorFlower = color(178, 68, 89);
 
-    let numFlowers = 18;
+    let numFlowers = 24;
     let flowerRadius = grid * 3;
     let fallingFlowers = [];
 
@@ -44,10 +44,9 @@ function BigMoon() {
         pixelDensity(1);
 
         for (let i = 0; i < numFlowers; ++i) {
-            var rotationScale = utils.getBias(random(-1, 1), 0.85);
-
+            var rotationScale = utils.getBias(random(10, 20), 0.85) * Math.sign(random(-1, 1));
             var newFlower = new FallingFlower(
-                (i + random(-0.2, 0.2)) * (flowerRadius * 1.1),
+                (i + random(-0.25, 0.25)) * (flowerRadius * 0.6),
                 random(-height * 2, 0),
                 flowerRadius,
                 i * 0.7,
@@ -158,16 +157,13 @@ function BigMoon() {
         pop();
     }
 
-    this.updateFlower = () => {
-        for (let i = 0; i < numFlowers; ++i) {
-            var f = fallingFlowers[i];
-            f.y += f.velocityY;
-            if (f.y > height) {
-                f.y -= height * 2 ;
-            }
-            f.rotation += 0.0007 * f.rotationScale;
-            this.drawFlower(f.x, f.y, f.rotation, f.radius, false);
+    this.updateFlower = (f) => {
+        f.y += f.velocityY;
+        if (f.y > height) {
+            f.y -= height * 2 ;
         }
+        f.rotation += 0.005 * f.rotationScale;
+        this.drawFlower(f.x, f.y, f.rotation, f.radius, false);
     }
 
     this.drawFlower = (x, y, rotation, size, deleteRandomly = false) => {
@@ -193,7 +189,7 @@ function BigMoon() {
 
 
     this.drawMoon = (x, y) => {
-        var size = moonSize + cos(frameCount * 0.008) * grid * 0.6;
+        var size = moonSize + cos(frameCount * 0.005) * grid * 1.5;
         // Create always circular moonbase, so the texture is visible even in shadow
         this.moonBaseMask.push();
         this.moonBaseMask.background(255);
