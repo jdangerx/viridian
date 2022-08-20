@@ -18,15 +18,16 @@ function HoleyMoley() {
     }
 
     this.draw = () => {
+        var holeSpeed = 0.15;
         image(this.bgImage, 0, 0, width, height);
         this.overlay.image(this.overlayImage, 0, 0, width, height);
         const radius = 2 * grid;
         const xMargin = radius * 1.1;
         const xRange = width - 2 * xMargin;
-        const x = width - xMargin - abs(2 * frameCount % xRange - xRange / 2) * 2;
+        const x = width - xMargin - abs(2 * (frameCount * holeSpeed) % xRange - xRange / 2) * 2;
         const yMargin = radius * 1.1;
         const yRange = height - 2 * yMargin;
-        const y = yMargin + abs(1.8 * frameCount % yRange - yRange / 2) * 2;
+        const y = yMargin + abs(1.8 * (frameCount * holeSpeed) % yRange - yRange / 2) * 2;
         this.cutout(this.overlay, x, y, radius);
         utils.glow(color(80), radius * 0.3, 0, 0);
         image(this.overlay, 0, 0, width, height);
