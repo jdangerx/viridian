@@ -22,10 +22,13 @@ function MooncakeTest() {
         this.cloudFill = color(230, 240, 255);
         this.cloudStroke = color(191, 218, 255);
 
-        this.t = millis();
+        this.maxFrames = frameCount + 10 * 60;
+        console.log(this.maxFrames);
         this.delta = 1000 / 60;
         this.radius = grid * 0.8;
-        this.engine = Matter.Engine.create();
+        this.engine = Matter.Engine.create({
+            enableSleeping: true
+        });
         const cloudOpts = {
             restitution: 0.7,
             friction: 100,
@@ -125,6 +128,7 @@ function MooncakeTest() {
         }
 
         Matter.Composite.add(this.engine.world, orbs);
+        console.log(orbs);
 
         this.orbs = [...this.engine.world.bodies.filter(b => b.label === 'mooncake'), ...orbs];
     }
@@ -154,7 +158,7 @@ function MooncakeTest() {
         for (let i = 0; i < nLevels; i++) {
             let xOffset = xRadius * 0.75;
             for (let j = 0; j <= i; j++) {
-                const decay = 0.9 ** i;
+                const decay = 0.888 ** i;
                 const xStart = x - xOffset * i * decay;
                 cloud = new Cloud(
                     xStart + xOffset * 2 * j * decay,
@@ -239,15 +243,23 @@ function MooncakeTest() {
             image(this.bgImage, 0, 0, width, height);
         }
 
-        if (this.orbs.length < 4) {
+        if (this.orbs.length < 4 && frameCount < this.maxFrames) {
             this.spawnOrbs(8);
         }
 
         Matter.Engine.update(this.engine, 1000 / 60);
+
+        const wind = Matter.Vector.create(Math.cos(frameCount * 0.02) * 0.003, 0);
         this.orbs.forEach((orb) => {
-            if (orb.position.y > 10 * grid) {
+            Matter.Body.applyForce(orb, orb.position, wind);
+            if (orb.position.y > 12 * grid) {
                 Matter.Composite.remove(this.engine.world, orb);
                 this.orbs = this.engine.world.bodies.filter(b => b.label === 'mooncake');
+                if (this.orbs.length === 0) {
+                    console.log("omg it's over");
+                    const instance = P5Capture.getInstance();
+                    instance.stop();
+                }
             }
         })
 

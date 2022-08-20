@@ -9,10 +9,12 @@
  */
 let mgr;
 const IS_PROD = false;
+const MINUTE = 60 * 60;
 P5Capture.setDefaultOptions({
     format: "webm",
     framerate: 60,
     disableUi: false,
+    duration: 5 * MINUTE,
     autoSaveDuration: 240,
     disablePixelScaling: true
 });
