@@ -155,12 +155,14 @@ function BigMoon() {
 
         utils.noGlow();
         pop();
+
+        utils.lightTest();
     }
 
     this.updateFlower = (f) => {
         f.y += f.velocityY;
         if (f.y > height) {
-            f.y -= height * 2 ;
+            f.y -= height * 2;
         }
         f.rotation += 0.005 * f.rotationScale;
         this.drawFlower(f.x, f.y, f.rotation, f.radius, false);

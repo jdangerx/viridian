@@ -38,7 +38,7 @@ function setup() {
     mgr.addScene(MooncakeTest);
     mgr.addScene(Mountains);
 
-    mgr.showScene(HoleyMoley);
+    mgr.showScene(MooncakeTest);
     pop();
 }
 

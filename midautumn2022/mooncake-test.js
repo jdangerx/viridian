@@ -13,16 +13,17 @@ SAVE_CLOUDS = false;
 function MooncakeTest() {
     // just testing importing of mooncakes stuff for now
     this.setup = () => {
+        frameRate(60);
         this.bgImage = loadImage('images/clouds.png');
         this.bgTexture = loadImage('images/parchment.jpg');
 
         // blue ish palette
-        this.bgFill = color(141, 208, 255);
-        this.bgStroke = color(138, 205, 252);
+        this.bgFill = color(71, 180, 255);
+        this.bgStroke = color(...this.bgFill.levels.map(l => l - 2).slice(0, 3));
         this.cloudFill = color(230, 240, 255);
-        this.cloudStroke = color(191, 218, 255);
+        this.cloudStroke = color(131, 178, 235);
 
-        this.maxFrames = frameCount + 10 * 60;
+        this.maxFrames = frameCount + 300 * 60;
         console.log(this.maxFrames);
         this.delta = 1000 / 60;
         this.radius = grid * 0.8;
@@ -90,6 +91,7 @@ function MooncakeTest() {
 
         // debug renderer
 
+        /*
         if (!IS_PROD) {
             this.render = Matter.Render.create({
                 element: document.body,
@@ -101,6 +103,7 @@ function MooncakeTest() {
             });
             Matter.Render.run(this.render);
         }
+        */
     }
 
     this.spawnOrbs = (nOrbs) => {
@@ -282,5 +285,6 @@ function MooncakeTest() {
 
         this.activeClusters.forEach(this.drawCluster);
 
+        utils.lightTest();
     }
 }
