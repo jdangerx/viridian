@@ -115,17 +115,6 @@ function Mountains() {
         pop();
     }
 
-    this.drawWithOutline = (ctx, x, y, color, glowStrokeWidth, size) => {
-        utils.glow(color, 0, glowStrokeWidth, 0);
-        image(ctx, x, y, size, size);
-        utils.glow(color, 0, -glowStrokeWidth, 0);
-        image(ctx, x, y, size, size);
-        utils.glow(color, 0, 0, glowStrokeWidth);
-        image(ctx, x, y, size, size);
-        utils.glow(color, 0, 0, -glowStrokeWidth);
-        image(ctx, x, y, size, size);
-    }
-
     this.updateMountain = () => {
         for (let i=0; i < numFlowers; ++i)
         {

@@ -44,7 +44,7 @@ function BigMoon() {
         pixelDensity(1);
 
         for (let i = 0; i < numFlowers; ++i) {
-            var rotationScale = random(-1, 1);
+            var rotationScale = utils.getBias(random(-1, 1), 0.85);
 
             var newFlower = new FallingFlower(
                 (i + random(-0.2, 0.2)) * (flowerRadius * 1.1),
@@ -105,11 +105,11 @@ function BigMoon() {
                 }
                 var flowerX = ((i - 1) + (j * 0.5)) * grid * 2.1;
                 var flowerY = height / 2 + grid * (j + 1);
-                this.drawFlower(flowerX, flowerY, i + j, grid * 3, deleteRandomly);
+                this.drawFlower(flowerX, flowerY, cos(frameCount * 0.003 + i + j), grid * 3, deleteRandomly);
             }
         }
 
-        this.drawMoon(width / 2, height / 2 - grid * .5);
+        this.drawMoon(width / 2, height / 2 + grid * 1.7);
 
         for (let i = 0; i < numFlowers; ++i) {
             this.updateFlower(fallingFlowers[i]);
@@ -136,7 +136,7 @@ function BigMoon() {
             for (let i = 0; i < 20; ++i) {
                 var flowerX = ((i - 1) + (j * 0.5)) * grid * 2.1;
                 var flowerY = height / 2 + grid * (j + 1);
-                this.drawFlower(flowerX, flowerY, i + j, grid * 3);
+                this.drawFlower(flowerX, flowerY, cos(frameCount * 0.003 + i + j), grid * 3);
             }
         }
 
@@ -150,7 +150,7 @@ function BigMoon() {
             for (let i = 0; i < 20; ++i) {
                 var flowerX = ((i - 1) + (j * 0.5)) * grid * 2.1;
                 var flowerY = height / 2 + grid * (j + 1);
-                this.drawFlower(flowerX, flowerY, i + j, grid * 3);
+                this.drawFlower(flowerX, flowerY, cos(frameCount * 0.003 + i + j), grid * 3);
             }
         }
 
@@ -163,9 +163,9 @@ function BigMoon() {
             var f = fallingFlowers[i];
             f.y += f.velocityY;
             if (f.y > height) {
-                f.y -= height * 2;
+                f.y -= height * 2 ;
             }
-            f.rotation += 0.001 * f.rotationScale;
+            f.rotation += 0.0007 * f.rotationScale;
             this.drawFlower(f.x, f.y, f.rotation, f.radius, false);
         }
     }
@@ -193,7 +193,7 @@ function BigMoon() {
 
 
     this.drawMoon = (x, y) => {
-        var size = moonSize + cos(frameCount * 0.005) * grid / 2;
+        var size = moonSize + cos(frameCount * 0.008) * grid * 0.6;
         // Create always circular moonbase, so the texture is visible even in shadow
         this.moonBaseMask.push();
         this.moonBaseMask.background(255);
