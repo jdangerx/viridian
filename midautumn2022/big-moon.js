@@ -2,7 +2,7 @@ class FallingFlower {
     constructor(x, y, radius, rotation, rotationScale) {
         this.x = x;
         this.y = y;
-        this.velocityY = 0.8 + random(0, 1);
+        this.velocityY = 0.5 + random(0, 1);
         this.radius = radius;
         this.rotation = rotation
 
@@ -44,10 +44,10 @@ function BigMoon() {
         pixelDensity(1);
 
         for (let i = 0; i < numFlowers; ++i) {
-            var rotationScale = utils.getBias(random(10, 20), 0.85) * Math.sign(random(-1, 1));
+            var rotationScale = utils.getBias(random(5, 10), 0.85) * Math.sign(random(-1, 1));
             var newFlower = new FallingFlower(
                 (i + random(-0.25, 0.25)) * (flowerRadius * 0.6),
-                random(-height * 2, 0),
+                random(-height * 3, 0),
                 flowerRadius,
                 i * 0.7,
                 rotationScale);
@@ -104,7 +104,7 @@ function BigMoon() {
                 }
                 var flowerX = ((i - 1) + (j * 0.5)) * grid * 2.1;
                 var flowerY = height / 2 + grid * (j + 1);
-                this.drawFlower(flowerX, flowerY, cos(frameCount * 0.003 + i + j), grid * 3, deleteRandomly);
+                this.drawFlower(flowerX, flowerY, cos(frameCount * 0.002 + i + j), grid * 3, deleteRandomly);
             }
         }
 
@@ -191,7 +191,7 @@ function BigMoon() {
 
 
     this.drawMoon = (x, y) => {
-        var size = moonSize + cos(frameCount * 0.005) * grid * 1.5;
+        var size = moonSize + cos(frameCount * 0.003) * grid * 1.5;
         // Create always circular moonbase, so the texture is visible even in shadow
         this.moonBaseMask.push();
         this.moonBaseMask.background(255);
