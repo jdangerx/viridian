@@ -23,12 +23,12 @@ function Mountains() {
         colorMode(HSB, 360, 100, 100, 255);
 
         colorDeepRed = color(356, 81.8, 64.7, 255);
-        colorBG = color(195, 56, 74, 255);
+        colorBG = color(310, 17, 98, 255);
         colorOutline = color(17, 90, 42.7);
-        colorMoon = color(38, 50, 98, 255);
+        colorMoon = color(36, 80, 100, 255);
         colorMountain = color(119, 10, 69);
 
-        moonSize = utils.roundUpNearest10(grid * 4.5);
+        moonSize = utils.roundUpNearest10(grid * 6.5);
         this.strokeWidth = 0;
         threshold = 128;
         pixelDensity(1);
@@ -37,9 +37,11 @@ function Mountains() {
         moonImage = loadImage("images/watercolor_texture_pack/10-1.jpg");
         paperImage = loadImage("images/watercolor_texture_pack/10.jpg");
         mountainImage1 = loadImage('images/water_color_mountains/background_6.png');
-        mountainImage2 = loadImage('images/water_color_mountains/background_7.png');
+        mountainImage2 = loadImage('images/water_color_mountains/background_6-1.png');
         mountainImage3 = loadImage('images/water_color_mountains/background_2.png');
-        mountainImage4 = loadImage('images/water_color_mountains/background_2.png');
+        mountainImage4 = loadImage('images/water_color_mountains/background_2-1.png');
+        mountainImage5 = loadImage('images/water_color_mountains/background_7.png');
+        mountainImage6 = loadImage('images/water_color_mountains/background_7-1.png');
 
         bunnyImage1 = loadImage('images/rabbits/PNG/bunny-hop.png');
         bunnyImage2 = loadImage('images/rabbits/PNG/bunny-sit.png');
@@ -65,18 +67,20 @@ function Mountains() {
 
     this.draw = function () {
 
-        randomSeed(12);
+        randomSeed(15);
         background(colorBG);
 
         push();
-        tint(colorBG);
+        //tint(colorBG);
         this.backgroundLayer.image(paperImage, 0, 0, width, width * (paperImage.height/paperImage.width));
         image(this.backgroundLayer, 0, 0, width, height);
         pop();
 
         noStroke();
       
-        this.drawMoon(width/2, height/2);
+        var moonX = width/2 + grid * 7;
+        var moonY = height/2 + grid;
+        this.drawMoon(moonX, moonY);
 
         /*
         for (let i = 0; i < numFlowers; ++i)
@@ -93,20 +97,20 @@ function Mountains() {
 
         utils.glow(color(0), 12, 0, 0);
         var bunSize = grid * 5;
-        var bunX = width/2;
-        var bunY = height/2;
+        var bunX = moonX;
+        var bunY = moonY;
         imageMode(CENTER);
         image(this.bunnyLayer, bunX, bunY, this.bunnyLayer.width, this.bunnyLayer.height);
         //this.drawWithOutline(this.bunnyLayer, bunX, bunY, colorOutline, glowStrokeWidth, bunSize);
 
 
-        for (let j = 2; j < 4; ++j)
+        for (let j = 0; j < 2; ++j)
         {
             for (let i = 0; i < 20; ++i)
             {
                 var mountainSizeX = grid * 6;
-                var x = ((i-1+cos(frameCount/200)*0.5*Math.pow(-1, j)) - (j*0.7)) * mountainSizeX * 1.4;
-                var y = grid * 3.5 + grid*(j+1)*1.3;
+                var x = ((i-1+cos(frameCount/400)*0.5*Math.pow(-1, j)) - (j*0.7)) * mountainSizeX * 1.2;
+                var y = grid * 6 + grid*(j)*2;
                 this.drawMountain(x, y, 0, mountainSizeX);
             }
         }
@@ -132,7 +136,7 @@ function Mountains() {
         push();
         utils.glow(color(0), 12, -2, 2);
 
-        var ran = random(0, 4);
+        var ran = random(0, 6);
         var ranImage = mountainImage1;
         if (ran > 1) {
             ranImage = mountainImage2;
@@ -142,6 +146,12 @@ function Mountains() {
         }
         if (ran > 3) {
             ranImage = mountainImage4;
+        }
+        if (ran > 4) {
+            ranImage = mountainImage5;
+        }
+        if (ran > 5) {
+            ranImage = mountainImage6;
         }
 
         if (deleteRandomly)
@@ -156,7 +166,7 @@ function Mountains() {
         this.mountainLayer.clear();
         utils.addRotatedImage(this.mountainLayer, ranImage, rotation); 
         //tint(colorMountain);
-        image(this.mountainLayer, x, y, size*2, size);
+        image(this.mountainLayer, x, y, size*1.5, size);
 
         utils.noGlow();
         pop();
@@ -167,8 +177,8 @@ function Mountains() {
         push();
         utils.glow(color(0), 12, -2, 2);
 
-        tint(colorMoon);
-        var size = moonSize + cos(frameCount * 0.005) * grid/2;
+        //tint(colorMoon);
+        var size = moonSize;// + cos(frameCount * 0.005) * grid/2;
         // Create always circular moonbase, so the texture is visible even in shadow
 
         this.moonBase.push();
