@@ -85,8 +85,8 @@ function Scratch() {
         pattern.torus(16, 4, 12, 8);
         pattern.pop();
 
-        image(pattern, 0, 0, 128, 36);
         this.render(this.pattern);
+        image(pattern, 0, 0, 128, 36);
 
     }
 }
