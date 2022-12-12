@@ -3,6 +3,7 @@ function Scratch() {
         this.pattern = createGraphics(128, 36, WEBGL);
         this.pattern.background(0);
         this.pattern.noStroke();
+        // todo: try blurring the pixels - you'll need a whole nother graphics context I think
     }
 
     this.getPixelValues = (graphics) => {
