@@ -64,13 +64,12 @@ function WaterBlob() {
             for (let i = 0; i < width; i += barWidth) {
                 phase = (i + frameCount) * 0.02 + 0.1;
                 imageX = (1 - i / width) * pattern.width | 0;
-                // if we have a bigger picture, what happens?
                 yloc = (j - (0.5 + 0.5 * sin(phase))) / numRows;
                 imageY = ((yloc * pattern.height) - 1) | 0;
                 imageVal = pixVals[imageY][imageX];
                 ysize = 0.005 + (0.04 * imageVal) + 0.002 * sin(phase * 2 + 0.5 * sin(5 * yloc + frameCount * 0.05));
-                fill(190, 130, 130);
-                rect(i, height * (yloc - ysize / 2) - offset, barWidth, height * ysize + offset);
+                // fill(190, 130, 130);
+                // rect(i, height * (yloc - ysize / 2) - offset, barWidth, height * ysize + offset);
                 fill(255);
                 rect(i, height * (yloc - ysize / 2), barWidth, height * ysize);
             }
@@ -80,7 +79,7 @@ function WaterBlob() {
     this.draw = () => {
 
         const pattern = this.pattern;
-        this.camera.setPosition(0, 0, 600 + (120 * cos(0.01 * frameCount)));
+        this.camera.setPosition(0, 0, 590 + (120 * cos(0.01 * frameCount)));
         pattern.push();
         pattern.clear();
         pattern.pointLight(
