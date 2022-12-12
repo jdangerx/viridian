@@ -1,8 +1,10 @@
-function Scratch() {
+function WaterBlob() {
     this.setup = () => {
-        this.pattern = createGraphics(128, 36, WEBGL);
+        const size = 8;
+        this.pattern = createGraphics(32 * size, 9 * size, WEBGL);
         this.pattern.background(0);
         this.pattern.noStroke();
+        this.bunny = this.pattern.loadModel("images/bunny.obj");
         // todo: try blurring the pixels - you'll need a whole nother graphics context I think
     }
 
@@ -59,7 +61,7 @@ function Scratch() {
         for (let j = numRows; j > 0; j--) {
             for (let i = 0; i < width; i += barWidth) {
                 phase = (i + frameCount) * 0.02 + 0.1;
-                imageX = i / width * pattern.width | 0;
+                imageX = (1 - i / width) * pattern.width | 0;
                 // if we have a bigger picture, what happens?
                 yloc = (j - (0.5 + 0.5 * sin(phase))) / numRows;
                 imageY = ((yloc * pattern.height) - 1) | 0;
@@ -75,19 +77,31 @@ function Scratch() {
 
         const pattern = this.pattern;
         pattern.push();
-        pattern.pointLight(250, 250, 250, 50, 50, 50)
-        pattern.pointLight(250, 250, 250, -50, -20, 0)
-        pattern.strokeWeight(0.5);
         pattern.clear();
-        pattern.background(10 + 10 * (1 + sin(frameCount * 0.1)));
-        pattern.fill(255);
-        pattern.rotateX(Math.PI * sin(frameCount * 0.01));
-        pattern.rotateY(Math.PI * sin(frameCount * 0.01));
-        pattern.torus(16, 4, 12, 8);
+        pattern.pointLight(255, 255, 255, 0, 0, 20);
+        pattern.strokeWeight(1);
+
+        pattern.push();
+        pattern.translate(0, -pattern.height / 4);
+        pattern.translate(-0.2 * pattern.width, 0);
+        pattern.scale(250);
+        pattern.model(this.bunny);
+        pattern.pop();
+
+        pattern.push();
+        pattern.translate(0, -pattern.height / 4);
+        pattern.translate(0.2 * pattern.width, 0);
+        pattern.scale(250);
+        pattern.model(this.bunny);
+        pattern.pop();
+
         pattern.pop();
 
         this.render(this.pattern);
-        image(pattern, 0, 0, 128, 36);
+        push();
+        rotate(PI);
+        image(pattern, width / 2, height / 2, this.pattern.width, this.pattern.height);
+        pop();
 
     }
 }

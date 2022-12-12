@@ -22,7 +22,7 @@ let mgr;
 const IS_PROD = false;
 const MINUTE = 60 * 60;
 const SCENES = {
-    "1": Scratch
+    "1": WaterBlob,
 }
 
 function setup() {
@@ -36,7 +36,7 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Scratch);
+    mgr.showScene(WaterBlob);
     pop();
 }
 
