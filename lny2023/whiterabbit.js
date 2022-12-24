@@ -159,20 +159,7 @@ function WhiteRabbit() {
         {
             const rw = 0.16 * width;
             const rh = rw * this.rabbit.height / this.rabbit.width;
-            const rabbitStart = createVector(-rw / width, 0.2);
-            const rabbitEnd = createVector(1 + rw / width, 0.4);
-            startFirst = p5.Vector.lerp(rabbitStart, firstPallette, utils.smoothstep(0.2, 0.24, slowT));
-            firstSecond = p5.Vector.lerp(firstPallette, secondPallette, utils.smoothstep(0.65, 0.70, slowT));
-            secondEnd = p5.Vector.lerp(secondPallette, rabbitEnd, utils.smoothstep(0.85, 0.90, slowT));
-            let loc = rabbitStart;
-            if (slowT < 0.3) {
-                loc = startFirst
-            } else if (slowT < 0.8) {
-                loc = firstSecond
-            } else {
-                loc = secondEnd;
-            }
-
+            let loc = firstPallette;
             image(this.rabbit, width * loc.x - 0.75 * rw, height * loc.y - 0.5 * rh, rw, rh);
             this.border(0.15, utils.smoothstep(0.45, 0.55, t));
             blendMode(HARD_LIGHT);

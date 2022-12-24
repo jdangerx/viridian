@@ -50,7 +50,6 @@ function draw() {
         rect(width * (1 - gapWidth) / 2, 0, width * gapWidth, height);
     }
     pop();
-
 }
 
 function keyPressed() {
