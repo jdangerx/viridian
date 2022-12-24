@@ -22,7 +22,7 @@ function WhiteRabbit() {
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
     }
 
-    this.border = (borderRatio) => {
+    this.border = (borderRatio, t) => {
         // TODO: animate based on xOffset?
         push();
         fill(this.blue);
@@ -37,22 +37,33 @@ function WhiteRabbit() {
         const marginX = 0.25 * borderHeight;
         const marginY = 0.1 * borderHeight;
         const shadowOffset = 0.12 * borderHeight;
-        // if we iterate based some # of rabbits instead of on position the animation will be easier.
-        for (let x = 0; x < width / 2; x += 2 * (rw + marginX)) {
+        const patternWidth = 2 * (rw + marginX);
+        const xOffset = t * patternWidth;
+        const nRabbits = (width / patternWidth) / 2 + 1;
+        push();
+        translate(xOffset % patternWidth, 0);
+        for (let i = -nRabbits - 1; i < nRabbits; i++) {
+            x = i * patternWidth + (rw + marginX) / 2;
             let x0 = x + marginX / 2;
             let x1 = x0 + rw + marginX;
             utils.glow(this.blue, 0, shadowOffset, shadowOffset);
             image(this.borderRabbits.rightInvert, width / 2 + x0, marginY, rw, rh);
             image(this.borderRabbits.leftInvert, width / 2 + x1, marginY, rw, rh);
-            image(this.borderRabbits.rightInvert, width / 2 - x1 - rw, marginY, rw, rh);
-            image(this.borderRabbits.leftInvert, width / 2 - x0 - rw, marginY, rw, rh);
-            image(this.borderRabbits.right, width / 2 + x0, height - marginY - rh, rw, rh);
-            image(this.borderRabbits.left, width / 2 + x1, height - marginY - rh, rw, rh);
+            utils.noGlow();
+        }
+        pop();
+        push();
+        translate(-xOffset % patternWidth, 0);
+        for (let i = -nRabbits; i < nRabbits; i++) {
+            x = i * patternWidth + (rw + marginX) / 2;
+            let x0 = x + marginX / 2;
+            let x1 = x0 + rw + marginX;
+            utils.glow(this.blue, 0, shadowOffset, shadowOffset);
             image(this.borderRabbits.right, width / 2 - x1 - rw, height - marginY - rh, rw, rh);
             image(this.borderRabbits.left, width / 2 - x0 - rw, height - marginY - rh, rw, rh);
             utils.noGlow();
         }
-
+        pop();
         pop();
     }
 
@@ -107,9 +118,45 @@ function WhiteRabbit() {
             }
         }
 
-        this.pallette(width * 0.25, height / 2, width * 0.2, height * 0.5, 0.1 * frameCount);
-        this.pallette(width * 0.75, height / 2, width * 0.2, height * 0.5, -0.1 * frameCount);
-        this.border(0.15);
+        const total = 300;
+        const t = (frameCount % total) / total;
+        const slowT = ((frameCount / 2) % total) / total;
+        const damping = utils.widePulse(0.3, 0.7, 0.2, slowT);
+        const palletteLooseness = utils.widePulse(0.5, 0.6, 0.1, slowT);
+        const firstPallette = createVector(0.25, 0.4);
+        const secondPallette = createVector(0.75, 0.6);
+        {
+            const loc = p5.Vector.lerp(
+                firstPallette,
+                secondPallette,
+                utils.smoothstep(0.65, 0.75, slowT)
+            );
+            this.pallette(
+                width * loc.x,
+                height * loc.y,
+                width * 0.2 * (1 + 0.1 * sin(frameCount * 0.001) * damping),
+                height * 0.5 * (1 + 0.1 * sin(frameCount * 0.001) * damping),
+                sin(10 * t * 2 * PI * palletteLooseness) * PI * 0.05 * damping
+            );
+
+        }
+
+        {
+            const loc = p5.Vector.lerp(
+                secondPallette,
+                firstPallette,
+                utils.smoothstep(0.62, 0.78, slowT)
+            );
+            this.pallette(
+                width * loc.x,
+                height * loc.y,
+                width * 0.2 * (1 + 0.1 * sin(frameCount * 0.0012) * damping),
+                height * 0.5 * (1 + 0.1 * sin(frameCount * 0.0012) * damping),
+                sin(11 * t * 2 * PI * palletteLooseness) * PI * 0.05 * damping
+            );
+        }
+
+        this.border(0.15, utils.smoothstep(0.45, 0.55, t));
         image(this.overlay, 0, 0, width, height);
     };
 }
