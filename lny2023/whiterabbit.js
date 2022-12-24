@@ -75,11 +75,12 @@ function WhiteRabbit() {
         fill(this.black);
         ellipse(0, 0, w, h);
         fill(this.white);
-        circle(0.2 * w, -0.2 * h, 0.2 * h);
+        circle(0.22 * w, -0.2 * h, 0.2 * h);
         fill(this.red);
-        circle(0.3 * w, 0.1 * h, 0.18 * h);
-        fill(this.blue);
-        circle(0.15 * w, 0.25 * h, 0.13 * h);
+        circle(0.33 * w, 0.1 * h, 0.18 * h);
+        const rw = 0.16 * width;
+        const rh = rw * this.rabbit.height / this.rabbit.width;
+        image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
         pop();
     }
 
@@ -124,8 +125,8 @@ function WhiteRabbit() {
         const slowT = ((frameCount / 2) % total) / total;
         const damping = utils.widePulse(0.3, 0.7, 0.2, slowT);
         const palletteLooseness = utils.widePulse(0.5, 0.6, 0.1, slowT);
-        const firstPallette = createVector(0.25, 0.4);
-        const secondPallette = createVector(0.75, 0.6);
+        const firstPallette = createVector(0.25, 0.54);
+        const secondPallette = createVector(0.75, 0.62);
         {
             const loc = p5.Vector.lerp(
                 firstPallette,
@@ -156,14 +157,8 @@ function WhiteRabbit() {
             );
         }
 
-        {
-            const rw = 0.16 * width;
-            const rh = rw * this.rabbit.height / this.rabbit.width;
-            let loc = firstPallette;
-            image(this.rabbit, width * loc.x - 0.75 * rw, height * loc.y - 0.5 * rh, rw, rh);
-            this.border(0.15, utils.smoothstep(0.45, 0.55, t));
-            blendMode(HARD_LIGHT);
-            image(this.overlay, 0, 0, width, height);
-        };
+        this.border(0.15, utils.smoothstep(0.45, 0.55, t));
+        blendMode(HARD_LIGHT);
+        image(this.overlay, 0, 0, width, height);
     }
 }
