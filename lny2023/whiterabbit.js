@@ -1,8 +1,4 @@
 function WhiteRabbit() {
-    this.preload = () => {
-        console.log("preloading");
-    }
-
     this.setup = () => {
         this.borderRabbits = {
             right: loadImage("images/border-rabbit-right.png"),
@@ -10,13 +6,15 @@ function WhiteRabbit() {
             rightInvert: loadImage("images/border-rabbit-right-invert.png"),
             leftInvert: loadImage("images/border-rabbit-left-invert.png"),
         };
-
-        this.overlay = createGraphics(width, height);
         this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
+    }
+
+    this.enter = () => {
         this.blue = color(60, 60, 200);
         this.white = color(250, 250, 240);
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
+        this.overlay = createGraphics(width, height);
     }
 
     this.overlayCallback = () => {
