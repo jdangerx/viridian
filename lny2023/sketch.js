@@ -1,6 +1,6 @@
 /**
  * To add a new scene:
- * 
+ *
  * 1. make a new Scene() function (see mooncakes.js). It should have its own
  *    setup and draw methods and live in its own file.
  * 2. Include that file in the <head> tag in index.html.
@@ -23,6 +23,7 @@ const IS_PROD = false;
 const MINUTE = 60 * 60;
 const SCENES = {
     "1": WaterBlob,
+    "2": WhiteRabbit,
 }
 
 function setup() {
@@ -36,7 +37,7 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(WaterBlob);
+    mgr.showScene(WhiteRabbit);
     pop();
 }
 
