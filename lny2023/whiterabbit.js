@@ -1,4 +1,8 @@
 function WhiteRabbit() {
+    this.preload = () => {
+        console.log("preloading");
+    }
+
     this.setup = () => {
         this.borderRabbits = {
             right: loadImage("images/border-rabbit-right.png"),
@@ -6,11 +10,18 @@ function WhiteRabbit() {
             rightInvert: loadImage("images/border-rabbit-right-invert.png"),
             leftInvert: loadImage("images/border-rabbit-left-invert.png"),
         };
-        this.paper = loadImage("images/crumpled-paper-texture.jpeg");
+
+        this.overlay = createGraphics(width, height);
+        this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
         this.blue = color(60, 60, 200);
         this.white = color(250, 250, 240);
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
+    }
+
+    this.overlayCallback = () => {
+        this.overlay.tint(255, 40);
+        this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
     }
 
     this.border = (borderRatio) => {
@@ -46,12 +57,28 @@ function WhiteRabbit() {
 
         pop();
     }
+
+    this.pallette = (x, y, w, h, rotation) => {
+        push();
+        translate(x, y);
+        rotate(rotation);
+        fill(this.black);
+        ellipse(0, 0, w, h);
+        fill(this.white);
+        circle(0.2 * w, -0.2 * h, 0.2 * h);
+        fill(this.red);
+        circle(0.3 * w, 0.1 * h, 0.18 * h);
+        fill(this.blue);
+        circle(0.15 * w, 0.25 * h, 0.13 * h);
+        pop();
+    }
+
     this.draw = () => {
         background(this.white);
+        noStroke();
 
         {
             fill(this.blue);
-            noStroke();
             let stripeWidth = width * 0.004;
             const nStripes = 8;
             for (let i = 0; i < nStripes; i++) {
@@ -61,7 +88,6 @@ function WhiteRabbit() {
                     width / 2,
                     stripeWidth * (0.6 + i * 0.15)
                 );
-
                 rect(
                     width / 2,
                     height * 0.25 - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth,
@@ -71,7 +97,6 @@ function WhiteRabbit() {
             }
         }
         {
-            noStroke();
             const stripeWidth = width * 0.003;
             const nStripes = 8;
             fill(this.white);
@@ -83,11 +108,10 @@ function WhiteRabbit() {
                 rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, 0, stripeWidth, height);
             }
         }
+
+        this.pallette(width * 0.25, height / 2, width * 0.2, height * 0.5, 0.1 * frameCount);
+        this.pallette(width * 0.75, height / 2, width * 0.2, height * 0.5, -0.1 * frameCount);
         this.border(0.15);
-        push();
-        blendMode(HARD_LIGHT);
-        tint(255, 40);
-        image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
-        pop();
+        image(this.overlay, 0, 0, width, height);
     };
 }
