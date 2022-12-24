@@ -7,7 +7,10 @@
  * 3. add a line in SCENES so you can switch at leisure.
  */
 
-/*
+let mgr;
+const IS_PROD = false;
+const MINUTE = 60 * 60;
+
 P5Capture.setDefaultOptions({
     format: "webm",
     framerate: 60,
@@ -16,11 +19,7 @@ P5Capture.setDefaultOptions({
     autoSaveDuration: 240,
     disablePixelScaling: true
 });
-*/
 
-let mgr;
-const IS_PROD = false;
-const MINUTE = 60 * 60;
 const SCENES = {
     "1": WaterBlob,
     "2": WhiteRabbit,

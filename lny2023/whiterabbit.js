@@ -6,6 +6,7 @@ function WhiteRabbit() {
             rightInvert: loadImage("images/border-rabbit-right-invert.png"),
             leftInvert: loadImage("images/border-rabbit-left-invert.png"),
         };
+        this.rabbit = loadImage("images/big-white-rabbit.png");
         this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
     }
 
@@ -18,7 +19,7 @@ function WhiteRabbit() {
     }
 
     this.overlayCallback = () => {
-        this.overlay.tint(255, 40);
+        this.overlay.tint(255, 30);
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
     }
 
@@ -129,7 +130,7 @@ function WhiteRabbit() {
             const loc = p5.Vector.lerp(
                 firstPallette,
                 secondPallette,
-                utils.smoothstep(0.65, 0.75, slowT)
+                utils.smoothstep(0.62, 0.72, slowT)
             );
             this.pallette(
                 width * loc.x,
@@ -138,14 +139,13 @@ function WhiteRabbit() {
                 height * 0.5 * (1 + 0.1 * sin(frameCount * 0.001) * damping),
                 sin(10 * t * 2 * PI * palletteLooseness) * PI * 0.05 * damping
             );
-
         }
 
         {
             const loc = p5.Vector.lerp(
                 secondPallette,
                 firstPallette,
-                utils.smoothstep(0.62, 0.78, slowT)
+                utils.smoothstep(0.65, 0.75, slowT)
             );
             this.pallette(
                 width * loc.x,
@@ -156,7 +156,27 @@ function WhiteRabbit() {
             );
         }
 
-        this.border(0.15, utils.smoothstep(0.45, 0.55, t));
-        image(this.overlay, 0, 0, width, height);
-    };
+        {
+            const rw = 0.16 * width;
+            const rh = rw * this.rabbit.height / this.rabbit.width;
+            const rabbitStart = createVector(-rw / width, 0.2);
+            const rabbitEnd = createVector(1 + rw / width, 0.4);
+            startFirst = p5.Vector.lerp(rabbitStart, firstPallette, utils.smoothstep(0.2, 0.24, slowT));
+            firstSecond = p5.Vector.lerp(firstPallette, secondPallette, utils.smoothstep(0.65, 0.70, slowT));
+            secondEnd = p5.Vector.lerp(secondPallette, rabbitEnd, utils.smoothstep(0.85, 0.90, slowT));
+            let loc = rabbitStart;
+            if (slowT < 0.3) {
+                loc = startFirst
+            } else if (slowT < 0.8) {
+                loc = firstSecond
+            } else {
+                loc = secondEnd;
+            }
+
+            image(this.rabbit, width * loc.x - 0.75 * rw, height * loc.y - 0.5 * rh, rw, rh);
+            this.border(0.15, utils.smoothstep(0.45, 0.55, t));
+            blendMode(HARD_LIGHT);
+            image(this.overlay, 0, 0, width, height);
+        };
+    }
 }
