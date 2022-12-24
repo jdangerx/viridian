@@ -6,6 +6,7 @@ function WhiteRabbit() {
             rightInvert: loadImage("images/border-rabbit-right-invert.png"),
             leftInvert: loadImage("images/border-rabbit-left-invert.png"),
         };
+        this.paper = loadImage("images/crumpled-paper-texture.jpeg");
         this.blue = color(60, 60, 200);
         this.white = color(250, 250, 240);
         this.red = color(200, 60, 60);
@@ -40,15 +41,6 @@ function WhiteRabbit() {
             image(this.borderRabbits.left, width / 2 + x1, height - marginY - rh, rw, rh);
             image(this.borderRabbits.right, width / 2 - x1 - rw, height - marginY - rh, rw, rh);
             image(this.borderRabbits.left, width / 2 - x0 - rw, height - marginY - rh, rw, rh);
-            // utils.glow(this.blue, 0, -0.3 * shadowOffset, -0.3 * shadowOffset);
-            // image(this.borderRabbits.rightInvert, width / 2 + x0, marginY, rw, rh);
-            // image(this.borderRabbits.leftInvert, width / 2 + x1, marginY, rw, rh);
-            // image(this.borderRabbits.rightInvert, width / 2 - x1 - rw, marginY, rw, rh);
-            // image(this.borderRabbits.leftInvert, width / 2 - x0 - rw, marginY, rw, rh);
-            // image(this.borderRabbits.right, width / 2 + x0, height - marginY - rh, rw, rh);
-            // image(this.borderRabbits.left, width / 2 + x1, height - marginY - rh, rw, rh);
-            // image(this.borderRabbits.right, width / 2 - x1 - rw, height - marginY - rh, rw, rh);
-            // image(this.borderRabbits.left, width / 2 - x0 - rw, height - marginY - rh, rw, rh);
             utils.noGlow();
         }
 
@@ -91,6 +83,11 @@ function WhiteRabbit() {
                 rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, 0, stripeWidth, height);
             }
         }
-        this.border(0.15)
+        this.border(0.15);
+        push();
+        blendMode(HARD_LIGHT);
+        tint(255, 40);
+        image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
+        pop();
     };
 }
