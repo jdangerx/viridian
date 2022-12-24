@@ -72,11 +72,13 @@ function WhiteRabbit() {
         push();
         translate(x, y);
         rotate(rotation);
+        fill(this.red);
+        ellipse(0.03 * w, 0.2 * h, w, h);
         fill(this.black);
         ellipse(0, 0, w, h);
         fill(this.white);
         circle(0.22 * w, -0.2 * h, 0.2 * h);
-        fill(this.red);
+        fill(this.blue);
         circle(0.33 * w, 0.1 * h, 0.18 * h);
         const rw = 0.16 * width;
         const rh = rw * this.rabbit.height / this.rabbit.width;
