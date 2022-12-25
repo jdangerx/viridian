@@ -102,13 +102,14 @@ function WhiteRabbit() {
     this.draw = () => {
         background(this.white);
         noStroke();
+        const borderSize = 0.15;
 
         const total = 300;
         const t = (frameCount % total) / total;
         const slowT = ((frameCount / 2) % total) / total;
 
-        this.blueStripes(0, height * 0.65, width * 0.5, height * 0.25, 8, 0.2, 1, -t);
-        this.blueStripes(width * 0.5, height * 0.15, width * 0.5, height * 0.25, 8, 1, 0, t);
+        this.blueStripes(0, height * (1 - borderSize), width * 0.5, -height * 0.24, 8, 0.8, 0, t);
+        this.blueStripes(width * 0.5, height * borderSize, width * 0.5, height * 0.24, 8, 0.8, 0, t);
 
         const stripeWidth = width * 0.003;
         const nStripes = 8;
@@ -155,7 +156,7 @@ function WhiteRabbit() {
             );
         }
 
-        this.border(0.15, utils.smoothstep(0.45, 0.55, t));
+        this.border(borderSize, utils.smoothstep(0.45, 0.55, t));
         blendMode(HARD_LIGHT);
         image(this.overlay, 0, 0, width, height);
     }
