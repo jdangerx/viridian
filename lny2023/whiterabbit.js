@@ -86,13 +86,13 @@ function WhiteRabbit() {
         pop();
     }
 
-    this.blueStripes = (x, y, width, height, nStripes, topValue, bottomValue, offset) => {
+    this.blueStripes = (x, y, width, height, nStripes, offset) => {
         push();
         rowHeight = height / nStripes;
-        translate(x, y);
-        for (let i = -1; i < nStripes; i++) {
+        translate(x, y - rowHeight);
+        for (let i = 0; i < nStripes; i++) {
             stripeY = i * rowHeight + (offset * rowHeight % rowHeight);
-            let stripeValue = lerp(topValue, bottomValue, stripeY / height);
+            let stripeValue = 0.8 * cos(PI / 2 * stripeY / height);
             fill(this.blue);
             rect(0, stripeY, width, rowHeight * stripeValue);
         }
@@ -108,8 +108,8 @@ function WhiteRabbit() {
         const t = (frameCount % total) / total;
         const slowT = ((frameCount / 2) % total) / total;
 
-        this.blueStripes(0, height * (1 - borderSize), width * 0.5, -height * 0.24, 8, 0.8, 0, t);
-        this.blueStripes(width * 0.5, height * borderSize, width * 0.5, height * 0.24, 8, 0.8, 0, t);
+        this.blueStripes(0, height * (1 - borderSize), width * 0.5, -height * 0.24, 8, t);
+        this.blueStripes(width * 0.5, height * borderSize, width * 0.5, height * 0.24, 8, t);
 
         const stripeWidth = width * 0.003;
         const nStripes = 8;
