@@ -32,7 +32,9 @@ function WhiteRabbit() {
         const rabbitScale = rabbitHeight / this.borderRabbits.right.height;
         const rh = this.borderRabbits.right.height * rabbitScale;
         const rw = this.borderRabbits.right.width * rabbitScale;
+        utils.glow("#000000", 4, 0, borderHeight * 0.05);
         rect(0, 0, width, borderHeight);
+        utils.noGlow();
         rect(0, height - borderHeight, width, borderHeight);
 
         const marginX = 0.25 * borderHeight;
@@ -73,7 +75,7 @@ function WhiteRabbit() {
         translate(x, y);
         rotate(rotation);
         fill(this.red);
-        ellipse(0.03 * w, 0.2 * h, w, h);
+        rect(-0.39 * w, -0.37 * h, w, h, h * 0.3);
         fill(this.black);
         ellipse(0, 0, w, h);
         fill(this.white);

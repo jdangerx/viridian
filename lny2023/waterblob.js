@@ -8,6 +8,8 @@ function WaterBlob() {
         this.camera = this.pattern.createCamera();
         this.camera.perspective(PI * 0.3);
         // todo: try blurring the pixels - you'll need a whole nother graphics context I think
+
+        this.drawOnce = false;
     }
 
     this.getPixelValues = (graphics) => {
@@ -57,19 +59,16 @@ function WaterBlob() {
         const pixVals = this.getPixelValues(pattern);
         noStroke();
         let phase;
-        const numRows = 28;
+        const numRows = 36;
         const barWidth = width / pattern.width | 0;
-        const offset = 3;
         for (let j = numRows; j > 0; j--) {
             for (let i = 0; i < width; i += barWidth) {
-                phase = (i + frameCount) * 0.02 + 0.1;
-                imageX = (1 - i / width) * pattern.width | 0;
+                phase = ((i + frameCount) * 0.02 + 0.1) * pattern.width / width * 5;
+                imageX = (1 - (i + 1) / width) * pattern.width | 0;
                 yloc = (j - (0.5 + 0.5 * sin(phase))) / numRows;
                 imageY = ((yloc * pattern.height) - 1) | 0;
                 imageVal = pixVals[imageY][imageX];
                 ysize = 0.005 + (0.04 * imageVal) + 0.002 * sin(phase * 2 + 0.5 * sin(5 * yloc + frameCount * 0.05));
-                // fill(190, 130, 130);
-                // rect(i, height * (yloc - ysize / 2) - offset, barWidth, height * ysize + offset);
                 fill(255);
                 rect(i, height * (yloc - ysize / 2), barWidth, height * ysize);
             }
@@ -77,36 +76,43 @@ function WaterBlob() {
     }
 
     this.draw = () => {
+        if (this.drawOnce) {
+            // useful for spitting out console logs without overwhelming the browser
+            this.draw = () => null
+        }
 
         const pattern = this.pattern;
-        this.camera.setPosition(0, 0, 590 + (120 * cos(0.01 * frameCount)));
+        this.camera.setPosition(0, 0, 600);
         pattern.push();
         pattern.clear();
         pattern.pointLight(
-            180, 180, 180, 1000, pattern.height * 0.5, 300
+            80, 80, 80, 1000, pattern.height * 0.5, 300
         );
         pattern.pointLight(
-            180, 180, 180, -1000, -pattern.height * 0.5, 300
+            80, 80, 80, -1000, -pattern.height * 0.5, 300
+        );
+        pattern.pointLight(
+            120, 120, 120, 0, 0, 300
         );
         pattern.strokeWeight(1);
 
-        const numX = 8;
+        const numX = 16;
         const numY = 2;
-        const numZ = 1;
+        const numZ = 3;
         const gridSize = 300;
         for (let i = 0; i < numX; i++) {
             for (let j = 0; j < numY; j++) {
                 for (let k = 0; k < numZ; k++) {
-                    this.makeBun(
-                        (i - numX / 2 + 0.5) * gridSize,
-                        (j - numY / 2 + 0.5) * gridSize,
-                        (k - numZ / 2 + 0.5) * gridSize,
-                    );
+                    if ((i + j + k) % 2 == 0) {
+                        this.makeBun(
+                            (i - numX / 2 + 0.5) * gridSize * 0.75,
+                            (j - numY / 2 + 0.5) * gridSize,
+                            ((k - numZ / 2 + 0.5) * gridSize + frameCount * 3) % (3 * gridSize) - gridSize,
+                        );
+                    }
                 }
             }
         }
-        this.makeBun()
-
 
         pattern.pop();
 
@@ -114,7 +120,9 @@ function WaterBlob() {
         push();
         translate(width / 2, height / 2);
         rotate(PI);
-        image(pattern, -width / 2, -height / 2, this.pattern.width, this.pattern.height);
+        if (!IS_PROD) {
+            image(pattern, -width / 2, -height / 2, this.pattern.width, this.pattern.height);
+        }
         pop();
 
     }
