@@ -86,45 +86,41 @@ function WhiteRabbit() {
         pop();
     }
 
+    this.blueStripes = (x, y, width, height, nStripes, topValue, bottomValue, offset) => {
+        push();
+        rowHeight = height / nStripes;
+        translate(x, y);
+        for (let i = -1; i < nStripes; i++) {
+            stripeY = i * rowHeight + (offset * rowHeight % rowHeight);
+            let stripeValue = lerp(topValue, bottomValue, stripeY / height);
+            fill(this.blue);
+            rect(0, stripeY, width, rowHeight * stripeValue);
+        }
+        pop();
+    }
+
     this.draw = () => {
         background(this.white);
         noStroke();
 
-        {
-            fill(this.blue);
-            let stripeWidth = width * 0.004;
-            const nStripes = 8;
-            for (let i = 0; i < nStripes; i++) {
-                rect(
-                    0,
-                    height * 0.75 - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth,
-                    width / 2,
-                    stripeWidth * (0.6 + i * 0.15)
-                );
-                rect(
-                    width / 2,
-                    height * 0.25 - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth,
-                    width / 2,
-                    stripeWidth * (1.6 - i * 0.15)
-                );
-            }
-        }
-        {
-            const stripeWidth = width * 0.003;
-            const nStripes = 8;
-            fill(this.white);
-            rect(width * 0.5 - (nStripes + 0.5) * stripeWidth, 0, stripeWidth, height);
-            for (let i = 0; i < nStripes; i++) {
-                fill(this.red);
-                rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth, 0, stripeWidth, height);
-                fill(this.white);
-                rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, 0, stripeWidth, height);
-            }
-        }
-
         const total = 300;
         const t = (frameCount % total) / total;
         const slowT = ((frameCount / 2) % total) / total;
+
+        this.blueStripes(0, height * 0.65, width * 0.5, height * 0.25, 8, 0.2, 1, -t);
+        this.blueStripes(width * 0.5, height * 0.15, width * 0.5, height * 0.25, 8, 1, 0, t);
+
+        const stripeWidth = width * 0.003;
+        const nStripes = 8;
+        fill(this.white);
+        rect(width * 0.5 - (nStripes + 0.5) * stripeWidth, 0, stripeWidth, height);
+        for (let i = 0; i < nStripes; i++) {
+            fill(this.red);
+            rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth, 0, stripeWidth, height);
+            fill(this.white);
+            rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, 0, stripeWidth, height);
+        }
+
         const damping = utils.widePulse(0.3, 0.7, 0.2, slowT);
         const palletteLooseness = utils.widePulse(0.5, 0.6, 0.1, slowT);
         const firstPallette = createVector(0.25, 0.54);
