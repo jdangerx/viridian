@@ -90,37 +90,47 @@ function WhiteRabbit() {
     }
 
     this.reel = (x, xSize, t) => {
+        push();
         const u = xSize * 0.1;
         const cellHeight = height * 1.0;
         const connectorSize = cellHeight / 2;
         const palletter = (y) => {
             this.pallette(x, y, 10 * u, 6 * u);
         }
+
+        const nullIcon = (y) => { };
         const reelMakers = [
             {
                 topX: 4 * u,
-                botX: -2 * u,
                 iconMaker: palletter,
-            }
+            },
+            {
+                topX: -2 * u,
+                iconMaker: palletter,
+            },
+            {
+                topX: 3 * u,
+                iconMaker: palletter,
+            },
+            {
+                topX: 3 * u,
+                iconMaker: palletter,
+            },
+            {
+                topX: -2 * u,
+                iconMaker: palletter,
+            },
         ]
-        push();
+
         const baseY = -t * (2 * cellHeight);
-        this.redStripes(x + 4 * u, baseY, 0.1 * u, -connectorSize, 8);
-        this.redStripes(x - 2 * u, baseY, 0.1 * u, connectorSize, 8);
-        this.pallette(x, baseY, 10 * u, 6 * u);
-
-        this.redStripes(x - 2 * u, baseY + cellHeight, 0.1 * u, -connectorSize, 8);
-        this.redStripes(x + 4 * u, baseY + cellHeight, 0.1 * u, connectorSize, 8);
-        this.pallette(x, baseY + cellHeight, 10 * u, 6 * u);
-
-        this.redStripes(x + 4 * u, baseY + 2 * cellHeight, 0.1 * u, -connectorSize, 8);
-        this.redStripes(x - 2 * u, baseY + 2 * cellHeight, 0.1 * u, connectorSize, 8);
-        this.pallette(x, baseY + 2 * cellHeight, 10 * u, 6 * u);
-
-        this.redStripes(x - 2 * u, baseY + 3 * cellHeight, 0.1 * u, -connectorSize, 8);
-        this.redStripes(x + 4 * u, baseY + 3 * cellHeight, 0.1 * u, connectorSize, 8);
-        this.pallette(x, baseY + 3 * cellHeight, 10 * u, 6 * u);
-
+        reelMakers.forEach(({ topX, iconMaker }, i, arr) => {
+            const nextIndex = (i + 1) % arr.length;
+            const botX = arr[nextIndex].topX;
+            const y = baseY + i * cellHeight;
+            this.redStripes(x + topX, y, 0.1 * u, -connectorSize, 8);
+            this.redStripes(x + botX, y, 0.1 * u, connectorSize, 8);
+            iconMaker(y);
+        });
         pop();
     }
 
