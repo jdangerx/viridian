@@ -92,45 +92,45 @@ function WhiteRabbit() {
     this.reel = (x, xSize, t) => {
         push();
         const u = xSize * 0.1;
-        const cellHeight = height * 1.0;
+        const cellHeight = height * 1.2;
         const connectorSize = cellHeight / 2;
-        const palletter = (y) => {
+        const palletter = (y, i) => {
             this.pallette(x, y, 10 * u, 6 * u);
         }
 
-        const nullIcon = (y) => { };
+        const nullIcon = (y, i) => {
+            push();
+            fill(0);
+            for (let j = 0; j <= i; j++) {
+                circle(x + j * u, y, u);
+            }
+            pop();
+        };
+        // The illusion is that the last element swaps out for the first element at loop time
+        // so the last element needs to actually connect to the *second* element
+        // which means that if nextIndex is 0, it should be 1
         const reelMakers = [
             {
-                topX: 4 * u,
-                iconMaker: palletter,
-            },
-            {
                 topX: -2 * u,
-                iconMaker: palletter,
+                iconMaker: nullIcon,
             },
             {
-                topX: 3 * u,
-                iconMaker: palletter,
-            },
-            {
-                topX: 3 * u,
-                iconMaker: palletter,
-            },
-            {
-                topX: -2 * u,
-                iconMaker: palletter,
+                topX: 0 * u,
+                iconMaker: nullIcon,
             },
         ]
 
-        const baseY = -t * (2 * cellHeight);
-        reelMakers.forEach(({ topX, iconMaker }, i, arr) => {
-            const nextIndex = (i + 1) % arr.length;
-            const botX = arr[nextIndex].topX;
-            const y = baseY + i * cellHeight;
+        const baseY = cellHeight / 2 - t * (reelMakers.length) * cellHeight;
+        // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
+        for (let i = 0; i <= reelMakers.length; i++) {
+            let { topX, iconMaker } = reelMakers[i % reelMakers.length];
+            let nextIndex = (i + 1) % reelMakers.length;
+            let botX = reelMakers[nextIndex].topX;
+            let y = baseY + i * cellHeight;
             this.redStripes(x + topX, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(x + botX, y, 0.1 * u, connectorSize, 8);
-            iconMaker(y);
-        });
+            iconMaker(y, i);
+        }
         pop();
     }
 
