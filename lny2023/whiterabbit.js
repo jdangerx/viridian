@@ -1,4 +1,5 @@
 function WhiteRabbit() {
+    const g = width / 32;
     this.setup = () => {
         this.borderRabbits = {
             right: loadImage("images/border-rabbit-right.png"),
@@ -45,10 +46,9 @@ function WhiteRabbit() {
         pop();
     }
 
-    this.pallette = (x, y, w, h, rotation) => {
+    this.pallette = (x, y, w, h) => {
         push();
         translate(x, y);
-        rotate(rotation);
         fill(this.red);
         rect(-0.39 * w, -0.37 * h, w, h, h * 0.3);
         fill(this.black);
@@ -76,62 +76,66 @@ function WhiteRabbit() {
         pop();
     }
 
+    this.redStripes = (x, y, stripeWidth, ySize, nStripes) => {
+        push();
+        fill(this.white);
+        rect(x - (nStripes + 0.5) * stripeWidth, y, stripeWidth, height);
+        for (let i = 0; i < nStripes; i++) {
+            fill(this.red);
+            rect(x - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth, y, stripeWidth, ySize);
+            fill(this.white);
+            rect(x - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, y, stripeWidth, ySize);
+        }
+        pop()
+    }
+
+    this.reel = (x, xSize, t) => {
+        const u = xSize * 0.1;
+        const cellHeight = height * 1.0;
+        const connectorSize = cellHeight / 2;
+        const palletter = (y) => {
+            this.pallette(x, y, 10 * u, 6 * u);
+        }
+        const reelMakers = [
+            {
+                topX: 4 * u,
+                botX: -2 * u,
+                iconMaker: palletter,
+            }
+        ]
+        push();
+        const baseY = -t * (2 * cellHeight);
+        this.redStripes(x + 4 * u, baseY, 0.1 * u, -connectorSize, 8);
+        this.redStripes(x - 2 * u, baseY, 0.1 * u, connectorSize, 8);
+        this.pallette(x, baseY, 10 * u, 6 * u);
+
+        this.redStripes(x - 2 * u, baseY + cellHeight, 0.1 * u, -connectorSize, 8);
+        this.redStripes(x + 4 * u, baseY + cellHeight, 0.1 * u, connectorSize, 8);
+        this.pallette(x, baseY + cellHeight, 10 * u, 6 * u);
+
+        this.redStripes(x + 4 * u, baseY + 2 * cellHeight, 0.1 * u, -connectorSize, 8);
+        this.redStripes(x - 2 * u, baseY + 2 * cellHeight, 0.1 * u, connectorSize, 8);
+        this.pallette(x, baseY + 2 * cellHeight, 10 * u, 6 * u);
+
+        this.redStripes(x - 2 * u, baseY + 3 * cellHeight, 0.1 * u, -connectorSize, 8);
+        this.redStripes(x + 4 * u, baseY + 3 * cellHeight, 0.1 * u, connectorSize, 8);
+        this.pallette(x, baseY + 3 * cellHeight, 10 * u, 6 * u);
+
+        pop();
+    }
+
     this.draw = () => {
         background(this.white);
         noStroke();
 
-        const total = 300;
+        const total = 400;
         const t = (frameCount % total) / total;
-        const slowT = ((frameCount / 2) % total) / total;
 
-        const stripeWidth = width * 0.003;
-        const nStripes = 8;
-        fill(this.white);
-        rect(width * 0.5 - (nStripes + 0.5) * stripeWidth, 0, stripeWidth, height);
-        for (let i = 0; i < nStripes; i++) {
-            fill(this.red);
-            rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth, 0, stripeWidth, height);
-            fill(this.white);
-            rect(width * 0.5 - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, 0, stripeWidth, height);
-        }
-
-        const damping = utils.widePulse(0.3, 0.7, 0.2, slowT);
-        const palletteLooseness = utils.widePulse(0.5, 0.6, 0.1, slowT);
-        const firstPallette = createVector(0.25, 0.54);
-        const secondPallette = createVector(0.75, 0.62);
-        {
-            const loc = p5.Vector.lerp(
-                firstPallette,
-                secondPallette,
-                utils.smoothstep(0.62, 0.72, slowT)
-            );
-            this.pallette(
-                width * loc.x,
-                height * loc.y,
-                width * 0.2 * (1 + 0.1 * sin(frameCount * 0.001) * damping),
-                height * 0.5 * (1 + 0.1 * sin(frameCount * 0.001) * damping),
-                sin(10 * t * 2 * PI * palletteLooseness) * PI * 0.05 * damping
-            );
-        }
-
-        {
-            const loc = p5.Vector.lerp(
-                secondPallette,
-                firstPallette,
-                utils.smoothstep(0.65, 0.75, slowT)
-            );
-            this.pallette(
-                width * loc.x,
-                height * loc.y,
-                width * 0.2 * (1 + 0.1 * sin(frameCount * 0.0012) * damping),
-                height * 0.5 * (1 + 0.1 * sin(frameCount * 0.0012) * damping),
-                sin(11 * t * 2 * PI * palletteLooseness) * PI * 0.05 * damping
-            );
-        }
+        this.reel(8 * g, 9 * g, t);
 
         const borderSize = 0.06;
-        this.border(borderSize, 0, 2 * t);
-        this.border(-borderSize, width, 2 * t);
+        this.border(borderSize, 0, 20 * t);
+        this.border(-borderSize, width, 20 * t);
         blendMode(HARD_LIGHT);
         image(this.overlay, 0, 0, width, height);
     }
