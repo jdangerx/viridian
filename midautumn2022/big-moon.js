@@ -156,7 +156,7 @@ function BigMoon() {
         utils.noGlow();
         pop();
 
-        utils.lightTest();
+        // utils.lightTest();
     }
 
     this.updateFlower = (f) => {

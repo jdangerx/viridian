@@ -23,50 +23,25 @@ function WhiteRabbit() {
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
     }
 
-    this.border = (borderRatio, t) => {
-        // TODO: animate based on xOffset?
+    this.border = (borderRatio, x, t) => {
         push();
         fill(this.blue);
-        const borderHeight = borderRatio * height;
-        const rabbitHeight = borderHeight * 1.2;
-        const rabbitScale = rabbitHeight / this.borderRabbits.right.height;
-        const rh = this.borderRabbits.right.height * rabbitScale;
-        const rw = this.borderRabbits.right.width * rabbitScale;
-        utils.glow("#000000", 4, 0, borderHeight * 0.05);
-        rect(0, 0, width, borderHeight);
-        utils.noGlow();
-        rect(0, height - borderHeight, width, borderHeight);
+        const borderWidth = width * borderRatio;
+        const nStripes = 8;
+        const stripesWidth = borderWidth * 0.8;
+        const stripeWidth = stripesWidth / nStripes;
 
-        const marginX = 0.25 * borderHeight;
-        const marginY = 0.1 * borderHeight;
-        const shadowOffset = 0.12 * borderHeight;
-        const patternWidth = 2 * (rw + marginX);
-        const xOffset = t * patternWidth;
-        const nRabbits = (width / patternWidth) / 2 + 1;
         push();
-        translate(xOffset % patternWidth, 0);
-        for (let i = -nRabbits - 1; i < nRabbits; i++) {
-            x = i * patternWidth + (rw + marginX) / 2;
-            let x0 = x + marginX / 2;
-            let x1 = x0 + rw + marginX;
-            utils.glow(this.blue, 0, shadowOffset, shadowOffset);
-            image(this.borderRabbits.rightInvert, width / 2 + x0, marginY, rw, rh);
-            image(this.borderRabbits.leftInvert, width / 2 + x1, marginY, rw, rh);
-            utils.noGlow();
+        rect(x, 0, borderWidth, height);
+        translate(x + borderWidth - stripeWidth, 0);
+        for (let i = 0; i < nStripes; i++) {
+            stripeX = i * stripeWidth + (t * stripeWidth % stripeWidth);
+            let stripeValue = 0.8 * cos(PI / 2 * stripeX / stripesWidth);
+            fill(this.blue);
+            rect(stripeX, 0, stripeWidth * stripeValue, height);
         }
         pop();
-        push();
-        translate(-xOffset % patternWidth, 0);
-        for (let i = -nRabbits; i < nRabbits; i++) {
-            x = i * patternWidth + (rw + marginX) / 2;
-            let x0 = x + marginX / 2;
-            let x1 = x0 + rw + marginX;
-            utils.glow(this.blue, 0, shadowOffset, shadowOffset);
-            image(this.borderRabbits.right, width / 2 - x1 - rw, height - marginY - rh, rw, rh);
-            image(this.borderRabbits.left, width / 2 - x0 - rw, height - marginY - rh, rw, rh);
-            utils.noGlow();
-        }
-        pop();
+
         pop();
     }
 
@@ -104,14 +79,10 @@ function WhiteRabbit() {
     this.draw = () => {
         background(this.white);
         noStroke();
-        const borderSize = 0.15;
 
         const total = 300;
         const t = (frameCount % total) / total;
         const slowT = ((frameCount / 2) % total) / total;
-
-        this.blueStripes(0, height * (1 - borderSize), width * 0.5, -height * 0.24, 8, t);
-        this.blueStripes(width * 0.5, height * borderSize, width * 0.5, height * 0.24, 8, t);
 
         const stripeWidth = width * 0.003;
         const nStripes = 8;
@@ -158,7 +129,9 @@ function WhiteRabbit() {
             );
         }
 
-        this.border(borderSize, utils.smoothstep(0.45, 0.55, t));
+        const borderSize = 0.06;
+        this.border(borderSize, 0, 2 * t);
+        this.border(-borderSize, width, 2 * t);
         blendMode(HARD_LIGHT);
         image(this.overlay, 0, 0, width, height);
     }
