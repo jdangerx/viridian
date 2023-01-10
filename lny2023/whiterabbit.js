@@ -175,7 +175,7 @@ function WhiteRabbit() {
             pop();
         }
 
-        const reelItems = [
+        const items = [
             {
                 topX: 3 * u,
                 iconMaker: palletter,
@@ -190,14 +190,15 @@ function WhiteRabbit() {
             },
         ]
 
-        const reelT = utils.smoothsteps([0.25, 0.75], 0.2, t);
-        const baseY = height / 2 - reelT * (reelItems.length) * cellHeight;
+        const steps = items.map((_value, i, arr) => (i * 2 + 1) / (arr.length * 2));
+        const stepT = utils.smoothsteps(steps, 0.1, t);
+        const baseY = height / 2 - stepT * (items.length) * cellHeight;
 
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
-        for (let i = 0; i <= reelItems.length; i++) {
-            let { topX, iconMaker } = reelItems[i % reelItems.length];
-            let nextIndex = (i + 1) % reelItems.length;
-            let botX = reelItems[nextIndex].topX;
+        for (let i = 0; i <= items.length; i++) {
+            let { topX, iconMaker } = items[i % items.length];
+            let nextIndex = (i + 1) % items.length;
+            let botX = items[nextIndex].topX;
             let y = baseY + i * cellHeight;
             this.redStripes(x + topX, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(x + botX, y, 0.1 * u, connectorSize, 8);
@@ -210,7 +211,7 @@ function WhiteRabbit() {
         background(this.white);
         noStroke();
 
-        const total = 400;
+        const total = 800;
         const t = (frameCount % total) / total;
 
 
