@@ -23,6 +23,7 @@ P5Capture.setDefaultOptions({
 const SCENES = {
     "1": WaterBlob,
     "2": WhiteRabbit,
+    "3": Squiggle,
 }
 
 function setup() {

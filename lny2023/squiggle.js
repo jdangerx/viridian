@@ -16,12 +16,12 @@ function Squiggle() {
         translate(width/2, height/2);
         rotate(PI/5);
         translate(-width/2, -height/2);
-        this.drawWave(-100, width+100, height * 1, 50, noise(0.1));
+        this.drawWave(-100, width+100, height * 1, 30, noise(0.1));
         pop();
 
         push();
         translate(0, 0);
-        this.drawWave(-100, width+100, height * 0.8, 50, noise(0.45));
+        this.drawWave(-100, width+100, height * 0.8, 30, noise(0.45));
         pop();
 
         push();
@@ -29,7 +29,7 @@ function Squiggle() {
         rotate(-PI/6);
         translate(-width/2, -height/2);
         translate(300, 0);
-        this.drawWave(-100, width+100, height * 1.2, 50, noise(0.87));
+        this.drawWave(-100, width+100, height * 1.2, 30, noise(0.87));
         pop();
     }
 
