@@ -53,6 +53,13 @@ const utils = {
         return x * x * (3 - 2 * x);
     },
 
+    smoothsteps: (steps, width, t) => {
+        const sum = (steps.map(step => [step - width / 2, step + width / 2])
+            .map(([min, max]) => utils.smoothstep(min, max, t))
+            .reduce((acc, cur) => acc + cur, 0));
+        return sum / steps.length;
+    },
+
     // https://www.iquilezles.org/www/articles/functions/functions.htm
     cubicPulse: (center, width, x) => {
         x = abs(x - center);

@@ -50,14 +50,14 @@ function WhiteRabbit() {
         push();
         translate(x, y);
         fill(this.red);
-        rect(-0.39 * w, -0.37 * h, w, h, h * 0.3);
+        rect(-0.50 * w, -0.37 * h, w, h, h * 0.3);
         fill(this.black);
-        ellipse(0, 0, w, h);
+        ellipse(-0.10 * w, 0, w, h);
         fill(this.white);
-        circle(0.22 * w, -0.2 * h, 0.2 * h);
-        fill(this.blue);
-        circle(0.33 * w, 0.1 * h, 0.18 * h);
-        const rw = 0.16 * width;
+        circle(0.21 * w, -0.2 * h, 0.2 * h);
+        fill(this.red);
+        circle(0.26 * w, 0.1 * h, 0.18 * h);
+        const rw = 0.2 * width;
         const rh = rw * this.rabbit.height / this.rabbit.width;
         image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
         pop();
@@ -98,7 +98,7 @@ function WhiteRabbit() {
             this.pallette(x, y, 10 * u, 6 * u);
         }
 
-        const nullIcon = (y, i) => {
+        const debugIcon = (y, i) => {
             push();
             fill(0);
             for (let j = 0; j <= i; j++) {
@@ -106,26 +106,26 @@ function WhiteRabbit() {
             }
             pop();
         };
-        // The illusion is that the last element swaps out for the first element at loop time
-        // so the last element needs to actually connect to the *second* element
-        // which means that if nextIndex is 0, it should be 1
-        const reelMakers = [
-            {
-                topX: -2 * u,
-                iconMaker: nullIcon,
-            },
+
+        const reelItems = [
             {
                 topX: 0 * u,
-                iconMaker: nullIcon,
+                iconMaker: palletter,
+            },
+            {
+                topX: 2 * u,
+                iconMaker: debugIcon,
             },
         ]
 
-        const baseY = cellHeight / 2 - t * (reelMakers.length) * cellHeight;
+        const reelT = utils.smoothsteps([0.25, 0.75], 0.2, t);
+        const baseY = height / 2 - reelT * (reelItems.length) * cellHeight;
+
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
-        for (let i = 0; i <= reelMakers.length; i++) {
-            let { topX, iconMaker } = reelMakers[i % reelMakers.length];
-            let nextIndex = (i + 1) % reelMakers.length;
-            let botX = reelMakers[nextIndex].topX;
+        for (let i = 0; i <= reelItems.length; i++) {
+            let { topX, iconMaker } = reelItems[i % reelItems.length];
+            let nextIndex = (i + 1) % reelItems.length;
+            let botX = reelItems[nextIndex].topX;
             let y = baseY + i * cellHeight;
             this.redStripes(x + topX, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(x + botX, y, 0.1 * u, connectorSize, 8);
@@ -141,7 +141,8 @@ function WhiteRabbit() {
         const total = 400;
         const t = (frameCount % total) / total;
 
-        this.reel(8 * g, 9 * g, t);
+
+        this.reel(10 * g, 9 * g, t);
 
         const borderSize = 0.06;
         this.border(borderSize, 0, 20 * t);
