@@ -1,6 +1,6 @@
 /**
  * To add a new scene:
- * 
+ *
  * 1. make a new Scene() function (see mooncakes.js). It should have its own
  *    setup and draw methods and live in its own file.
  * 2. Include that file in the <head> tag in index.html.
