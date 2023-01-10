@@ -89,12 +89,14 @@ function WhiteRabbit() {
         pop()
     }
 
+
     this.reel = (x, xSize, t) => {
         push();
         const u = xSize * 0.1;
         const cellHeight = height * 1.2;
         const connectorSize = cellHeight / 2;
-        const palletter = (y, i) => {
+
+        const palletter = (y, _i) => {
             this.pallette(x, y, 10 * u, 6 * u);
         }
 
@@ -107,14 +109,84 @@ function WhiteRabbit() {
             pop();
         };
 
+        const viridian = (y, _i) => {
+            push();
+            translate(x, y);
+            // TODO: probably we want each letter to be its own coordinate system
+            // and then we have offsets between each one - easier to think about.
+
+            /**
+             * letters = [
+             * { strokes: [["l", [0, 0, 2, 6]], ["l", [2, 6, 4 0]]],
+                 * marginLeft: 0,
+                 * marginTop: 0 // with default margins
+             * },
+             * ]
+             * Then a conversion to raw coordinates to draw + center
+             *
+             */
+
+            const strokes = [
+                // V
+                ["l", [0, 0, 2, 6]],
+                ["l", [2, 6, 4, 0]],
+                // i
+                ["l", [5, 2, 5, 6]],
+                // r
+                ["l", [7, 2, 7, 6]],
+                ["a", [7, 3.30, 3, 2.6, -TAU / 4, TAU / 4]],
+                ["l", [7, 3.3, 8.5, 6]],
+                // i
+                ["l", [10.25, 2, 10.25, 6]],
+                // d
+                ["l", [12, 2, 12, 6]],
+                ["a", [12, 4, 3, 4, -TAU / 4, TAU / 4]],
+                // i
+                ["l", [15, 2, 15, 6]],
+                // a
+                ["l", [18, 2, 17, 6]],
+                ["l", [18, 2, 19, 6]],
+                ["l", [18, 6, 17.5, 4]],
+                ["l", [18, 6, 18.5, 4]],
+                //n
+                ["l", [20, 2, 20, 6]],
+                ["l", [20, 2, 22, 6]],
+                ["l", [22, 2, 22, 6]],
+            ];
+
+
+            strokes.forEach(([type, coords]) => {
+                fill('rgba(0, 0, 0, 0)');
+                stroke(0);
+                const s = u * 0.4;
+                strokeWeight(s * 0.2);
+                push();
+                translate(-11 * s, -3 * s);
+                if (type === "l") {
+                    let [x1, y1, x2, y2] = coords
+                    line(x1 * s, y1 * s, x2 * s, y2 * s);
+                } else if (type === "a") {
+                    let [x, y, w, h, th0, th1] = coords
+                    arc(x * s, y * s, w * s, h * s, th0, th1, OPEN);
+                }
+                pop();
+            });
+
+            pop();
+        }
+
         const reelItems = [
             {
-                topX: 0 * u,
+                topX: 3 * u,
                 iconMaker: palletter,
             },
             {
-                topX: 2 * u,
-                iconMaker: debugIcon,
+                topX: -3 * u,
+                iconMaker: viridian,
+            },
+            {
+                topX: 3 * u,
+                iconMaker: palletter,
             },
         ]
 
