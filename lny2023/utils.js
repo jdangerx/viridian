@@ -48,15 +48,24 @@ const utils = {
             return utils.getBias(time * 2.0 - 1.0, 1.0 - gain) / 2.0 + 0.5;
     },
 
+    getGainWindow: (time, windowMin, windowMax, gain) => {
+        const width = windowMax - windowMin;
+        const normalizedTime = Math.min(Math.max(0, time - windowMin), width) / width;
+        return utils.getGain(normalizedTime, gain);
+    },
+
     smoothstep: (min, max, value) => {
         var x = Math.max(0, Math.min(1, (value - min) / (max - min)));
         return x * x * (3 - 2 * x);
     },
 
     smoothsteps: (steps, width, t) => {
+        const bias = 0.1;
         const sum = (steps.map(step => [step - width / 2, step + width / 2])
-            .map(([min, max]) => utils.smoothstep(min, max, t))
+            .map(([min, max]) => { console.log(min, max); return [min, max] })
+            .map(([min, max]) => utils.getGainWindow(t, min, max, bias))
             .reduce((acc, cur) => acc + cur, 0));
+        //return 0.25;
         return sum / steps.length;
     },
 

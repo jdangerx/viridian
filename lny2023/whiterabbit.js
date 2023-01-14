@@ -9,6 +9,8 @@ function WhiteRabbit() {
         };
         this.rabbit = loadImage("images/big-white-rabbit.png");
         this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
+        this.fontLoaded = false;
+        this.cnFont = loadFont("images/仓迹高德国妙黑.ttf", () => this.fontLoaded = true);
     }
 
     this.enter = () => {
@@ -19,16 +21,14 @@ function WhiteRabbit() {
         this.overlay = createGraphics(width, height);
         this.reelLayers = [];
         this.reelOverlays = [];
-        this.reelLayer = createGraphics(width, height);
-        this.reelOverlay = createGraphics(width, height);
+        this.leftReel = createGraphics(width, height);
+        this.rightReel = createGraphics(width, height);
     }
 
     this.overlayCallback = () => {
-        this.overlay.tint(255, 12);
+        this.overlay.tint(255, 20);
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
-        this.reelOverlay.image(this.overlay, 0, 0, width, height);
     }
-
 
     this.applyTexture = (drawTo, overlay, baseTexture) => {
         overlay.clear();
@@ -37,9 +37,7 @@ function WhiteRabbit() {
         overlay.drawingContext.globalCompositeOperation = "destination-in";
         overlay.image(drawTo, 0, 0, overlay.width, overlay.height);
         drawTo.push();
-        drawTo.blendMode(HARD_LIGHT);
         drawTo.image(overlay, 0, 0, drawTo.width, drawTo.height);
-        drawTo.blendMode(BLEND);
         drawTo.pop();
     }
 
@@ -47,15 +45,15 @@ function WhiteRabbit() {
         push();
         fill(this.blue);
         const borderWidth = width * borderRatio;
-        const nStripes = 8;
-        const stripesWidth = borderWidth * 0.8;
+        const nStripes = 10;
+        const stripesWidth = borderWidth * 5;
         const stripeWidth = stripesWidth / nStripes;
 
         push();
         rect(x, 0, borderWidth, height);
         translate(x + borderWidth - stripeWidth, 0);
         for (let i = 0; i < nStripes; i++) {
-            stripeX = i * stripeWidth + (t * stripeWidth % stripeWidth);
+            stripeX = i * stripeWidth + (0.5 * t * stripeWidth % stripeWidth);
             let stripeValue = 0.8 * cos(PI / 2 * stripeX / stripesWidth);
             fill(this.blue);
             rect(stripeX, 0, stripeWidth * stripeValue, height);
@@ -171,6 +169,30 @@ function WhiteRabbit() {
         ctx.pop();
     }
 
+    this.diamond = (ctx, u) => {
+        ctx.push();
+        ctx.fill(this.white);
+        ctx.stroke(this.black);
+        ctx.strokeWeight(u * 0.12);
+        ctx.strokeCap(ROUND);
+        const quadpoints = [
+            -8, 0,
+            0, -4,
+            8, 0,
+            0, 4
+        ];
+        ctx.quad(...quadpoints.map(x => x * u));
+        ctx.drawingContext.globalCompositeOperation = "source-atop";
+        const lines = [
+            2, 2.67, 3.33,
+        ].flatMap(y => [-y, y])
+            .map(y => [-8, y, 8, y]);
+
+        lines.forEach(coords => ctx.line(...coords.map(x => x * u)));
+        ctx.drawingContext.globalCompositeOperation = "source-over";
+        ctx.pop()
+    }
+
     this.reel = (ctx, x, xSize, t) => {
         push();
         ctx.noStroke();
@@ -184,7 +206,24 @@ function WhiteRabbit() {
         }
 
         const viridian = (ctx, _i) => {
+            this.diamond(ctx, u);
             this.viridian(ctx, u);
+        }
+
+        const textDiamond = ctx => {
+            this.diamond(ctx, u * 0.6);
+            const greeting = "新年快乐";
+            const textSize = 1.5 * u;
+            if (this.fontLoaded) {
+                ctx.textSize(textSize);
+                ctx.textFont(this.cnFont);
+                const bbox = this.cnFont.textBounds(greeting, 0, 0, textSize);
+                ctx.fill(128);
+                ctx.fill(this.black);
+                ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
+                ctx.fill(this.red);
+                ctx.circle(0, 0, 5);
+            }
         }
 
         const debugIcon = (ctx, i) => {
@@ -194,18 +233,21 @@ function WhiteRabbit() {
             }
         };
 
+        // nullIcon wants the topX to be the same as the *next* topX
+        const nullIcon = (ctx, i) => { };
+
         const items = [
             {
+                topX: -3 * u,
+                iconMaker: textDiamond,
+            },
+            {
                 topX: 3 * u,
-                iconMaker: palletter,
+                iconMaker: nullIcon,
             },
             {
-                topX: -3 * u,
-                iconMaker: viridian,
-            },
-            {
-                topX: -3 * u,
-                iconMaker: debugIcon,
+                topX: 3 * u,
+                iconMaker: textDiamond,
             },
         ];
 
@@ -238,9 +280,9 @@ function WhiteRabbit() {
 
 
             this.applyTexture(iconCtx, this.reelOverlays[i], this.overlay);
-            utils.glow('rgba(0, 0, 0, 0.5)', 5, 5, 5, ctx);
+            //utils.glow('rgba(0, 0, 0, 0.5)', 5, 5, 5, ctx);
             ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
-            utils.noGlow(ctx);
+            //utils.noGlow(ctx);
         }
 
         pop();
@@ -251,16 +293,20 @@ function WhiteRabbit() {
         background(this.white);
         noStroke();
 
-        const total = 300;
+        const total = 900;
         const t = (frameCount % total) / total;
 
 
-        const borderSize = 0.06;
+        const borderSize = 0.02;
         this.border(borderSize, 0, 20 * t);
         this.border(-borderSize, width, 20 * t);
-        this.reel(this.reelLayer, 10 * g, 9 * g, t);
+        this.reel(this.leftReel, 10 * g, 9 * g, t);
+
+
+        this.reel(this.rightReel, 22 * g, 9 * g, t);
 
         image(this.overlay, 0, 0, width, height);
-        image(this.reelLayer, 0, 0, width, height);
+        image(this.leftReel, 0, 0, width, height);
+        image(this.rightReel, 0, 0, width, height);
     }
 }
