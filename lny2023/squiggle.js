@@ -1,4 +1,7 @@
 function Squiggle() {
+    var bg_color = color(250, 210, 200);
+    var red = color(140, 30, 0);
+
     this.setup = () => {
         this.drawOnce = false;
     }
@@ -9,13 +12,14 @@ function Squiggle() {
             this.draw = () => null
         }
 
-        background(250, 200, 200);
-        background(0);
-
+        background(bg_color);
 
         this.drawWaveBundle(0, -1000, width+400, height * 0.4, 100, 0);
         this.drawWaveBundle(0, -400, width+400, height * 0.5, 200, 15);
 
+        stroke(red);
+        strokeWeight(3);
+        circle(400, -50, 500);
         /*
         this.drawWaveBundle(0, -200, width+200, height * 0.6, 200, 0);
 
@@ -53,7 +57,7 @@ function Squiggle() {
         var coordinates = [];
         var KNOT_SEPARATION = 120;
         var KNOTS = ((endX-startX) / float(KNOT_SEPARATION)) | 0;
-        var t = frameCount * 0.02;
+        var t = frameCount * 0.01;
         for (var i = 1; i <= KNOTS; ++i)
         { 
             var x = i * KNOT_SEPARATION + startX;
@@ -84,9 +88,9 @@ function Squiggle() {
         var AMOUNT_OF_COORDINATES = coordinates.length;
 
         curveTightness(-0.5);
-        fill(140, 50, 0);
+        fill(red);
         strokeWeight(2);
-        stroke(255);
+        stroke(bg_color);
         beginShape();
 
         // Draw the continuous spline curve, which must be bound by beginShape and endShape.
