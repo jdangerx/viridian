@@ -62,7 +62,6 @@ const utils = {
     smoothsteps: (steps, width, t) => {
         const bias = 0.1;
         const sum = (steps.map(step => [step - width / 2, step + width / 2])
-            .map(([min, max]) => { console.log(min, max); return [min, max] })
             .map(([min, max]) => utils.getGainWindow(t, min, max, bias))
             .reduce((acc, cur) => acc + cur, 0));
         //return 0.25;

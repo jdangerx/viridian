@@ -63,9 +63,9 @@ function WhiteRabbit() {
         pop();
     }
 
-    this.pallette = (ctx, x, y, w, h) => {
+    this.pallette = (ctx, w) => {
+        const h = 0.6 * w;
         ctx.push();
-        ctx.translate(x, y);
         ctx.fill(this.red);
         ctx.rect(-0.50 * w, -0.37 * h, w, h, h * 0.3);
         ctx.fill(this.black);
@@ -193,63 +193,46 @@ function WhiteRabbit() {
         ctx.pop()
     }
 
-    this.reel = (ctx, x, xSize, t) => {
+
+    const palletter = (ctx, xSize) => {
+        this.pallette(ctx, 0, 0, xSize, xSize * 0.6);
+    }
+
+    const textDiamond = (ctx, xSize) => {
+        const u = xSize * 0.1;
+        this.diamond(ctx, u * 0.6);
+        const greeting = "新年快乐";
+        const textSize = 1.5 * u;
+        if (this.fontLoaded) {
+            ctx.textSize(textSize);
+            ctx.textFont(this.cnFont);
+            const bbox = this.cnFont.textBounds(greeting, 0, 0, textSize);
+            ctx.fill(128);
+            ctx.fill(this.black);
+            ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
+            ctx.fill(this.red);
+            ctx.circle(0, 0, 5);
+        }
+    }
+
+    const debugIcon = (ctx, xSize, i) => {
+        ctx.fill(0);
+        const u = xSize * 0.1;
+        for (let j = 0; j <= i; j++) {
+            ctx.circle(j * u, 0, u);
+        }
+    };
+
+    // nullIcon wants the topX to be the same as the *next* topX
+    const nullIcon = () => { };
+
+    this.reel = (ctx, items, x, xSize, t) => {
         push();
         ctx.noStroke();
         ctx.clear();
         const u = xSize * 0.1;
         const cellHeight = height * 1.2;
         const connectorSize = cellHeight / 2;
-
-        const palletter = (ctx, _i) => {
-            this.pallette(ctx, 0, 0, 10 * u, 6 * u);
-        }
-
-        const viridian = (ctx, _i) => {
-            this.diamond(ctx, u);
-            this.viridian(ctx, u);
-        }
-
-        const textDiamond = ctx => {
-            this.diamond(ctx, u * 0.6);
-            const greeting = "新年快乐";
-            const textSize = 1.5 * u;
-            if (this.fontLoaded) {
-                ctx.textSize(textSize);
-                ctx.textFont(this.cnFont);
-                const bbox = this.cnFont.textBounds(greeting, 0, 0, textSize);
-                ctx.fill(128);
-                ctx.fill(this.black);
-                ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
-                ctx.fill(this.red);
-                ctx.circle(0, 0, 5);
-            }
-        }
-
-        const debugIcon = (ctx, i) => {
-            ctx.fill(0);
-            for (let j = 0; j <= i; j++) {
-                ctx.circle(j * u, 0, u);
-            }
-        };
-
-        // nullIcon wants the topX to be the same as the *next* topX
-        const nullIcon = (ctx, i) => { };
-
-        const items = [
-            {
-                topX: -3 * u,
-                iconMaker: textDiamond,
-            },
-            {
-                topX: 3 * u,
-                iconMaker: nullIcon,
-            },
-            {
-                topX: 3 * u,
-                iconMaker: textDiamond,
-            },
-        ];
 
         const steps = items.map((_value, i, arr) => (i * 2 + 1) / (arr.length * 2));
         const stepT = utils.smoothsteps(steps, 0.1, t);
@@ -269,13 +252,13 @@ function WhiteRabbit() {
             let botX = items[nextIndex].topX;
             let y = baseY + i * cellHeight;
             let iconCtx = this.reelLayers[i];
-            this.redStripes(ctx, x + topX, y, 0.1 * u, -connectorSize, 8);
-            this.redStripes(ctx, x + botX, y, 0.1 * u, connectorSize, 8);
+            this.redStripes(ctx, x + topX * u, y, 0.1 * u, -connectorSize, 8);
+            this.redStripes(ctx, x + botX * u, y, 0.1 * u, connectorSize, 8);
 
             iconCtx.push();
             iconCtx.clear();
             iconCtx.translate(iconCtx.width / 2, iconCtx.height / 2);
-            iconMaker(iconCtx, i);
+            iconMaker(iconCtx, xSize, i);
             iconCtx.pop();
 
 
@@ -300,10 +283,31 @@ function WhiteRabbit() {
         const borderSize = 0.02;
         this.border(borderSize, 0, 20 * t);
         this.border(-borderSize, width, 20 * t);
-        this.reel(this.leftReel, 10 * g, 9 * g, t);
 
 
-        this.reel(this.rightReel, 22 * g, 9 * g, t);
+        const leftItems = [
+            {
+                topX: -3,
+                iconMaker: textDiamond,
+            },
+            {
+                topX: 3,
+                iconMaker: nullIcon,
+            },
+            {
+                topX: 3,
+                iconMaker: this.pallette,
+            },
+            {
+                topX: -3,
+                iconMaker: nullIcon,
+            },
+        ];
+        this.reel(this.leftReel, leftItems, 10 * g, 9 * g, t);
+
+
+        const rightItems = leftItems.slice(-1).concat(leftItems.slice(0, -1));
+        this.reel(this.rightReel, rightItems, 22 * g, 9 * g, t);
 
         image(this.overlay, 0, 0, width, height);
         image(this.leftReel, 0, 0, width, height);
