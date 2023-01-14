@@ -77,6 +77,10 @@ function WhiteRabbit() {
         const rw = 0.2 * width;
         const rh = rw * this.rabbit.height / this.rabbit.width;
         ctx.image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
+        ctx.fill(this.red);
+        ctx.ellipse(-0.370 * w, -0.29 * h, 0.06 * h, 0.05 * h);
+        ctx.fill(this.white);
+        ctx.circle(-0.380 * w, -0.300 * h, 0.018 * h);
         ctx.pop();
     }
 
@@ -194,11 +198,7 @@ function WhiteRabbit() {
     }
 
 
-    const palletter = (ctx, xSize) => {
-        this.pallette(ctx, 0, 0, xSize, xSize * 0.6);
-    }
-
-    const textDiamond = (ctx, xSize) => {
+    this.textDiamond = (ctx, xSize) => {
         const u = xSize * 0.1;
         this.diamond(ctx, u * 0.6);
         const greeting = "新年快乐";
@@ -210,12 +210,10 @@ function WhiteRabbit() {
             ctx.fill(128);
             ctx.fill(this.black);
             ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
-            ctx.fill(this.red);
-            ctx.circle(0, 0, 5);
         }
     }
 
-    const debugIcon = (ctx, xSize, i) => {
+    this.debugIcon = (ctx, xSize, i) => {
         ctx.fill(0);
         const u = xSize * 0.1;
         for (let j = 0; j <= i; j++) {
@@ -224,14 +222,14 @@ function WhiteRabbit() {
     };
 
     // nullIcon wants the topX to be the same as the *next* topX
-    const nullIcon = () => { };
+    this.nullIcon = () => { };
 
     this.reel = (ctx, items, x, xSize, t) => {
         push();
         ctx.noStroke();
         ctx.clear();
         const u = xSize * 0.1;
-        const cellHeight = height * 1.2;
+        const cellHeight = height * 1.8;
         const connectorSize = cellHeight / 2;
 
         const steps = items.map((_value, i, arr) => (i * 2 + 1) / (arr.length * 2));
@@ -276,9 +274,8 @@ function WhiteRabbit() {
         background(this.white);
         noStroke();
 
-        const total = 900;
+        const total = 400;
         const t = (frameCount % total) / total;
-
 
         const borderSize = 0.02;
         this.border(borderSize, 0, 20 * t);
@@ -288,25 +285,22 @@ function WhiteRabbit() {
         const leftItems = [
             {
                 topX: -3,
-                iconMaker: textDiamond,
-            },
-            {
-                topX: 3,
-                iconMaker: nullIcon,
-            },
-            {
-                topX: 3,
                 iconMaker: this.pallette,
             },
             {
+                topX: 3,
+                iconMaker: this.textDiamond,
+            },
+            {
                 topX: -3,
-                iconMaker: nullIcon,
+                iconMaker: this.nullIcon,
             },
         ];
         this.reel(this.leftReel, leftItems, 10 * g, 9 * g, t);
 
 
-        const rightItems = leftItems.slice(-1).concat(leftItems.slice(0, -1));
+        const rightItems = leftItems.slice(-1).concat(leftItems.slice(0, -1))
+            .map(({ topX, iconMaker }) => { return { topX: -topX, iconMaker } });
         this.reel(this.rightReel, rightItems, 22 * g, 9 * g, t);
 
         image(this.overlay, 0, 0, width, height);
