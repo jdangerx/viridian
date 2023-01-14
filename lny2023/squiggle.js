@@ -1,6 +1,6 @@
 function Squiggle() {
     this.setup = () => {
-        this.drawOnce = false;
+        this.drawOnce = true;
     }
 
     this.draw = () => {
@@ -9,56 +9,58 @@ function Squiggle() {
             this.draw = () => null
         }
 
-        background(255);
+        background(250, 200, 200);
 
+        //this.drawWaveBundle(0, -200, width+200, height * 0.3, 300, 0);
 
+        this.drawWaveBundle(PI/12, -500, width*0.75, height * 1.0, 200, 5.2);
+
+        //this.drawWaveBundle(0, -100, width+200, height * 0.7, 300, 0);
+
+        //this.drawWaveBundle(-PI/6, 200, width+100, height * 1.0, 300, 17.87);
+    }
+
+    this.drawWaveBundle = (rotation, startX, endX, startY, bumpAmp, seed) =>
+    {
         push();
         translate(width/2, height/2);
-        rotate(PI/5);
+        rotate(rotation);
         translate(-width/2, -height/2);
-        this.drawWave(-100, width+100, height * 1, 30, noise(0.1));
-        pop();
-
-        push();
-        translate(0, 0);
-        this.drawWave(-100, width+100, height * 0.8, 30, noise(0.45));
-        pop();
-
-        push();
-        translate(width/2, height/2);
-        rotate(-PI/6);
-        translate(-width/2, -height/2);
-        translate(300, 0);
-        this.drawWave(-100, width+100, height * 1.2, 30, noise(0.87));
+        this.drawWave(startX, endX, startY, bumpAmp, seed);
         pop();
     }
 
-    this.drawWave = (startX, endX, startY, lineCount, seed) =>
+    this.drawWave = (startX, endX, startY, bumpAmp, seed) =>
     {
-        for (var j=0; j < lineCount; ++j)
+        var lineCount = 10;
+        for (var j=1; j <= lineCount; ++j)
         {
             var yOff = j * 12 + startY;
-            var xOff = 50 * sin(j * 0.3) + startX; 
-            var coordinates = this.makeCoordinates(xOff, yOff, endX, 100, seed);
-            this.drawSpline(coordinates);
+            var xOff = 100 * sin(j * 0.3 + frameCount * 0.03) + startX; 
+            var coordinates = this.makeCoordinates(xOff, yOff, endX, bumpAmp, j, seed);
+            this.drawSpline(coordinates, seed * j);
         }
     }
 
-    this.makeCoordinates = (startX, startY, endX, bigSinAmp, seed) => {
+    this.makeCoordinates = (startX, startY, endX, bigSinAmp, j, seed) => {
         var coordinates = [];
         var KNOT_SEPARATION = 120;
-        var KNOTS = (endX-startX) / float(KNOT_SEPARATION);
-        var t = frameCount * 0.1;
-        for (var i = 0; i < KNOTS; ++i)
-        {
+        var KNOTS = ((endX-startX) / float(KNOT_SEPARATION)) | 0;
+        var t = frameCount * 0.0;
+        for (var i = 1; i <= KNOTS; ++i)
+        { 
             var x = i * KNOT_SEPARATION + startX;
-            var noiseVal = ((noise(i * KNOT_SEPARATION * 0.05 + seed) * 2) - 1);
-            var noiseVal2 = ((noise(x * 0.05 + seed) * 2) - 1);
-            var sinOffY = cos(i * KNOT_SEPARATION *0.1) * bigSinAmp;
-            var y = (sin(i * KNOT_SEPARATION * 4 + t) + noiseVal + noiseVal2 * 0.75) * (KNOT_SEPARATION/4) + startY + sinOffY;
+            var noiseVal = noise((j* i * KNOT_SEPARATION + seed) * 0.05) * 0;
+            var noiseVal2 = ((noise(j * 0.3 * i + seed) * 2) - 1) * 0.75 * 0;
+            var smallSin = ((sin(i * KNOT_SEPARATION * 4 + t) + 1) / 2)  * 0; 
+            var bigSin = ((cos(i * KNOT_SEPARATION *0.1)+1)/2) * bigSinAmp;
+            var y = (smallSin + noiseVal + noiseVal2) * (KNOT_SEPARATION/6) + startY + bigSin;
+            
+            // FOR SCALE 
+            //var y = startY + noise(i + j + seed) * 100;
 
-            if ((i === 0) || (i === KNOTS-1)) {
-                y += 200;
+            if ((i === 1) || (i === KNOTS)) {
+                y += 300;
             }
 
             coordinates.push(x);
@@ -68,14 +70,14 @@ function Squiggle() {
         return coordinates;
     }
 
-    this.drawSpline = (coordinates) => {
+    this.drawSpline = (coordinates, seed) => {
 
         var FIRST_X_COORDINATE = 0;
         var LAST_X_COORDINATE = (coordinates.length - 2);
         var AMOUNT_OF_COORDINATES = coordinates.length;
 
         curveTightness(-0.5);
-        fill(140, 0, 0);
+        fill(140, 50, 0);
         strokeWeight(2);
         stroke(255);
         beginShape();
@@ -93,10 +95,10 @@ function Squiggle() {
 
         endShape();
 
-        /*
+        
         for (let i = FIRST_X_COORDINATE; i < AMOUNT_OF_COORDINATES; i += 2) {
             ellipse(coordinates[i], coordinates[i + 1], 5, 5);
-        }*/
+        }
     
     }
 }
