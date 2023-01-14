@@ -87,14 +87,25 @@ const utils = {
         return utils.smoothstep(start, start + transition, x) - utils.smoothstep(end, end + transition, x);
     },
 
-    glow: (glowColor, blurriness, x, y) => {
+    glow: (glowColor, blurriness, x, y, ctx) => {
+        if (ctx !== undefined) {
+            ctx.drawingContext.shadowBlur = blurriness;
+            ctx.drawingContext.shadowColor = glowColor;
+            ctx.drawingContext.shadowOffsetX = x;
+            ctx.drawingContext.shadowOffsetY = y;
+        }
         drawingContext.shadowBlur = blurriness;
         drawingContext.shadowColor = glowColor;
         drawingContext.shadowOffsetX = x;
         drawingContext.shadowOffsetY = y;
     },
 
-    noGlow: () => {
+    noGlow: (ctx) => {
+        if (ctx !== undefined) {
+            ctx.drawingContext.shadowBlur = 0;
+            ctx.drawingContext.shadowOffsetX = 0;
+            ctx.drawingContext.shadowOffsetY = 0;
+        }
         drawingContext.shadowBlur = 0;
         drawingContext.shadowOffsetX = 0;
         drawingContext.shadowOffsetY = 0;

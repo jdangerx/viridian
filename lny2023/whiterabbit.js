@@ -24,7 +24,7 @@ function WhiteRabbit() {
     }
 
     this.overlayCallback = () => {
-        this.overlay.tint(255, 30);
+        this.overlay.tint(255, 12);
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
         this.reelOverlay.image(this.overlay, 0, 0, width, height);
     }
@@ -179,29 +179,19 @@ function WhiteRabbit() {
         const cellHeight = height * 1.2;
         const connectorSize = cellHeight / 2;
 
-        const palletter = (ctx, y, _i) => {
-            ctx.push();
-            ctx.clear();
-            this.pallette(ctx, x, y, 10 * u, 6 * u);
-            ctx.pop();
+        const palletter = (ctx, _i) => {
+            this.pallette(ctx, 0, 0, 10 * u, 6 * u);
         }
 
-        const viridian = (ctx, y, _i) => {
-            ctx.push();
-            ctx.clear();
-            ctx.translate(x, y);
+        const viridian = (ctx, _i) => {
             this.viridian(ctx, u);
-            ctx.pop();
         }
 
-        const debugIcon = (ctx, y, i) => {
-            ctx.push();
-            ctx.clear();
+        const debugIcon = (ctx, i) => {
             ctx.fill(0);
             for (let j = 0; j <= i; j++) {
-                ctx.circle(x + j * u, y, u);
+                ctx.circle(j * u, 0, u);
             }
-            ctx.pop();
         };
 
         const items = [
@@ -213,6 +203,10 @@ function WhiteRabbit() {
                 topX: -3 * u,
                 iconMaker: viridian,
             },
+            {
+                topX: -3 * u,
+                iconMaker: debugIcon,
+            },
         ];
 
         const steps = items.map((_value, i, arr) => (i * 2 + 1) / (arr.length * 2));
@@ -221,7 +215,7 @@ function WhiteRabbit() {
 
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
         const numIcons = items.length + 1;
-        if (this.reelLayers.length !== numIcons * 3) {
+        if (this.reelLayers.length !== numIcons) {
             console.log("initializing reel layers")
             this.reelLayers = Array(numIcons).fill().map(() => createGraphics(width, height)).map(ctx => ctx.noStroke());
             this.reelOverlays = Array(numIcons).fill().map(() => createGraphics(width, height));
@@ -232,15 +226,23 @@ function WhiteRabbit() {
             let nextIndex = (i + 1) % items.length;
             let botX = items[nextIndex].topX;
             let y = baseY + i * cellHeight;
+            let iconCtx = this.reelLayers[i];
             this.redStripes(ctx, x + topX, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(ctx, x + botX, y, 0.1 * u, connectorSize, 8);
-            iconMaker(this.reelLayers[i], y, i);
+
+            iconCtx.push();
+            iconCtx.clear();
+            iconCtx.translate(iconCtx.width / 2, iconCtx.height / 2);
+            iconMaker(iconCtx, i);
+            iconCtx.pop();
+
+
+            this.applyTexture(iconCtx, this.reelOverlays[i], this.overlay);
+            utils.glow('rgba(0, 0, 0, 0.5)', 5, 5, 5, ctx);
+            ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
+            utils.noGlow(ctx);
         }
 
-        this.reelLayers.forEach((drawTo, i) => {
-            this.applyTexture(drawTo, this.reelOverlays[i], this.overlay);
-            ctx.image(drawTo, 0, 0, ctx.width, ctx.height);
-        });
         pop();
     }
 
@@ -253,13 +255,12 @@ function WhiteRabbit() {
         const t = (frameCount % total) / total;
 
 
-
         const borderSize = 0.06;
         this.border(borderSize, 0, 20 * t);
         this.border(-borderSize, width, 20 * t);
-
         this.reel(this.reelLayer, 10 * g, 9 * g, t);
-        this.applyTexture(this.reelLayer, this.reelOverlay, this.overlay);
+
+        image(this.overlay, 0, 0, width, height);
         image(this.reelLayer, 0, 0, width, height);
     }
 }
