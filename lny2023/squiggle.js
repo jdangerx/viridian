@@ -14,12 +14,15 @@ function Squiggle() {
 
         background(bg_color);
 
+        stroke(red);
+        strokeWeight(3);
+        var t = frameCount * 0.01;
+        circle(width/2 + cos(t) * 400, height/2 + sin(t) * 400, 500);
+
+
         this.drawWaveBundle(0, -1000, width+400, height * 0.4, 100, 0);
         this.drawWaveBundle(0, -400, width+400, height * 0.5, 200, 15);
 
-        stroke(red);
-        strokeWeight(3);
-        circle(400, -50, 500);
         /*
         this.drawWaveBundle(0, -200, width+200, height * 0.6, 200, 0);
 
