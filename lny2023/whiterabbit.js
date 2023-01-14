@@ -17,11 +17,14 @@ function WhiteRabbit() {
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
         this.overlay = createGraphics(width, height);
+        this.reelLayer = createGraphics(width, height);
+        this.reelOverlay = createGraphics(width, height);
     }
 
     this.overlayCallback = () => {
         this.overlay.tint(255, 30);
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
+        this.reelOverlay.image(this.overlay, 0, 0, width, height);
     }
 
     this.border = (borderRatio, x, t) => {
@@ -46,21 +49,21 @@ function WhiteRabbit() {
         pop();
     }
 
-    this.pallette = (x, y, w, h) => {
-        push();
-        translate(x, y);
-        fill(this.red);
-        rect(-0.50 * w, -0.37 * h, w, h, h * 0.3);
-        fill(this.black);
-        ellipse(-0.10 * w, 0, w, h);
-        fill(this.white);
-        circle(0.21 * w, -0.2 * h, 0.2 * h);
-        fill(this.red);
-        circle(0.26 * w, 0.1 * h, 0.18 * h);
+    this.pallette = (ctx, x, y, w, h) => {
+        ctx.push();
+        ctx.translate(x, y);
+        ctx.fill(this.red);
+        ctx.rect(-0.50 * w, -0.37 * h, w, h, h * 0.3);
+        ctx.fill(this.black);
+        ctx.ellipse(-0.10 * w, 0, w, h);
+        ctx.fill(this.white);
+        ctx.circle(0.21 * w, -0.2 * h, 0.2 * h);
+        ctx.fill(this.red);
+        ctx.circle(0.26 * w, 0.1 * h, 0.18 * h);
         const rw = 0.2 * width;
         const rh = rw * this.rabbit.height / this.rabbit.width;
-        image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
-        pop();
+        ctx.image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
+        ctx.pop();
     }
 
     this.blueStripes = (x, y, width, height, nStripes, offset) => {
@@ -76,104 +79,110 @@ function WhiteRabbit() {
         pop();
     }
 
-    this.redStripes = (x, y, stripeWidth, ySize, nStripes) => {
-        push();
-        fill(this.white);
-        rect(x - (nStripes + 0.5) * stripeWidth, y, stripeWidth, height);
+    this.redStripes = (ctx, x, y, stripeWidth, ySize, nStripes) => {
+        ctx.push();
         for (let i = 0; i < nStripes; i++) {
-            fill(this.red);
-            rect(x - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth, y, stripeWidth, ySize);
-            fill(this.white);
-            rect(x - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, y, stripeWidth, ySize);
+            ctx.fill(this.red);
+            ctx.rect(x - (nStripes - 0.5) * stripeWidth + 2 * i * stripeWidth, y, stripeWidth, ySize);
+            ctx.fill(this.white);
+            ctx.rect(x - (nStripes - 0.5) * stripeWidth + (2 * i + 1) * stripeWidth, y, stripeWidth, ySize);
         }
-        pop()
+        ctx.pop()
     }
 
+    this.viridian = (ctx, u) => {
+        ctx.push();
+        // TODO: probably we want each letter to be its own coordinate system
+        // and then we have offsets between each one - easier to think about.
 
-    this.reel = (x, xSize, t) => {
+        /**
+         * letters = [
+         * { strokes: [["l", [0, 0, 2, 6]], ["l", [2, 6, 4 0]]],
+             * marginLeft: 0,
+             * marginTop: 0 // with default margins
+         * },
+         * ]
+         * Then a conversion to raw coordinates to draw + center
+         *
+         */
+
+        const strokes = [
+            // V
+            ["l", [0, 0, 2, 6]],
+            ["l", [2, 6, 4, 0]],
+            // i
+            ["l", [5, 2, 5, 6]],
+            // r
+            ["l", [7, 2, 7, 6]],
+            ["a", [7, 3.30, 3, 2.6, -TAU / 4, TAU / 4]],
+            ["l", [7, 3.3, 8.5, 6]],
+            // i
+            ["l", [10.25, 2, 10.25, 6]],
+            // d
+            ["l", [12, 2, 12, 6]],
+            ["a", [12, 4, 3, 4, -TAU / 4, TAU / 4]],
+            // i
+            ["l", [15, 2, 15, 6]],
+            // a
+            ["l", [18, 2, 17, 6]],
+            ["l", [18, 2, 19, 6]],
+            ["l", [18, 6, 17.5, 4]],
+            ["l", [18, 6, 18.5, 4]],
+            //n
+            ["l", [20, 2, 20, 6]],
+            ["l", [20, 2, 22, 6]],
+            ["l", [22, 2, 22, 6]],
+        ];
+
+
+        strokes.forEach(([type, coords]) => {
+            ctx.fill('rgba(0, 0, 0, 0)');
+            ctx.stroke(0);
+            const s = u * 0.4;
+            ctx.strokeWeight(s * 0.2);
+            ctx.push();
+            ctx.translate(-11 * s, -3 * s);
+            if (type === "l") {
+                let [x1, y1, x2, y2] = coords
+                ctx.line(x1 * s, y1 * s, x2 * s, y2 * s);
+            } else if (type === "a") {
+                let [x, y, w, h, th0, th1] = coords
+                ctx.arc(x * s, y * s, w * s, h * s, th0, th1, OPEN);
+            }
+            ctx.pop();
+        });
+
+        ctx.pop();
+    }
+
+    this.reel = (ctx, x, xSize, t) => {
         push();
+        ctx.blendMode(BLEND);
+        ctx.noStroke();
+        ctx.clear();
         const u = xSize * 0.1;
         const cellHeight = height * 1.2;
         const connectorSize = cellHeight / 2;
 
-        const palletter = (y, _i) => {
-            this.pallette(x, y, 10 * u, 6 * u);
+        const palletter = (ctx, y, _i) => {
+            this.pallette(ctx, x, y, 10 * u, 6 * u);
         }
 
-        const debugIcon = (y, i) => {
-            push();
-            fill(0);
+        const viridian = (ctx, y, _i) => {
+            ctx.push();
+            ctx.translate(x, y);
+            this.viridian(ctx, u);
+            ctx.pop();
+        }
+
+        const debugIcon = (ctx, y, i) => {
+            ctx.push();
+            ctx.fill(0);
             for (let j = 0; j <= i; j++) {
-                circle(x + j * u, y, u);
+                ctx.circle(x + j * u, y, u);
             }
-            pop();
+            ctx.pop();
         };
-
-        const viridian = (y, _i) => {
-            push();
-            translate(x, y);
-            // TODO: probably we want each letter to be its own coordinate system
-            // and then we have offsets between each one - easier to think about.
-
-            /**
-             * letters = [
-             * { strokes: [["l", [0, 0, 2, 6]], ["l", [2, 6, 4 0]]],
-                 * marginLeft: 0,
-                 * marginTop: 0 // with default margins
-             * },
-             * ]
-             * Then a conversion to raw coordinates to draw + center
-             *
-             */
-
-            const strokes = [
-                // V
-                ["l", [0, 0, 2, 6]],
-                ["l", [2, 6, 4, 0]],
-                // i
-                ["l", [5, 2, 5, 6]],
-                // r
-                ["l", [7, 2, 7, 6]],
-                ["a", [7, 3.30, 3, 2.6, -TAU / 4, TAU / 4]],
-                ["l", [7, 3.3, 8.5, 6]],
-                // i
-                ["l", [10.25, 2, 10.25, 6]],
-                // d
-                ["l", [12, 2, 12, 6]],
-                ["a", [12, 4, 3, 4, -TAU / 4, TAU / 4]],
-                // i
-                ["l", [15, 2, 15, 6]],
-                // a
-                ["l", [18, 2, 17, 6]],
-                ["l", [18, 2, 19, 6]],
-                ["l", [18, 6, 17.5, 4]],
-                ["l", [18, 6, 18.5, 4]],
-                //n
-                ["l", [20, 2, 20, 6]],
-                ["l", [20, 2, 22, 6]],
-                ["l", [22, 2, 22, 6]],
-            ];
-
-
-            strokes.forEach(([type, coords]) => {
-                fill('rgba(0, 0, 0, 0)');
-                stroke(0);
-                const s = u * 0.4;
-                strokeWeight(s * 0.2);
-                push();
-                translate(-11 * s, -3 * s);
-                if (type === "l") {
-                    let [x1, y1, x2, y2] = coords
-                    line(x1 * s, y1 * s, x2 * s, y2 * s);
-                } else if (type === "a") {
-                    let [x, y, w, h, th0, th1] = coords
-                    arc(x * s, y * s, w * s, h * s, th0, th1, OPEN);
-                }
-                pop();
-            });
-
-            pop();
-        }
 
         const items = [
             {
@@ -200,14 +209,27 @@ function WhiteRabbit() {
             let nextIndex = (i + 1) % items.length;
             let botX = items[nextIndex].topX;
             let y = baseY + i * cellHeight;
-            this.redStripes(x + topX, y, 0.1 * u, -connectorSize, 8);
-            this.redStripes(x + botX, y, 0.1 * u, connectorSize, 8);
-            iconMaker(y, i);
+            this.redStripes(ctx, x + topX, y, 0.1 * u, -connectorSize, 8);
+            this.redStripes(ctx, x + botX, y, 0.1 * u, connectorSize, 8);
+            iconMaker(ctx, y, i);
+
+            // this.redStripes(this.reelOverlay, x + topX, y, 0.1 * u, -connectorSize, 8);
+            // this.redStripes(this.reelOverlay, x + botX, y, 0.1 * u, connectorSize, 8);
+            // iconMaker(this.reelOverlay, y, i);
         }
+        this.reelOverlay.clear();
+        this.reelOverlay.drawingContext.globalCompositeOperation = "source-over";
+        this.reelOverlay.image(this.overlay, 0, 0, this.overlay.width, this.overlay.height);
+        this.reelOverlay.drawingContext.globalCompositeOperation = "destination-in";
+        this.reelOverlay.image(ctx, 0, 0, this.overlay.width, this.overlay.height);
+
+        ctx.blendMode(HARD_LIGHT);
+        ctx.image(this.reelOverlay, 0, 0, width, height);
         pop();
     }
 
     this.draw = () => {
+        clear();
         background(this.white);
         noStroke();
 
@@ -215,12 +237,18 @@ function WhiteRabbit() {
         const t = (frameCount % total) / total;
 
 
-        this.reel(10 * g, 9 * g, t);
 
         const borderSize = 0.06;
         this.border(borderSize, 0, 20 * t);
         this.border(-borderSize, width, 20 * t);
         blendMode(HARD_LIGHT);
         image(this.overlay, 0, 0, width, height);
+        blendMode(BLEND);
+
+        this.reel(this.reelLayer, 10 * g, 9 * g, t);
+        //this.reelLayer.image(this.overlay, 0, 0, width, height);
+        utils.glow("rgba(0,0,0,0.5)", 5, 5, 5);
+        image(this.reelLayer, 0, 0, width, height);
+        utils.noGlow();
     }
 }
