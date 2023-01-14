@@ -17,6 +17,8 @@ function WhiteRabbit() {
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
         this.overlay = createGraphics(width, height);
+        this.reelLayers = [];
+        this.reelOverlays = [];
         this.reelLayer = createGraphics(width, height);
         this.reelOverlay = createGraphics(width, height);
     }
@@ -34,8 +36,11 @@ function WhiteRabbit() {
         overlay.image(baseTexture, 0, 0, overlay.width, overlay.height);
         overlay.drawingContext.globalCompositeOperation = "destination-in";
         overlay.image(drawTo, 0, 0, overlay.width, overlay.height);
+        drawTo.push();
         drawTo.blendMode(HARD_LIGHT);
         drawTo.image(overlay, 0, 0, drawTo.width, drawTo.height);
+        drawTo.blendMode(BLEND);
+        drawTo.pop();
     }
 
     this.border = (borderRatio, x, t) => {
@@ -168,7 +173,6 @@ function WhiteRabbit() {
 
     this.reel = (ctx, x, xSize, t) => {
         push();
-        ctx.blendMode(BLEND);
         ctx.noStroke();
         ctx.clear();
         const u = xSize * 0.1;
@@ -176,11 +180,15 @@ function WhiteRabbit() {
         const connectorSize = cellHeight / 2;
 
         const palletter = (ctx, y, _i) => {
+            ctx.push();
+            ctx.clear();
             this.pallette(ctx, x, y, 10 * u, 6 * u);
+            ctx.pop();
         }
 
         const viridian = (ctx, y, _i) => {
             ctx.push();
+            ctx.clear();
             ctx.translate(x, y);
             this.viridian(ctx, u);
             ctx.pop();
@@ -188,6 +196,7 @@ function WhiteRabbit() {
 
         const debugIcon = (ctx, y, i) => {
             ctx.push();
+            ctx.clear();
             ctx.fill(0);
             for (let j = 0; j <= i; j++) {
                 ctx.circle(x + j * u, y, u);
@@ -204,26 +213,34 @@ function WhiteRabbit() {
                 topX: -3 * u,
                 iconMaker: viridian,
             },
-            {
-                topX: 3 * u,
-                iconMaker: palletter,
-            },
-        ]
+        ];
 
         const steps = items.map((_value, i, arr) => (i * 2 + 1) / (arr.length * 2));
         const stepT = utils.smoothsteps(steps, 0.1, t);
         const baseY = height / 2 - stepT * (items.length) * cellHeight;
 
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
-        for (let i = 0; i <= items.length; i++) {
+        const numIcons = items.length + 1;
+        if (this.reelLayers.length !== numIcons * 3) {
+            console.log("initializing reel layers")
+            this.reelLayers = Array(numIcons).fill().map(() => createGraphics(width, height)).map(ctx => ctx.noStroke());
+            this.reelOverlays = Array(numIcons).fill().map(() => createGraphics(width, height));
+        }
+
+        for (let i = 0; i < numIcons; i++) {
             let { topX, iconMaker } = items[i % items.length];
             let nextIndex = (i + 1) % items.length;
             let botX = items[nextIndex].topX;
             let y = baseY + i * cellHeight;
             this.redStripes(ctx, x + topX, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(ctx, x + botX, y, 0.1 * u, connectorSize, 8);
-            iconMaker(ctx, y, i);
+            iconMaker(this.reelLayers[i], y, i);
         }
+
+        this.reelLayers.forEach((drawTo, i) => {
+            this.applyTexture(drawTo, this.reelOverlays[i], this.overlay);
+            ctx.image(drawTo, 0, 0, ctx.width, ctx.height);
+        });
         pop();
     }
 
@@ -232,7 +249,7 @@ function WhiteRabbit() {
         background(this.white);
         noStroke();
 
-        const total = 800;
+        const total = 300;
         const t = (frameCount % total) / total;
 
 
@@ -240,14 +257,9 @@ function WhiteRabbit() {
         const borderSize = 0.06;
         this.border(borderSize, 0, 20 * t);
         this.border(-borderSize, width, 20 * t);
-        blendMode(HARD_LIGHT);
-        // image(this.overlay, 0, 0, width, height);
-        blendMode(BLEND);
 
         this.reel(this.reelLayer, 10 * g, 9 * g, t);
         this.applyTexture(this.reelLayer, this.reelOverlay, this.overlay);
-        utils.glow("rgba(0,0,0,0.5)", 5, 5, 5);
         image(this.reelLayer, 0, 0, width, height);
-        utils.noGlow();
     }
 }
