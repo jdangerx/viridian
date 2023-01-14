@@ -27,6 +27,17 @@ function WhiteRabbit() {
         this.reelOverlay.image(this.overlay, 0, 0, width, height);
     }
 
+
+    this.applyTexture = (drawTo, overlay, baseTexture) => {
+        overlay.clear();
+        overlay.drawingContext.globalCompositeOperation = "source-over";
+        overlay.image(baseTexture, 0, 0, overlay.width, overlay.height);
+        overlay.drawingContext.globalCompositeOperation = "destination-in";
+        overlay.image(drawTo, 0, 0, overlay.width, overlay.height);
+        drawTo.blendMode(HARD_LIGHT);
+        drawTo.image(overlay, 0, 0, drawTo.width, drawTo.height);
+    }
+
     this.border = (borderRatio, x, t) => {
         push();
         fill(this.blue);
@@ -212,19 +223,7 @@ function WhiteRabbit() {
             this.redStripes(ctx, x + topX, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(ctx, x + botX, y, 0.1 * u, connectorSize, 8);
             iconMaker(ctx, y, i);
-
-            // this.redStripes(this.reelOverlay, x + topX, y, 0.1 * u, -connectorSize, 8);
-            // this.redStripes(this.reelOverlay, x + botX, y, 0.1 * u, connectorSize, 8);
-            // iconMaker(this.reelOverlay, y, i);
         }
-        this.reelOverlay.clear();
-        this.reelOverlay.drawingContext.globalCompositeOperation = "source-over";
-        this.reelOverlay.image(this.overlay, 0, 0, this.overlay.width, this.overlay.height);
-        this.reelOverlay.drawingContext.globalCompositeOperation = "destination-in";
-        this.reelOverlay.image(ctx, 0, 0, this.overlay.width, this.overlay.height);
-
-        ctx.blendMode(HARD_LIGHT);
-        ctx.image(this.reelOverlay, 0, 0, width, height);
         pop();
     }
 
@@ -242,11 +241,11 @@ function WhiteRabbit() {
         this.border(borderSize, 0, 20 * t);
         this.border(-borderSize, width, 20 * t);
         blendMode(HARD_LIGHT);
-        image(this.overlay, 0, 0, width, height);
+        // image(this.overlay, 0, 0, width, height);
         blendMode(BLEND);
 
         this.reel(this.reelLayer, 10 * g, 9 * g, t);
-        //this.reelLayer.image(this.overlay, 0, 0, width, height);
+        this.applyTexture(this.reelLayer, this.reelOverlay, this.overlay);
         utils.glow("rgba(0,0,0,0.5)", 5, 5, 5);
         image(this.reelLayer, 0, 0, width, height);
         utils.noGlow();
