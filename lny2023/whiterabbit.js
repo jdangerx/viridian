@@ -22,6 +22,8 @@ function WhiteRabbit() {
 
         const texture = PRELOADS.all.crumpledPaper;
         this.baseTextureLayer = utils.createBaseTexture(texture, 255, 20);
+
+        this.t = 0;
     }
 
     this.border = (borderWidth, x, t) => {
@@ -201,7 +203,12 @@ function WhiteRabbit() {
         const lines = [
             2, 2.67, 3.33,
         ].flatMap(y => [-y, y])
-            .map(y => [-8, y, 8, y]);
+            .map(y => {
+                const intersect = 8 - (Math.abs(y) * 2) + 1;
+                const phase = this.t * TAU + y
+                return [-intersect * sin(phase), y, intersect * sin(phase), y]
+            });
+
 
         lines.forEach(coords => ctx.line(...coords.map(x => x * u)));
         ctx.drawingContext.globalCompositeOperation = "source-over";
@@ -314,8 +321,9 @@ function WhiteRabbit() {
             .map(({ topX, iconMaker }) => { return { topX: -topX, iconMaker } }),
             1);
 
-        const total = 200 * leftItems.length;
+        const total = 600 * leftItems.length;
         const t = (frameCount % total) / total;
+        this.t = t;
 
         const borderSize = 5 * g;
         const borderT = 4 * leftItems.length * t;
