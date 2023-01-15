@@ -4,6 +4,8 @@ function Squiggle() {
 
     this.setup = () => {
         this.drawOnce = false;
+
+        //this.rabbit = loadImage("images/bunny-leap.png");
     }
 
     this.draw = () => {
@@ -17,21 +19,22 @@ function Squiggle() {
         stroke(red);
         strokeWeight(3);
         var t = frameCount * 0.01;
-        circle(width/2 + cos(t) * 400, height/2 + sin(t) * 400, 500);
+        //circle(width/2 + cos(t) * 400, height/2 + sin(t) * 400, 500);
 
 
         this.drawWaveBundle(0, -1000, width+400, height * 0.4, 100, 0);
         this.drawWaveBundle(0, -400, width+400, height * 0.5, 200, 15);
 
-        /*
-        this.drawWaveBundle(0, -200, width+200, height * 0.6, 200, 0);
+        //this.rabbitLayer = createGraphics(this.rabbit.width, this.rabbit.height);
+        //this.makeRabbit(this.rabbitLayer);
+        //image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
+    }
 
-        this.drawWaveBundle(PI/12, -500, width*0.75, height * 1.1, 200, 5.2);
-
-        this.drawWaveBundle(-PI/8, 200, width+400, height * 0.55, 200, 6);
-
-        this.drawWaveBundle(-PI/6, 500, width+400, height * 0.8, 300, 17);
-        */
+    this.makeRabbit = (ctx) =>
+    {
+        const rw = 0.2 * width;
+        const rh = rw * this.rabbit.height / this.rabbit.width;
+        ctx.image(this.rabbit, 0, 0, rw, rh);
     }
 
     this.drawWaveBundle = (rotation, startX, endX, startY, bumpAmp, seed) =>
@@ -64,7 +67,7 @@ function Squiggle() {
         for (var i = 1; i <= KNOTS; ++i)
         { 
             var x = i * KNOT_SEPARATION + startX;
-            var noiseVal = noise((j* i * KNOT_SEPARATION + seed) * 0.05) * 1;
+            var noiseVal = noise((j* x+ seed) * 0.05) * 1;
             var noiseVal2 = ((noise(j * 0.3 * i + seed) * 2) - 1) * 0.75 * 0.5;
             var smallSin = ((sin(i * KNOT_SEPARATION * 4) + 1) / 2)  * 0.5; 
             var bigSin = ((cos(i * KNOT_SEPARATION *0.1 + t)+1)/2) * bigSinAmp;
@@ -82,6 +85,16 @@ function Squiggle() {
         }
 
         return coordinates;
+    }
+
+    this.computeX = () =>
+    {
+        return i * KNOT_SEPARATION + startX;
+    }
+
+    this.computeY = () =>
+    {
+        return i * KNOT_SEPARATION + startX;
     }
 
     this.drawSpline = (coordinates, seed) => {
