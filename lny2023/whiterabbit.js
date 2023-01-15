@@ -9,7 +9,7 @@ function WhiteRabbit() {
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
 
-        this.overlay = createGraphics(width, height);
+        this.baseTextureLayer = createGraphics(width, height);
         this.leftReel = createGraphics(width, height);
         this.rightReel = createGraphics(width, height);
 
@@ -18,11 +18,12 @@ function WhiteRabbit() {
         this.iconTextureLayer = createGraphics(width, height);
 
         console.log(PRELOADS);
-        this.paper = PRELOADS.all.crumpledPaper;
         this.rabbit = PRELOADS.whiteRabbit.rabbit;
         this.fonts = PRELOADS.whiteRabbit.fonts;
-        this.overlay.tint(255, 20);
-        this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
+
+        const texture = PRELOADS.all.crumpledPaper;
+        this.baseTextureLayer.tint(255, 20);
+        this.baseTextureLayer.image(texture, 0, 0, width, texture.height / texture.width * width);
     }
 
     this.border = (borderWidth, x, t) => {
@@ -274,7 +275,7 @@ function WhiteRabbit() {
             iconCtx.pop();
 
 
-            utils.applyTexture(iconCtx, this.iconTextureLayer, this.overlay, HARD_LIGHT);
+            utils.applyTexture(iconCtx, this.iconTextureLayer, this.baseTextureLayer, HARD_LIGHT);
             if ((y <= height + iconCtx.height / 2) || (y >= -iconCtx.height / 2)) {
                 ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
             }
@@ -334,7 +335,7 @@ function WhiteRabbit() {
         this.reel(this.rightReel, rightItems, width - reelMargin, frameWidth * 0.4, t);
 
         blendMode(HARD_LIGHT);
-        image(this.overlay, 0, 0, width, height);
+        image(this.baseTextureLayer, 0, 0, width, height);
         blendMode(BLEND);
         image(this.leftReel, 0, 0, width, height);
         image(this.rightReel, 0, 0, width, height);

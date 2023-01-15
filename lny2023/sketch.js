@@ -30,6 +30,8 @@ function preload() {
     PRELOADS = {
         all: {
             crumpledPaper: loadImage("images/crumpled-paper-texture.jpeg"),
+            paper: loadImage("images/paper.jpg"),
+            parchment: loadImage("images/parchment.jpg"),
         },
         whiteRabbit: {
             fonts: {
@@ -37,7 +39,6 @@ function preload() {
                 kr: loadFont("images/NotoSansKR-Regular.otf"),
             },
             rabbit: loadImage("images/big-white-rabbit.png"),
-
         }
     }
 }
