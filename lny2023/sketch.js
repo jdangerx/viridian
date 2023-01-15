@@ -40,6 +40,9 @@ function preload() {
                 vn: loadFont("images/RobotoCondensed-Regular.ttf")
             },
             rabbit: loadImage("images/big-white-rabbit.png"),
+        },
+        squiggle: {
+            rabbit: loadImage("images/bunny-leap.png"),
         }
     }
 }

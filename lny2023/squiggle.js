@@ -4,14 +4,15 @@ function Squiggle() {
 
     this.setup = () => {
         this.drawOnce = false;
-
-        //this.rabbit = loadImage("images/bunny-leap.png");
+        this.rabbit = PRELOADS.squiggle.rabbit;
+        this.rabbitLayer = createGraphics(this.rabbit.width, this.rabbit.height);
     }
 
     this.draw = () => {
         if (this.drawOnce) {
             // useful for spitting out console logs without overwhelming the browser
-            this.draw = () => null
+            this.draw = () => null;
+
         }
 
         background(bg_color);
@@ -19,15 +20,14 @@ function Squiggle() {
         stroke(red);
         strokeWeight(3);
         var t = frameCount * 0.01;
-        //circle(width/2 + cos(t) * 400, height/2 + sin(t) * 400, 500);
+        circle(width/2 + cos(t) * 400, height/2 + sin(t) * 400, 500);
 
 
         this.drawWaveBundle(0, -1000, width+400, height * 0.4, 100, 0);
         this.drawWaveBundle(0, -400, width+400, height * 0.5, 200, 15);
 
-        //this.rabbitLayer = createGraphics(this.rabbit.width, this.rabbit.height);
-        //this.makeRabbit(this.rabbitLayer);
-        //image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
+        this.makeRabbit(this.rabbitLayer);
+        image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
     }
 
     this.makeRabbit = (ctx) =>
