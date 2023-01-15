@@ -37,7 +37,7 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Squiggle);
+    mgr.showScene(WhiteRabbit);
     pop();
 }
 

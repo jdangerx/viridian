@@ -12,8 +12,10 @@ function WhiteRabbit() {
         this.overlay = createGraphics(width, height);
         this.leftReel = createGraphics(width, height);
         this.rightReel = createGraphics(width, height);
-        this.reelLayers = [];
-        this.reelOverlays = [];
+
+        this.iconLayer = createGraphics(width, height);
+        this.iconLayer.noStroke();
+        this.iconTextureLayer = createGraphics(width, height);
 
         this.fontLoaded = false;
         this.rabbit = loadImage("images/big-white-rabbit.png");
@@ -49,7 +51,7 @@ function WhiteRabbit() {
         rect(x, 0, borderWidth, height);
         translate(x + borderWidth - stripeWidth, 0);
         for (let i = 0; i < nStripes; i++) {
-            stripeX = i * stripeWidth + (0.5 * t * stripeWidth % stripeWidth);
+            stripeX = i * stripeWidth + (t * stripeWidth % stripeWidth);
             let stripeValue = 0.8 * cos(PI / 2 * stripeX / stripesWidth);
             fill(this.blue);
             rect(stripeX, 0, stripeWidth * stripeValue, height);
@@ -265,20 +267,17 @@ function WhiteRabbit() {
 
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
         const numIcons = items.length + 1;
-        if (this.reelLayers.length !== numIcons) {
-            console.log(`initializing ${numIcons} reel layers`)
-            this.reelLayers = Array(numIcons).fill().map(() => createGraphics(width, height)).map(ctx => ctx.noStroke());
-            this.reelOverlays = Array(numIcons).fill().map(() => createGraphics(width, height));
-        }
-        // I suppose I could reduce the # of layers - how many are really getting rendered?
-        // depends on cell height
-
         for (let i = 0; i < numIcons; i++) {
             let { topX, iconMaker } = items[i % items.length];
             let nextIndex = (i + 1) % items.length;
             let botX = items[nextIndex].topX;
             let y = baseY + i * cellHeight;
-            let iconCtx = this.reelLayers[i];
+            let above = (y < -cellHeight / 2);
+            let below = (y > height + cellHeight / 2);
+            if (above || below) {
+                continue;
+            }
+            let iconCtx = this.iconLayer;
             this.redStripes(ctx, x + topX * u, y, 0.1 * u, -connectorSize, 8);
             this.redStripes(ctx, x + botX * u, y, 0.1 * u, connectorSize, 8);
 
@@ -289,7 +288,7 @@ function WhiteRabbit() {
             iconCtx.pop();
 
 
-            this.applyTexture(iconCtx, this.reelOverlays[i], this.overlay);
+            this.applyTexture(iconCtx, this.iconTextureLayer, this.overlay);
             //utils.glow('rgba(0, 0, 0, 0.5)', 5, 5, 5, ctx);
             if ((y <= height + iconCtx.height / 2) || (y >= -iconCtx.height / 2)) {
                 ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
@@ -307,11 +306,6 @@ function WhiteRabbit() {
 
         const total = 400;
         const t = (frameCount % total) / total;
-
-        const borderSize = 0.02;
-        this.border(borderSize, 0, 20 * t);
-        this.border(-borderSize, width, 20 * t);
-
 
         const leftItems = [
             {
@@ -339,6 +333,13 @@ function WhiteRabbit() {
                 iconMaker: this.nullIcon,
             },
         ];
+
+        const borderSize = 0.02;
+        const borderT = ((30 / leftItems.length) | 0) * t;
+        this.border(borderSize, 0, borderT);
+        this.border(-borderSize, width, borderT);
+
+
         this.reel(this.leftReel, leftItems, 10 * g, 9 * g, t);
 
 
