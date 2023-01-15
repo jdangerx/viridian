@@ -26,11 +26,20 @@ const SCENES = {
     "3": Squiggle,
 }
 
-const PRELOADS = {
-}
-
 function preload() {
-    PRELOADS.crumpledPaper = loadImage("images/crumpled-paper-texture.jpeg");
+    PRELOADS = {
+        all: {
+            crumpledPaper: loadImage("images/crumpled-paper-texture.jpeg"),
+        },
+        whiteRabbit: {
+            fonts: {
+                cn: loadFont("images/仓迹高德国妙黑.ttf"),
+                kr: loadFont("images/NotoSansKR-Regular.otf"),
+            },
+            rabbit: loadImage("images/big-white-rabbit.png"),
+
+        }
+    }
 }
 
 function setup() {
