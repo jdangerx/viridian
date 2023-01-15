@@ -17,10 +17,13 @@ function WhiteRabbit() {
         this.iconLayer.noStroke();
         this.iconTextureLayer = createGraphics(width, height);
 
-        this.fontLoaded = false;
+        this.fontsLoaded = { "cn": false, "kr": false };
         this.rabbit = loadImage("images/big-white-rabbit.png");
         this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
-        this.cnFont = loadFont("images/仓迹高德国妙黑.ttf", () => this.fontLoaded = true);
+        this.fonts = {
+            cn: loadFont("images/仓迹高德国妙黑.ttf", () => this.fontsLoaded["cn"] = true),
+            kr: loadFont("images/NotoSansKR-Regular.otf", () => this.fontsLoaded["kr"] = true)
+        }
     }
 
     this.overlayCallback = () => {
@@ -29,10 +32,9 @@ function WhiteRabbit() {
     }
 
 
-    this.border = (borderRatio, x, t) => {
+    this.border = (borderWidth, x, t) => {
         push();
         fill(this.blue);
-        const borderWidth = width * borderRatio;
         const nStripes = 10;
         const stripesWidth = borderWidth * 5;
         const stripeWidth = stripesWidth / nStripes;
@@ -54,6 +56,8 @@ function WhiteRabbit() {
     this.pallette = (ctx, w) => {
         const h = 0.6 * w;
         ctx.push();
+        // centering offset
+        ctx.translate(0.05 * w, 0.02 * w);
         ctx.fill(this.red);
         ctx.rect(-0.50 * w, -0.37 * h, w, h, h * 0.3);
         ctx.fill(this.black);
@@ -62,7 +66,7 @@ function WhiteRabbit() {
         ctx.circle(0.21 * w, -0.2 * h, 0.2 * h);
         ctx.fill(this.red);
         ctx.circle(0.26 * w, 0.1 * h, 0.18 * h);
-        const rw = 0.2 * width;
+        const rw = 0.75 * w;
         const rh = rw * this.rabbit.height / this.rabbit.width;
         ctx.image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
         ctx.fill(this.red);
@@ -70,6 +74,7 @@ function WhiteRabbit() {
         ctx.fill(this.white);
         ctx.circle(-0.380 * w, -0.300 * h, 0.018 * h);
         ctx.pop();
+        // utils.origin(ctx);
     }
 
     this.blueStripes = (x, y, width, height, nStripes, offset) => {
@@ -211,19 +216,19 @@ function WhiteRabbit() {
     }
 
 
-    this.textDiamond = (ctx, xSize) => {
-        const u = xSize * 0.1;
-        this.diamond(ctx, u * 0.6);
-        const greeting = "新年快乐";
-        const textSize = 1.5 * u;
-        if (this.fontLoaded) {
-            ctx.textSize(textSize);
-            ctx.textFont(this.cnFont);
-            const bbox = this.cnFont.textBounds(greeting, 0, 0, textSize);
-            ctx.fill(128);
-            ctx.fill(this.black);
-            ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
-        }
+    this.textDiamond = (text, textSize = 20, lang = "cn") => {
+        return (ctx, xSize) => {
+            this.diamond(ctx, xSize * 0.06);
+            const greeting = text;
+            if (this.fontsLoaded[lang]) {
+                ctx.textSize(textSize);
+                ctx.textFont(this.fonts[lang]);
+                const bbox = this.fonts[lang].textBounds(greeting, 0, 0, textSize);
+                ctx.fill(128);
+                ctx.fill(this.black);
+                ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
+            }
+        };
     }
 
     this.viridianDiamond = (ctx, xSize) => {
@@ -288,52 +293,54 @@ function WhiteRabbit() {
     }
 
     this.draw = () => {
+        const itemsMaker = (diamond) => {
+            return [
+                {
+                    topX: -3, iconMaker: this.pallette,
+                },
+                {
+                    topX: 3, iconMaker: diamond,
+                },
+                {
+                    topX: -3, iconMaker: this.nullIcon,
+                },
+
+            ]
+        };
+
+        const cycle = (arr, x) => arr.slice(-x).concat(arr.slice(0, -x));
+
+        const leftTexts = [
+            this.textDiamond("새해 복 많이 받으세요", 0.8 * g, "kr"),
+
+        ]
+        const leftItems = leftTexts.flatMap(itemsMaker);
+
+        const rightTexts = [
+            this.textDiamond("新年快乐", 1.1 * g, "cn"),
+        ]
+        const rightItems = cycle(rightTexts
+            .flatMap(itemsMaker)
+            .map(({ topX, iconMaker }) => { return { topX: -topX, iconMaker } }),
+            1);
+
+        const total = 200 * leftItems.length;
+        const t = (frameCount % total) / total;
+
+        const borderSize = 5 * g;
+        const borderT = 4 * leftItems.length * t;
+        const frameWidth = width - 2 * borderSize;
+        const reelMargin = borderSize + frameWidth / 4;
+
         clear();
         background(this.white);
         noStroke();
-
-        const total = 900;
-        const t = (frameCount % total) / total;
-
-        const leftItems = [
-            {
-                topX: -3,
-                iconMaker: this.pallette,
-            },
-            {
-                topX: 3,
-                iconMaker: this.textDiamond,
-            },
-            {
-                topX: -3,
-                iconMaker: this.nullIcon,
-            },
-            {
-                topX: -3,
-                iconMaker: this.pallette,
-            },
-            {
-                topX: 3,
-                iconMaker: this.viridianDiamond,
-            },
-            {
-                topX: -3,
-                iconMaker: this.nullIcon,
-            },
-        ];
-
-        const borderSize = 0.02;
-        const borderT = ((30 / leftItems.length) | 0) * t;
-        this.border(borderSize, 0, borderT);
-        this.border(-borderSize, width, borderT);
+        this.border(borderSize / 6, 0, borderT);
+        this.border(-borderSize / 6, width, borderT);
+        this.reel(this.leftReel, leftItems, reelMargin, frameWidth * 0.4, t);
 
 
-        this.reel(this.leftReel, leftItems, 10 * g, 9 * g, t);
-
-
-        const rightItems = leftItems.slice(-1).concat(leftItems.slice(0, -1))
-            .map(({ topX, iconMaker }) => { return { topX: -topX, iconMaker } });
-        this.reel(this.rightReel, rightItems, 22 * g, 9 * g, t);
+        this.reel(this.rightReel, rightItems, width - reelMargin, frameWidth * 0.4, t);
 
         blendMode(HARD_LIGHT);
         image(this.overlay, 0, 0, width, height);

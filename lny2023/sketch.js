@@ -35,6 +35,7 @@ function setup() {
     }
 
     mgr = new SceneManager();
+    frameRate(60);
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
     mgr.showScene(WhiteRabbit);
@@ -50,8 +51,12 @@ function draw() {
         fill('rgba(0, 0, 0, 0.4)');
         rect(width * (1 - gapWidth) / 2, 0, width * gapWidth, height);
     }
-    if (document.getElementById("frame-rate")) {
-        document.getElementById("frame-rate").innerHTML = `FPS: ${getFrameRate() | 0}`
+    if (frameCount % 5 == 0) {
+        const fps = getFrameRate();
+        const sps = 60 / getFrameRate();
+        if (document.getElementById("frame-rate")) {
+            document.getElementById("frame-rate").innerHTML = `FPS:\t${fps.toFixed(2)}<br>60FPS would be this much faster than what you see:\t${sps.toFixed(2)}`;
+        }
     }
     pop();
 }
