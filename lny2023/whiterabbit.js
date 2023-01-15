@@ -204,7 +204,7 @@ function WhiteRabbit() {
             2, 2.67, 3.33,
         ].flatMap(y => [-y, y])
             .map(y => {
-                const intersect = 8 - (Math.abs(y) * 2) + 1;
+                const intersect = 8 - (Math.abs(y) * 2);
                 const phase = this.t * TAU + y
                 return [-intersect * sin(phase), y, intersect * sin(phase), y]
             });
@@ -254,7 +254,7 @@ function WhiteRabbit() {
         const connectorSize = cellHeight / 2;
 
         const steps = items.map((_value, i, arr) => (i * 2 + 1) / (arr.length * 2));
-        const stepT = utils.smoothsteps(steps, 0.1, t);
+        const stepT = utils.smoothsteps(steps, 0.02, t);
         const baseY = height / 2 - stepT * (items.length) * cellHeight;
 
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
@@ -308,13 +308,18 @@ function WhiteRabbit() {
         const cycle = (arr, x) => arr.slice(-x).concat(arr.slice(0, -x));
 
         const leftTexts = [
+            this.textDiamond("Chúc mừng năm mới", 0.8 * g, "vn"),
+            this.textDiamond("新年快乐", 1.1 * g, "cn"),
             this.textDiamond("새해 복 많이 받으세요", 0.8 * g, "kr"),
-
+            this.textDiamond("Happy new year!", 0.8 * g, "vn"),
         ]
         const leftItems = leftTexts.flatMap(itemsMaker);
 
         const rightTexts = [
             this.textDiamond("新年快乐", 1.1 * g, "cn"),
+            this.textDiamond("Happy new year!", 0.8 * g, "vn"),
+            this.textDiamond("새해 복 많이 받으세요", 0.8 * g, "kr"),
+            this.textDiamond("Chúc mừng năm mới", 0.8 * g, "vn"),
         ]
         const rightItems = cycle(rightTexts
             .flatMap(itemsMaker)

@@ -37,6 +37,7 @@ function preload() {
             fonts: {
                 cn: loadFont("images/仓迹高德国妙黑.ttf"),
                 kr: loadFont("images/NotoSansKR-Regular.otf"),
+                vn: loadFont("images/RobotoCondensed-Regular.ttf")
             },
             rabbit: loadImage("images/big-white-rabbit.png"),
         }
