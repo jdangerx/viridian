@@ -26,6 +26,24 @@ const SCENES = {
     "3": Squiggle,
 }
 
+function preload() {
+    PRELOADS = {
+        all: {
+            crumpledPaper: loadImage("images/crumpled-paper-texture.jpeg"),
+            paper: loadImage("images/paper.jpg"),
+            parchment: loadImage("images/parchment.jpg"),
+        },
+        whiteRabbit: {
+            fonts: {
+                cn: loadFont("images/仓迹高德国妙黑.ttf"),
+                kr: loadFont("images/NotoSansKR-Regular.otf"),
+                vn: loadFont("images/RobotoCondensed-Regular.ttf")
+            },
+            rabbit: loadImage("images/big-white-rabbit.png"),
+        }
+    }
+}
+
 function setup() {
     push();
     grid = IS_PROD ? 120 : Math.floor(window.innerWidth / 32);
@@ -35,9 +53,10 @@ function setup() {
     }
 
     mgr = new SceneManager();
+    frameRate(60);
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Squiggle);
+    mgr.showScene(WhiteRabbit);
     pop();
 }
 
@@ -49,6 +68,13 @@ function draw() {
         noStroke();
         fill('rgba(0, 0, 0, 0.4)');
         rect(width * (1 - gapWidth) / 2, 0, width * gapWidth, height);
+    }
+    if (frameCount % 5 == 0) {
+        const fps = getFrameRate();
+        const sps = 60 / getFrameRate();
+        if (document.getElementById("frame-rate")) {
+            document.getElementById("frame-rate").innerHTML = `FPS:\t${fps.toFixed(2)}<br>60FPS would be this much faster than what you see:\t${sps.toFixed(2)}`;
+        }
     }
     pop();
 }

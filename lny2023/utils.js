@@ -181,5 +181,40 @@ const utils = {
         blendMode(BLEND);
         document.getElementsByTagName('body')[0].style.background = `rgb(${light.levels[0]}, ${light.levels[1]}, ${light.levels[2]})`
         pop();
+    },
+
+    origin: (ctx) => {
+        if (ctx === undefined) {
+            push();
+            fill("red");
+            circle(0, 0, 10);
+            pop();
+        } else {
+            ctx.fill("red");
+            ctx.circle(0, 0, 10);
+        }
+    },
+
+    applyTexture: (drawTo, textureCtx, baseTexture, blendMode = BLEND) => {
+        textureCtx.clear();
+        // draw the base texture into the texture context
+        textureCtx.drawingContext.globalCompositeOperation = "source-over";
+        textureCtx.image(baseTexture, 0, 0, textureCtx.width, textureCtx.height);
+        // draw the existing shape onto the texture context, clipping to shape
+        textureCtx.drawingContext.globalCompositeOperation = "destination-in";
+        textureCtx.image(drawTo, 0, 0, drawTo.width, drawTo.height);
+
+        // put the texture back into the drawn context
+        drawTo.push();
+        drawTo.blendMode(blendMode);
+        drawTo.image(textureCtx, 0, 0, drawTo.width, drawTo.height);
+        drawTo.pop();
+    },
+
+    createBaseTexture: (textureImage, ...tintArgs) => {
+        ctx = createGraphics(width, height);
+        ctx.tint(...tintArgs);
+        ctx.image(textureImage, 0, 0, width, textureImage.height / textureImage.width * width);
+        return ctx;
     }
 };
