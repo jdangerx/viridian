@@ -266,10 +266,12 @@ function WhiteRabbit() {
         // need to render the first element at the bottom of the reel, too, to maintain the looping illusion
         const numIcons = items.length + 1;
         if (this.reelLayers.length !== numIcons) {
-            console.log("initializing reel layers")
+            console.log(`initializing ${numIcons} reel layers`)
             this.reelLayers = Array(numIcons).fill().map(() => createGraphics(width, height)).map(ctx => ctx.noStroke());
             this.reelOverlays = Array(numIcons).fill().map(() => createGraphics(width, height));
         }
+        // I suppose I could reduce the # of layers - how many are really getting rendered?
+        // depends on cell height
 
         for (let i = 0; i < numIcons; i++) {
             let { topX, iconMaker } = items[i % items.length];
@@ -289,7 +291,9 @@ function WhiteRabbit() {
 
             this.applyTexture(iconCtx, this.reelOverlays[i], this.overlay);
             //utils.glow('rgba(0, 0, 0, 0.5)', 5, 5, 5, ctx);
-            ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
+            if ((y <= height + iconCtx.height / 2) || (y >= -iconCtx.height / 2)) {
+                ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
+            }
             //utils.noGlow(ctx);
         }
 
@@ -312,11 +316,23 @@ function WhiteRabbit() {
         const leftItems = [
             {
                 topX: -3,
-                iconMaker: this.viridianDiamond,
+                iconMaker: this.pallette,
             },
             {
                 topX: 3,
                 iconMaker: this.textDiamond,
+            },
+            {
+                topX: -3,
+                iconMaker: this.nullIcon,
+            },
+            {
+                topX: -3,
+                iconMaker: this.pallette,
+            },
+            {
+                topX: 3,
+                iconMaker: this.viridianDiamond,
             },
             {
                 topX: -3,
