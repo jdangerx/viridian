@@ -202,12 +202,19 @@ const utils = {
         textureCtx.image(baseTexture, 0, 0, textureCtx.width, textureCtx.height);
         // draw the existing shape onto the texture context, clipping to shape
         textureCtx.drawingContext.globalCompositeOperation = "destination-in";
-        textureCtx.image(drawTo, 0, 0, textureCtx.width, textureCtx.height);
+        textureCtx.image(drawTo, 0, 0, drawTo.width, drawTo.height);
 
         // put the texture back into the drawn context
         drawTo.push();
         drawTo.blendMode(blendMode);
         drawTo.image(textureCtx, 0, 0, drawTo.width, drawTo.height);
         drawTo.pop();
+    },
+
+    createBaseTexture: (textureImage, ...tintArgs) => {
+        ctx = createGraphics(width, height);
+        ctx.tint(...tintArgs);
+        ctx.image(textureImage, 0, 0, width, textureImage.height / textureImage.width * width);
+        return ctx;
     }
 };

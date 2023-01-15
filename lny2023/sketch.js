@@ -55,7 +55,7 @@ function setup() {
     frameRate(60);
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(WhiteRabbit);
+    mgr.showScene(Squiggle);
     pop();
 }
 

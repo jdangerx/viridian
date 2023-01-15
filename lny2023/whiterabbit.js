@@ -9,7 +9,6 @@ function WhiteRabbit() {
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
 
-        this.baseTextureLayer = createGraphics(width, height);
         this.leftReel = createGraphics(width, height);
         this.rightReel = createGraphics(width, height);
 
@@ -22,8 +21,7 @@ function WhiteRabbit() {
         this.fonts = PRELOADS.whiteRabbit.fonts;
 
         const texture = PRELOADS.all.crumpledPaper;
-        this.baseTextureLayer.tint(255, 20);
-        this.baseTextureLayer.image(texture, 0, 0, width, texture.height / texture.width * width);
+        this.baseTextureLayer = utils.createBaseTexture(texture, 255, 20);
     }
 
     this.border = (borderWidth, x, t) => {
