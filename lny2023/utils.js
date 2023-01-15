@@ -193,5 +193,21 @@ const utils = {
             ctx.fill("red");
             ctx.circle(0, 0, 10);
         }
+    },
+
+    applyTexture: (drawTo, textureCtx, baseTexture, blendMode = BLEND) => {
+        textureCtx.clear();
+        // draw the base texture into the texture context
+        textureCtx.drawingContext.globalCompositeOperation = "source-over";
+        textureCtx.image(baseTexture, 0, 0, textureCtx.width, textureCtx.height);
+        // draw the existing shape onto the texture context, clipping to shape
+        textureCtx.drawingContext.globalCompositeOperation = "destination-in";
+        textureCtx.image(drawTo, 0, 0, textureCtx.width, textureCtx.height);
+
+        // put the texture back into the drawn context
+        drawTo.push();
+        drawTo.blendMode(blendMode);
+        drawTo.image(textureCtx, 0, 0, drawTo.width, drawTo.height);
+        drawTo.pop();
     }
 };

@@ -28,16 +28,6 @@ function WhiteRabbit() {
         this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
     }
 
-    this.applyTexture = (drawTo, overlay, baseTexture) => {
-        overlay.clear();
-        overlay.drawingContext.globalCompositeOperation = "source-over";
-        overlay.image(baseTexture, 0, 0, overlay.width, overlay.height);
-        overlay.drawingContext.globalCompositeOperation = "destination-in";
-        overlay.image(drawTo, 0, 0, overlay.width, overlay.height);
-        drawTo.push();
-        drawTo.image(overlay, 0, 0, drawTo.width, drawTo.height);
-        drawTo.pop();
-    }
 
     this.border = (borderRatio, x, t) => {
         push();
@@ -288,12 +278,10 @@ function WhiteRabbit() {
             iconCtx.pop();
 
 
-            this.applyTexture(iconCtx, this.iconTextureLayer, this.overlay);
-            //utils.glow('rgba(0, 0, 0, 0.5)', 5, 5, 5, ctx);
+            utils.applyTexture(iconCtx, this.iconTextureLayer, this.overlay, HARD_LIGHT);
             if ((y <= height + iconCtx.height / 2) || (y >= -iconCtx.height / 2)) {
                 ctx.image(iconCtx, x - iconCtx.width / 2, y - iconCtx.height / 2, ctx.width, ctx.height);
             }
-            //utils.noGlow(ctx);
         }
 
         pop();
@@ -304,7 +292,7 @@ function WhiteRabbit() {
         background(this.white);
         noStroke();
 
-        const total = 400;
+        const total = 900;
         const t = (frameCount % total) / total;
 
         const leftItems = [
@@ -347,7 +335,9 @@ function WhiteRabbit() {
             .map(({ topX, iconMaker }) => { return { topX: -topX, iconMaker } });
         this.reel(this.rightReel, rightItems, 22 * g, 9 * g, t);
 
+        blendMode(HARD_LIGHT);
         image(this.overlay, 0, 0, width, height);
+        blendMode(BLEND);
         image(this.leftReel, 0, 0, width, height);
         image(this.rightReel, 0, 0, width, height);
     }
