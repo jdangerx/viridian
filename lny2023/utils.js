@@ -181,5 +181,17 @@ const utils = {
         blendMode(BLEND);
         document.getElementsByTagName('body')[0].style.background = `rgb(${light.levels[0]}, ${light.levels[1]}, ${light.levels[2]})`
         pop();
+    },
+
+    origin: (ctx) => {
+        if (ctx === undefined) {
+            push();
+            fill("red");
+            circle(0, 0, 10);
+            pop();
+        } else {
+            ctx.fill("red");
+            ctx.circle(0, 0, 10);
+        }
     }
 };

@@ -1,16 +1,6 @@
 function WhiteRabbit() {
     const g = width / 32;
     this.setup = () => {
-        this.borderRabbits = {
-            right: loadImage("images/border-rabbit-right.png"),
-            left: loadImage("images/border-rabbit-left.png"),
-            rightInvert: loadImage("images/border-rabbit-right-invert.png"),
-            leftInvert: loadImage("images/border-rabbit-left-invert.png"),
-        };
-        this.rabbit = loadImage("images/big-white-rabbit.png");
-        this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
-        this.fontLoaded = false;
-        this.cnFont = loadFont("images/仓迹高德国妙黑.ttf", () => this.fontLoaded = true);
     }
 
     this.enter = () => {
@@ -18,11 +8,17 @@ function WhiteRabbit() {
         this.white = color(250, 250, 240);
         this.red = color(200, 60, 60);
         this.black = color(30, 30, 30);
+
         this.overlay = createGraphics(width, height);
-        this.reelLayers = [];
-        this.reelOverlays = [];
         this.leftReel = createGraphics(width, height);
         this.rightReel = createGraphics(width, height);
+        this.reelLayers = [];
+        this.reelOverlays = [];
+
+        this.fontLoaded = false;
+        this.rabbit = loadImage("images/big-white-rabbit.png");
+        this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
+        this.cnFont = loadFont("images/仓迹高德国妙黑.ttf", () => this.fontLoaded = true);
     }
 
     this.overlayCallback = () => {
@@ -108,67 +104,92 @@ function WhiteRabbit() {
         ctx.pop()
     }
 
-    this.viridian = (ctx, u) => {
+    this.viridian = (ctx, xSize) => {
         ctx.push();
         // TODO: probably we want each letter to be its own coordinate system
         // and then we have offsets between each one - easier to think about.
 
-        /**
-         * letters = [
-         * { strokes: [["l", [0, 0, 2, 6]], ["l", [2, 6, 4 0]]],
-             * marginLeft: 0,
-             * marginTop: 0 // with default margins
-         * },
-         * ]
-         * Then a conversion to raw coordinates to draw + center
-         *
-         */
+        const { rightEnd, letters } = [
+            { strokes: [["l", [0, 0, 2, 6]], ["l", [2, 6, 4, 0]]], marginLeft: 0, marginTop: 0 }, // V
+            { strokes: [["l", [0, 0, 0, 4]],], marginLeft: 0.5 }, // i
+            {
+                strokes: [
+                    ["l", [0, 0, 0, 4]],
+                    ["a", [0, 1.30, 3, 2.6, -TAU / 4, TAU / 4]],
+                    ["l", [0, 1.3, 1.5, 4]],
+                ],
+            }, // r
+            { strokes: [["l", [0, 0, 0, 4]],] }, // i
+            { // d
+                strokes: [
+                    ["l", [0, 0, 0, 4]],
+                    ["a", [0, 2, 3, 4, -TAU / 4, TAU / 4]],
+                ]
+            },
+            { strokes: [["l", [0, 0, 0, 4]],] }, // i
+            { // a
+                strokes: [
+                    ["l", [1, 0, 0, 4]],
+                    ["l", [1, 0, 2, 4]],
+                    ["l", [1, 4, 0.5, 2]],
+                    ["l", [1, 4, 1.5, 2]],
+                ]
+            },
+            { // n
+                strokes: [
+                    ["l", [0, 0, 0, 4]],
+                    ["l", [0, 0, 2, 4]],
+                    ["l", [2, 0, 2, 4]],
+                ]
+            },
+        ].reduce(({ rightEnd, letters }, letter) => {
+            const strokes = letter.strokes;
+            const marginLeft = letter.marginLeft === undefined ? 1 : letter.marginLeft;
+            const marginTop = letter.marginTop === undefined ? 2 : letter.marginTop;
+            const letterStartX = rightEnd + marginLeft;
+            const shiftedStrokes = strokes.map(([type, coords]) => {
+                let shifted;
+                if (type === "l") {
+                    shifted = [coords[0] + letterStartX, coords[1] + marginTop, coords[2] + letterStartX, coords[3] + marginTop];
+                } else {
+                    shifted = [
+                        coords[0] + letterStartX, coords[1] + marginTop,
+                        coords[2], coords[3], coords[4], coords[5]
+                    ]
+                }
+                return [type, shifted];
+            });
+            const strokeMaxXs = shiftedStrokes.map(([type, coords]) => {
+                if (type === "l") {
+                    return Math.max(coords[0], coords[2]);
+                } else {
+                    return Math.max(coords[0], coords[0] + coords[2] / 2);
+                }
+            });
+            const newRightX = Math.max(...strokeMaxXs);
+            letters.push({ strokes: shiftedStrokes })
+            return { rightEnd: newRightX, letters: letters }
+        }, { rightEnd: 0, letters: [] });
 
-        const strokes = [
-            // V
-            ["l", [0, 0, 2, 6]],
-            ["l", [2, 6, 4, 0]],
-            // i
-            ["l", [5, 2, 5, 6]],
-            // r
-            ["l", [7, 2, 7, 6]],
-            ["a", [7, 3.30, 3, 2.6, -TAU / 4, TAU / 4]],
-            ["l", [7, 3.3, 8.5, 6]],
-            // i
-            ["l", [10.25, 2, 10.25, 6]],
-            // d
-            ["l", [12, 2, 12, 6]],
-            ["a", [12, 4, 3, 4, -TAU / 4, TAU / 4]],
-            // i
-            ["l", [15, 2, 15, 6]],
-            // a
-            ["l", [18, 2, 17, 6]],
-            ["l", [18, 2, 19, 6]],
-            ["l", [18, 6, 17.5, 4]],
-            ["l", [18, 6, 18.5, 4]],
-            //n
-            ["l", [20, 2, 20, 6]],
-            ["l", [20, 2, 22, 6]],
-            ["l", [22, 2, 22, 6]],
-        ];
-
-
-        strokes.forEach(([type, coords]) => {
-            ctx.fill('rgba(0, 0, 0, 0)');
-            ctx.stroke(0);
-            const s = u * 0.4;
-            ctx.strokeWeight(s * 0.2);
-            ctx.push();
-            ctx.translate(-11 * s, -3 * s);
-            if (type === "l") {
-                let [x1, y1, x2, y2] = coords
-                ctx.line(x1 * s, y1 * s, x2 * s, y2 * s);
-            } else if (type === "a") {
-                let [x, y, w, h, th0, th1] = coords
-                ctx.arc(x * s, y * s, w * s, h * s, th0, th1, OPEN);
-            }
-            ctx.pop();
-        });
+        const s = xSize * 0.02;
+        ctx.translate(-rightEnd / 2 * s, -3 * s);
+        letters.forEach(
+            ({ strokes }) => strokes.forEach(
+                ([type, coords]) => {
+                    ctx.noFill();
+                    ctx.stroke(0);
+                    ctx.strokeWeight(s * 0.4);
+                    ctx.push();
+                    if (type === "l") {
+                        let [x1, y1, x2, y2] = coords
+                        ctx.line(x1 * s, y1 * s, x2 * s, y2 * s);
+                    } else if (type === "a") {
+                        let [x, y, w, h, th0, th1] = coords
+                        ctx.arc(x * s, y * s, w * s, h * s, th0, th1, OPEN);
+                    }
+                    ctx.pop();
+                })
+        );
 
         ctx.pop();
     }
@@ -211,6 +232,12 @@ function WhiteRabbit() {
             ctx.fill(this.black);
             ctx.text(greeting, -0.51 * bbox.w, 0.42 * bbox.h);
         }
+    }
+
+    this.viridianDiamond = (ctx, xSize) => {
+        const u = xSize * 0.1;
+        this.diamond(ctx, u * 0.6);
+        this.viridian(ctx, xSize);
     }
 
     this.debugIcon = (ctx, xSize, i) => {
@@ -285,7 +312,7 @@ function WhiteRabbit() {
         const leftItems = [
             {
                 topX: -3,
-                iconMaker: this.pallette,
+                iconMaker: this.viridianDiamond,
             },
             {
                 topX: 3,
