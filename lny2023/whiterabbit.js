@@ -191,7 +191,8 @@ function WhiteRabbit() {
         ctx.pop();
     }
 
-    this.diamond = (ctx, u) => {
+    this.diamond = (ctx, w) => {
+        u = w / 16;
         ctx.push();
         ctx.fill(this.white);
         ctx.stroke(this.black);
@@ -218,7 +219,7 @@ function WhiteRabbit() {
 
     this.textDiamond = (text, textSize = 20, lang = "cn") => {
         return (ctx, xSize) => {
-            this.diamond(ctx, xSize * 0.06);
+            this.diamond(ctx, xSize);
             const greeting = text;
             if (this.fontsLoaded[lang]) {
                 ctx.textSize(textSize);
@@ -232,8 +233,7 @@ function WhiteRabbit() {
     }
 
     this.viridianDiamond = (ctx, xSize) => {
-        const u = xSize * 0.1;
-        this.diamond(ctx, u * 0.6);
+        this.diamond(ctx, xSize);
         this.viridian(ctx, xSize);
     }
 
