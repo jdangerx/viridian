@@ -62,9 +62,9 @@ function WhiteRabbit() {
         const rh = rw * this.rabbit.height / this.rabbit.width;
         ctx.image(this.rabbit, -0.71 * rw, -0.65 * rh, rw, rh);
         ctx.fill(this.red);
-        ctx.ellipse(-0.370 * w, -0.29 * h, 0.06 * h, 0.05 * h);
+        ctx.ellipse(-0.374 * w, -0.294 * h, 0.06 * h, 0.05 * h);
         ctx.fill(this.white);
-        ctx.circle(-0.380 * w, -0.300 * h, 0.018 * h);
+        ctx.circle(-0.384 * w, -0.307 * h, 0.018 * h);
         ctx.pop();
         // utils.origin(ctx);
     }
