@@ -26,6 +26,13 @@ const SCENES = {
     "3": Squiggle,
 }
 
+const PRELOADS = {
+}
+
+function preload() {
+    PRELOADS.crumpledPaper = loadImage("images/crumpled-paper-texture.jpeg");
+}
+
 function setup() {
     push();
     grid = IS_PROD ? 120 : Math.floor(window.innerWidth / 32);

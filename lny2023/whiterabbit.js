@@ -19,18 +19,15 @@ function WhiteRabbit() {
 
         this.fontsLoaded = { "cn": false, "kr": false };
         this.rabbit = loadImage("images/big-white-rabbit.png");
-        this.paper = loadImage("images/crumpled-paper-texture.jpeg", () => this.overlayCallback());
+        console.log(PRELOADS)
+        this.paper = PRELOADS.crumpledPaper;
+        this.overlay.tint(255, 20);
+        this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
         this.fonts = {
             cn: loadFont("images/仓迹高德国妙黑.ttf", () => this.fontsLoaded["cn"] = true),
             kr: loadFont("images/NotoSansKR-Regular.otf", () => this.fontsLoaded["kr"] = true)
         }
     }
-
-    this.overlayCallback = () => {
-        this.overlay.tint(255, 20);
-        this.overlay.image(this.paper, 0, 0, width, this.paper.height / this.paper.width * width);
-    }
-
 
     this.border = (borderWidth, x, t) => {
         push();
@@ -324,7 +321,7 @@ function WhiteRabbit() {
             .map(({ topX, iconMaker }) => { return { topX: -topX, iconMaker } }),
             1);
 
-        const total = 200 * leftItems.length;
+        const total = 600 * leftItems.length;
         const t = (frameCount % total) / total;
 
         const borderSize = 5 * g;
