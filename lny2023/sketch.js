@@ -36,8 +36,8 @@ function preload() {
         whiteRabbit: {
             fonts: {
                 cn: loadFont("images/仓迹高德国妙黑.ttf"),
-                kr: loadFont("images/NotoSansKR-Regular.otf"),
-                vn: loadFont("images/RobotoCondensed-Regular.ttf")
+                kr: loadFont("images/Gugi-Regular.ttf"),
+                vn: loadFont("images/Arima-SemiBold.ttf")
             },
             rabbit: loadImage("images/big-white-rabbit.png"),
         },
@@ -59,7 +59,7 @@ function setup() {
     frameRate(60);
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Squiggle);
+    mgr.showScene(WhiteRabbit);
     pop();
 }
 

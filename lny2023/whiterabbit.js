@@ -218,7 +218,7 @@ function WhiteRabbit() {
 
     this.textDiamond = (text, textSize = 20, lang = "cn") => {
         return (ctx, xSize) => {
-            this.diamond(ctx, xSize);
+            this.diamond(ctx, xSize * 1.08);
             const greeting = text;
             ctx.textSize(textSize);
             ctx.textFont(this.fonts[lang]);
@@ -301,25 +301,24 @@ function WhiteRabbit() {
                 {
                     topX: -3, iconMaker: this.nullIcon,
                 },
-
             ]
         };
 
         const cycle = (arr, x) => arr.slice(-x).concat(arr.slice(0, -x));
 
         const leftTexts = [
-            this.textDiamond("Chúc mừng năm mới", 0.8 * g, "vn"),
+            this.textDiamond("CHÚC MỪNG NĂM MỚI", 0.76 * g, "vn"),
+            this.textDiamond("HAPPY NEW YEAR", 0.9 * g, "vn"),
             this.textDiamond("新年快乐", 1.1 * g, "cn"),
-            this.textDiamond("새해 복 많이 받으세요", 0.8 * g, "kr"),
-            this.textDiamond("Happy new year!", 0.8 * g, "vn"),
+            this.textDiamond("새해 복 많이 받으세요", 0.76 * g, "kr"),
         ]
         const leftItems = leftTexts.flatMap(itemsMaker);
 
         const rightTexts = [
             this.textDiamond("新年快乐", 1.1 * g, "cn"),
-            this.textDiamond("Happy new year!", 0.8 * g, "vn"),
-            this.textDiamond("새해 복 많이 받으세요", 0.8 * g, "kr"),
-            this.textDiamond("Chúc mừng năm mới", 0.8 * g, "vn"),
+            this.textDiamond("새해 복 많이 받으세요", 0.76 * g, "kr"),
+            this.textDiamond("CHÚC MỪNG NĂM MỚI", 0.76 * g, "vn"),
+            this.textDiamond("HAPPY NEW YEAR", 0.9 * g, "vn"),
         ]
         const rightItems = cycle(rightTexts
             .flatMap(itemsMaker)
