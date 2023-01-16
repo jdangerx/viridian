@@ -55,8 +55,8 @@ function Squiggle() {
         animals[15] = {id: 1, offset: width * 0.5};
         animals[1] = {id: 1, offset: width * 0.85};
 
-        this.drawWaveBundle(0, -CELL * 9, height * 0.4, CELL * 0.75, 0, animals);
-        this.drawWaveBundle(0, -CELL * 4, height * 0.5, CELL * 0.75, 15, animals);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.3, CELL * 1.00, 0, animals, CELL * 2);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.4, CELL * 1.10, 15, animals, 0);
 
         //this.makeRabbit(this.rabbitLayer);
         //image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
@@ -69,18 +69,18 @@ function Squiggle() {
         ctx.image(this.rabbit, 0, 0, rw, rh);
     }
 
-    this.drawWaveBundle = (rotation, startX, startY, bumpAmp, seed, animals) =>
+    this.drawWaveBundle = (rotation, startX, startY, bumpAmp, seed, animals, bumpOffset) =>
     {
         push();
         translate(width/2, height/2);
         rotate(rotation);
         translate(-width/2, -height/2);
         var endX = width+CELL*5;
-        this.drawWave(startX, endX, startY, bumpAmp, seed, animals);
+        this.drawWave(startX, endX, startY, bumpAmp, seed, animals, bumpOffset);
         pop();
     }
 
-    this.drawWave = (startX, endX, startY, bumpAmp, seed, animals) =>
+    this.drawWave = (startX, endX, startY, bumpAmp, seed, animals, bumpOffset) =>
     {
         for (var j=0; j < LINECOUNT; ++j)
         {
@@ -89,19 +89,19 @@ function Squiggle() {
             var xOff = CELL * 1 * sin((seed + j) * 0.3 + t) + startX; 
 
             if (animals[j] !== 0) {
-                this.drawAnimal(animals[j], xOff, yOff, endX, bumpAmp, j, seed);
+                this.drawAnimal(animals[j], xOff, yOff, endX, bumpAmp, j, seed, bumpOffset);
             }
-            var coordinates = this.makeCoordinates(xOff, yOff, endX, bumpAmp, j, seed);
+            var coordinates = this.makeCoordinates(xOff, yOff, endX, bumpAmp, j, seed, bumpOffset);
             this.drawSpline(coordinates, seed * j);
         }
     }
 
-    this.drawAnimal = (animal, startX, startY, endX, bumpAmp, j, seed) =>
+    this.drawAnimal = (animal, startX, startY, endX, bumpAmp, j, seed, bumpOffset) =>
     {
         push();
         fill(255);
         var x = 6 * KNOT_SEPARATION +frameCount;
-        var y = this.computeY(x, j, bumpAmp, seed, false);      
+        var y = this.computeY(x, j, bumpAmp, seed, false, bumpOffset);      
 
         x += startX;
         y += startY;
@@ -109,14 +109,14 @@ function Squiggle() {
         pop();
     }
 
-    this.makeCoordinates = (startX, startY, endX, bigSinAmp, j, seed) => 
+    this.makeCoordinates = (startX, startY, endX, bigSinAmp, j, seed, bumpOffset) => 
     {
         var coordinates = [];
         var KNOTS = ((endX-startX) / float(KNOT_SEPARATION)) | 0;
         for (var i = 0; i < KNOTS; ++i)
         { 
             var x = this.computeX(i);
-            var y = this.computeY(x, j, bigSinAmp, seed);
+            var y = this.computeY(x, j, bigSinAmp, seed, true, bumpOffset);
 
             if ((i === 0) || (i === KNOTS-1)) {
                 y += 300;
@@ -137,22 +137,23 @@ function Squiggle() {
         return knotIndex * KNOT_SEPARATION;
     }
 
-    this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin=true) =>
+    this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin, bumpOffset) =>
     {
 
-        var LINE_NOISE_WEIGHT = 4;
-        var GEN_NOISE_WEIGHT = 2;
-        var SMALL_SIN_WEIGHT = 0.5;
+        var LINE_NOISE_WEIGHT = 2.5;
+        var GEN_NOISE_WEIGHT = 1;
+        var SMALL_SIN_WEIGHT = 1;
         
         var t = frameCount * WAVE_SPEED;
         
-        var noiseVal = noise((10 + lineIndex + x * 0.1 + seed) * 0.05) * LINE_NOISE_WEIGHT;
+        var noiseVal = noise((10 + lineIndex + x * 0.5 + seed) * 0.05) * LINE_NOISE_WEIGHT;
         var noiseVal2 = ((noise(0.003 * x + seed) * 2) - 1) * GEN_NOISE_WEIGHT;
         var smallSin = ((sin(x * 4) + 1) / 2) * SMALL_SIN_WEIGHT; 
-        var bigSin = ((cos(x *0.01 - t)+1)/2) * bigSinAmp;
+        var bigSin = ((cos(bumpOffset + x *0.008 - t)+1)/2) * bigSinAmp;
 
         if (!useSmallSin)
         { 
+            noiseVal = LINE_NOISE_WEIGHT;
             smallSin *= 0;
         }
 
