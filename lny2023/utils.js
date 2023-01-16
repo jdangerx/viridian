@@ -172,13 +172,13 @@ const utils = {
 
     lightTest: () => {
         push();
-        blendMode(OVERLAY);
-        const red = color('rgba(240, 0, 80, 0.7)')
-        const purple = color('rgba(200, 0, 255, 0.7)')
+        // blendMode(OVERLAY);
+        const red = color('rgba(240, 0, 80, 0.3)')
+        const purple = color('rgba(200, 0, 255, 0.3)')
         const light = lerpColor(red, purple, 0.5 * (1 + sin(frameCount * 0.01)))
         background(light);
-        background('rgba(255, 255, 255, 0.5)');
-        blendMode(BLEND);
+        // background('rgba(255, 255, 255, 0.5)');
+        // blendMode(BLEND);
         document.getElementsByTagName('body')[0].style.background = `rgb(${light.levels[0]}, ${light.levels[1]}, ${light.levels[2]})`
         pop();
     },

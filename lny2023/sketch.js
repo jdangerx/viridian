@@ -9,6 +9,7 @@
 
 let mgr;
 const IS_PROD = false;
+let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
 P5Capture.setDefaultOptions({
@@ -80,9 +81,16 @@ function draw() {
         }
     }
     pop();
+    if (LIGHT_TEST) {
+        utils.lightTest();
+    }
 }
 
 function keyPressed() {
+    if (key === "l") {
+        LIGHT_TEST = !LIGHT_TEST;
+        document.getElementsByTagName('body')[0].style.background = `white`;
+    }
     if (SCENES.hasOwnProperty(key)) {
         console.log(`Switching to ${SCENES[key].name}`);
         mgr.showScene(SCENES[key]);

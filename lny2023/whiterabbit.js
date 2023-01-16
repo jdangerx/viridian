@@ -353,5 +353,6 @@ function WhiteRabbit() {
         blendMode(BLEND);
         image(this.leftReel, 0, 0, width, height);
         image(this.rightReel, 0, 0, width, height);
+        background('rgba(255, 100, 0, 0.08)');
     }
 }
