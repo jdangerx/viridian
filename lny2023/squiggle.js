@@ -85,7 +85,7 @@ function Squiggle() {
         for (var j=0; j < LINECOUNT; ++j)
         {
             var t = frameCount * 0.01;
-            var yOff = j * CELL/10 + startY;
+            var yOff = j * CELL/12 + startY;
             var xOff = CELL * 1 * sin((seed + j) * 0.3 + t) + startX; 
 
             if (animals[j] !== 0) {
