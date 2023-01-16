@@ -112,12 +112,13 @@ function Squiggle() {
     {
         push();
         fill(255);
-        var x = (animal.offset + frameCount) % (width + CELL * 2) - CELL;
+        var x = animal.offset + frameCount * 4;
         var y = this.computeY(x, j, bumpAmp, seed, false, bumpOffset);      
 
         x += startX;
         y += startY;
-        circle(x, y - CELL * 0.5, 100);
+        const maxX = width + CELL;
+        circle(x % maxX - CELL / 2, y, 100);
         pop();
     }
 
