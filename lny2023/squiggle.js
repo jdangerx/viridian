@@ -8,6 +8,7 @@ function Squiggle() {
     const WAVE_SPEED = 0.001;
     const DEBUG = false;
     const OSCILLATION_SPEED = 0.01;
+    const VIRTUAL_SCREEN_WIDTH = width * 2;
 
     this.setup = () => {
         this.drawOnce = false;
@@ -55,7 +56,7 @@ function Squiggle() {
 
         this.drawWaveBundle(0, -CELL * 4, height * 0.3, CELL * 1.00, 0, animals, CELL * 2);
 
-        var unit = (width / 13);
+        var unit = (VIRTUAL_SCREEN_WIDTH / 12);
         animals[10] = { id: 1, offset: unit * 1 };
         animals[4] = { id: 1, offset: unit * 2 };
         animals[8] = { id: 1, offset: unit * 3 };
@@ -68,6 +69,16 @@ function Squiggle() {
         animals[3] = { id: 1, offset: unit * 10 };
         animals[12] = { id: 1, offset: unit * 11 };
         animals[7] = { id: 1, offset: unit * 12 };
+
+        animals = animals.map((animal, i) => {
+            if (animal === 0) {
+                return 0;
+            }
+            let { id, offset } = animal;
+            const offsetSize = 50;
+            offset += offsetSize * 2 * (noise(i) - 0.5);
+            return { id, offset };
+        })
 
         this.drawWaveBundle(0, -CELL * 4, height * 0.4, CELL * 1.10, 15, animals, 0);
 
@@ -109,9 +120,10 @@ function Squiggle() {
         push();
         fill(255);
         // define a loop length that is larger than the screen width
-        const loopPadding = CELL;
+        const loopPadding = (VIRTUAL_SCREEN_WIDTH - width) / 2;
         const loopLength = width + 2 * loopPadding;
-        const loopX = (frameCount * 4 + animal.offset) % loopLength;
+
+        const loopX = (frameCount + animal.offset + startX) % loopLength;
 
         // displayX = 0, loopX should be at exactly loopPadding:
         const displayX = loopX - loopPadding;
@@ -151,7 +163,7 @@ function Squiggle() {
 
     this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin, bumpOffset) => {
 
-        var LINE_NOISE_WEIGHT = 2.5;
+        var LINE_NOISE_WEIGHT = 3.5;
         var GEN_NOISE_WEIGHT = 1;
         var SMALL_SIN_WEIGHT = 1;
 
