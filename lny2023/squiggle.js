@@ -73,8 +73,8 @@ function Squiggle() {
         var lineCount = 35;
         for (var j=1; j <= lineCount; ++j)
         {
-            var yOff = j * 12 + startY;
-            var xOff = 100 * sin(seed + j * 0.3 + frameCount * 0.01) + startX; 
+            var yOff = j * CELL/10 + startY;
+            var xOff = CELL * 1 * sin(seed + j * 0.3 + frameCount * 0.01) + startX; 
             var coordinates = this.makeCoordinates(xOff, yOff, endX, bumpAmp, j, seed);
             this.drawSpline(coordinates, seed * j);
         }
@@ -83,7 +83,6 @@ function Squiggle() {
     this.makeCoordinates = (startX, startY, endX, bigSinAmp, j, seed) => 
     {
         var coordinates = [];
-        var KNOT_SEPARATION = 120;
         var KNOTS = ((endX-startX) / float(KNOT_SEPARATION)) | 0;
         var t = frameCount * 0.00;
         for (var i = 0; i < KNOTS; ++i)
