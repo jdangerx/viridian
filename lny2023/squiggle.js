@@ -4,9 +4,10 @@ function Squiggle() {
 
     const CELL = height * 0.25;
     const KNOT_SEPARATION = CELL;
-    const LINECOUNT = 15;
-    const WAVE_SPEED = 0.001;
+    const LINECOUNT = 2;
+    const WAVE_SPEED = 0; 0.001;
     const DEBUG = false;
+    const OSCILLATION_SPEED = 0;
 
     this.setup = () => {
         this.drawOnce = false;
@@ -55,7 +56,8 @@ function Squiggle() {
         this.drawWaveBundle(0, -CELL * 4, height * 0.3, CELL * 1.00, 0, animals, CELL * 2);
         
         var unit = (width / 13); 
-        animals[10] = {id: 1, offset: unit * 1};
+        animals[1] = {id: 1, offset: unit * 1};
+        /*
         animals[4] = {id: 1, offset: unit * 2};
         animals[8] = {id: 1, offset: unit * 3};
         animals[1] = {id: 1, offset: unit * 4};
@@ -67,6 +69,7 @@ function Squiggle() {
         animals[3] = {id: 1, offset: unit * 10};
         animals[12] = {id: 1, offset: unit * 11};
         animals[7] = {id: 1, offset: unit * 12};
+        */
 
         this.drawWaveBundle(0, -CELL * 4, height * 0.4, CELL * 1.10, 15, animals, 0);
 
@@ -96,7 +99,7 @@ function Squiggle() {
     {
         for (var j=0; j < LINECOUNT; ++j)
         {
-            var t = frameCount * 0.01;
+            var t = frameCount * OSCILLATION_SPEED;
             var yOff = j * CELL/12 + startY;
             var xOff = CELL * 1 * sin((seed + j) * 0.3 + t) + startX; 
 
@@ -112,13 +115,35 @@ function Squiggle() {
     {
         push();
         fill(255);
-        var x = animal.offset + frameCount * 4;
-        var y = this.computeY(x, j, bumpAmp, seed, false, bumpOffset);      
-
-        x += startX;
-        y += startY;
         const maxX = width + CELL;
-        circle(x % maxX - CELL / 2, y, 100);
+        let x = frameCount * 4 + animal.offset;
+        // x = maxX
+        // displayX = maxX + startX
+        // coordX = 0
+
+        // we *want* coordX = maxX
+        // when x = maxX + 1
+        // display X = maxX + startX + 1
+        // coord X = maxX + 1
+
+
+        //displayX = maxX + startX
+        // when do we want coordX to wrap back to 0?
+        // when 
+        // when do we want displayX to wrap back to 0?
+        // displayX wraps at displayX = maxX
+        // when displayX wraps to 0, this corresponds to displayX = -startX
+
+
+
+        let coordX = x % maxX;
+        let y = this.computeY(coordX, j, bumpAmp, seed, false, bumpOffset);
+        console.log(startX);
+        y += startY;
+        x += startX;
+        x %= maxX;
+
+        circle(x, y, 100);
         pop();
     }
 
@@ -153,9 +178,9 @@ function Squiggle() {
     this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin, bumpOffset) =>
     {
 
-        var LINE_NOISE_WEIGHT = 2.5;
-        var GEN_NOISE_WEIGHT = 1;
-        var SMALL_SIN_WEIGHT = 1;
+        var LINE_NOISE_WEIGHT = 0; 2.5;
+        var GEN_NOISE_WEIGHT = 0; 1;
+        var SMALL_SIN_WEIGHT = 0; 1;
         
         var t = frameCount * WAVE_SPEED;
         
@@ -185,6 +210,7 @@ function Squiggle() {
 
         curveTightness(-0.5);
         fill(red);
+        fill('rgba(180, 0, 0, 0.3)')
         strokeWeight(2);
         stroke(bg_color);
         beginShape();
