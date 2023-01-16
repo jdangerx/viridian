@@ -200,17 +200,21 @@ function WhiteRabbit() {
         ];
         ctx.quad(...quadpoints.map(x => x * u));
         ctx.drawingContext.globalCompositeOperation = "source-atop";
-        const lines = [
-            2, 2.67, 3.33,
-        ].flatMap(y => [-y, y])
-            .map(y => {
-                const intersect = 8 - (Math.abs(y) * 2);
-                const phase = this.t * TAU + y
-                return [-intersect * sin(phase), y, intersect * sin(phase), y]
-            });
 
-
-        lines.forEach(coords => ctx.line(...coords.map(x => x * u)));
+        push();
+        ctx.fill(this.black);
+        ctx.noStroke();
+        const nStripes = 10;
+        const stripesWidth = 3 * u;
+        const stripeWidth = stripesWidth / nStripes;
+        const diamondT = 28 * this.t;
+        for (let i = 0; i < nStripes; i++) {
+            stripeY = i * stripeWidth + (diamondT * stripeWidth % stripeWidth);
+            let stripeValue = 0.8 * cos(PI / 2 * stripeY / stripesWidth);
+            ctx.rect(-w / 2, -5 * u + stripeY, w, stripeWidth * stripeValue);
+            ctx.rect(-w / 2, 5 * u - stripeY, w, stripeWidth * stripeValue);
+        }
+        pop();
         ctx.drawingContext.globalCompositeOperation = "source-over";
         ctx.pop()
     }
