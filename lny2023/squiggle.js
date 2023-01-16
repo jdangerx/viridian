@@ -4,8 +4,9 @@ function Squiggle() {
 
     const CELL = height * 0.25;
     const KNOT_SEPARATION = CELL;
-    const LINECOUNT = 35;
-    const WAVE_SPEED = 0.0005;
+    const LINECOUNT = 25;
+    const WAVE_SPEED = 0.001;
+    const DEBUG = false;
 
     this.setup = () => {
         this.drawOnce = false;
@@ -19,14 +20,18 @@ function Squiggle() {
         this.baseTextureLayer = utils.createBaseTexture(texture, 255, 155);
 
         // WHAT IF COLOR
-        this.redTextureLayer = utils.createBaseTexture(texture, 255, 0, 0, 155);
+        this.bgTextureLayer = utils.createBaseTexture(texture, 250, 210, 200, 100);
+
+        this.base = createGraphics(width, height);
+        this.baseTexture =  createGraphics(width, height);
+        utils.applyTexture(this.base, this.baseTexture, this.bgTextureLayer, MULTIPLY);
 
         this.moon = createGraphics(CELL * 3, CELL * 3);
         this.moonTexture = createGraphics(CELL * 3, CELL * 3);
         this.moon.stroke(red);
         this.moon.strokeWeight(3);
         this.moon.circle(CELL * 1.5, CELL * 1.5, CELL * 3 - 5);
-        utils.applyTexture(this.moon, this.moonTexture, this.redTextureLayer, MULTIPLY);
+        utils.applyTexture(this.moon, this.moonTexture, this.baseTextureLayer, MULTIPLY);
     }
 
     this.draw = () => {
@@ -36,6 +41,7 @@ function Squiggle() {
         }
 
         background(bg_color);
+        image(this.bgTextureLayer, 0, 0, width, height);
 
         stroke(red);
         strokeWeight(3);
@@ -45,10 +51,9 @@ function Squiggle() {
         image(this.moon, x, y, this.moon.width, this.moon.height);
 
         var animals = new Array(LINECOUNT).fill(0);
-        animals[10] = {id: 1, offset: width * 0.75};
-        animals[15] = {id: 1, offset: width * 0.5};
-        animals[4] = {id: 1, offset: width * 0.85};
-
+        //animals[10] = {id: 1, offset: width * 0.75};
+        //animals[15] = {id: 1, offset: width * 0.5};
+        animals[0] = {id: 1, offset: width * 0.85};
 
         this.drawWaveBundle(0, -CELL * 9, height * 0.4, CELL * 1, 0, animals);
         this.drawWaveBundle(0, -CELL * 4, height * 0.5, CELL * 2, 15, animals);
@@ -79,8 +84,9 @@ function Squiggle() {
     {
         for (var j=0; j < LINECOUNT; ++j)
         {
+            var t = frameCount * 0.01;
             var yOff = j * CELL/10 + startY;
-            var xOff = CELL * 1 * sin(seed + j * 0.3 + frameCount * 0.01) + startX; 
+            var xOff = CELL * 1 * sin(seed + j * 0.3 + t) + startX; 
 
             if (animals[j] !== 0) {
                 this.drawAnimal(animals[j], xOff, yOff, endX, bumpAmp, j, seed);
@@ -94,8 +100,8 @@ function Squiggle() {
     {
         push();
         fill(255);
-        var x = 6 * KNOT_SEPARATION + (frameCount * 0.1);
-        var y = this.computeY(x, j, bumpAmp, seed);
+        var x = 6 * KNOT_SEPARATION +frameCount;
+        var y = this.computeY(x, j, bumpAmp, seed, false);      
 
         x += startX;
         y += startY;
@@ -116,8 +122,11 @@ function Squiggle() {
                 y += 300;
             }
 
-            coordinates.push(x + startX);
-            coordinates.push(y + startY);
+            x += startX;
+            y += startY;
+
+            coordinates.push(x);
+            coordinates.push(y);
         }
 
         return coordinates;
@@ -128,13 +137,17 @@ function Squiggle() {
         return knotIndex * KNOT_SEPARATION;
     }
 
-    this.computeY = (x, lineIndex, bigSinAmp, seed) =>
+    this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin=true) =>
     {
         var t = frameCount * WAVE_SPEED;
-        var noiseVal = noise((lineIndex * x + seed) * 0.05) * 1;
+        var noiseVal = noise((lineIndex * x + seed) * 0.05);
         var noiseVal2 = ((noise(0.00001 * x + seed) * 2) - 1) * 0.75 * 0.25;
-        var smallSin = ((sin(x * 4) + 1) / 2)  * 0.5; 
-        var bigSin = ((cos(x *0.1 + t)+1)/2) * bigSinAmp;
+        var smallSin = ((sin(x * 4) + 1) / 2) * 0.5; 
+        var bigSin = ((cos(x *0.01 - t)+1)/2) * bigSinAmp;
+        if (!useSmallSin)
+        {
+            smallSin *= 0;
+        }
         var y = (smallSin + noiseVal + noiseVal2) * (KNOT_SEPARATION/5) + bigSin;
         return y;
     }
@@ -164,10 +177,11 @@ function Squiggle() {
 
         endShape();
 
-        
-        for (let i = FIRST_X_COORDINATE; i < AMOUNT_OF_COORDINATES; i += 2) {
-            ellipse(coordinates[i], coordinates[i + 1], 5, 5);
+        if (DEBUG)
+        {
+           for (let i = FIRST_X_COORDINATE; i < AMOUNT_OF_COORDINATES; i += 2) {
+                ellipse(coordinates[i], coordinates[i + 1], 5, 5);
+            }
         }
-    
     }
 }
