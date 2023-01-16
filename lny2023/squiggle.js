@@ -43,13 +43,11 @@ function Squiggle() {
         var y = height/2 + sin(t) * CELL * 3 - this.moon.height / 2;
         image(this.moon, x, y, this.moon.width, this.moon.height);
 
-        /*
-        this.drawWaveBundle(0, -1000, width+600, height * 0.4, 100, 0);
-        this.drawWaveBundle(0, -400, width+600, height * 0.5, 200, 15);
+        this.drawWaveBundle(0, -CELL * 9, height * 0.4, CELL * 1, 0);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.5, CELL * 2, 15);
 
         this.makeRabbit(this.rabbitLayer);
         image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
-        */
     }
 
     this.makeRabbit = (ctx) =>
@@ -59,12 +57,13 @@ function Squiggle() {
         ctx.image(this.rabbit, 0, 0, rw, rh);
     }
 
-    this.drawWaveBundle = (rotation, startX, endX, startY, bumpAmp, seed) =>
+    this.drawWaveBundle = (rotation, startX, startY, bumpAmp, seed) =>
     {
         push();
         translate(width/2, height/2);
         rotate(rotation);
         translate(-width/2, -height/2);
+        var endX = width+CELL*5;
         this.drawWave(startX, endX, startY, bumpAmp, seed);
         pop();
     }
