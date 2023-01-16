@@ -111,30 +111,16 @@ function Squiggle() {
         push();
         fill(255);
         const maxDisplayX = width + CELL;
-        let x = frameCount * 4 + animal.offset;
-        const displayX = (x + startX) % maxDisplayX;
-        const coordX = displayX - startX;
-        // x = maxX
-        // displayX = maxX + startX
-        // coordX = 0
+        const loopPadding = CELL;
+        const loopOffset = startX + loopPadding;
+        const loopLength = width + 2 * loopPadding;
+        const x = frameCount * 4 + animal.offset;
+        const loopStart = (startX + loopPadding)
+        const loopX = (x + loopStart) % loopLength;
+        const displayX = loopX - loopPadding;
+        const coordX = loopX - loopOffset;
 
-        // we *want* coordX = maxX
-        // when x = maxX + 1
-        // display X = maxX + startX + 1
-        // coord X = maxX + 1
-
-
-        //displayX = maxX + startX
-        // when do we want coordX to wrap back to 0?
-        // when
-        // when do we want displayX to wrap back to 0?
-        // displayX wraps at displayX = maxX
-        // when displayX wraps to 0, this corresponds to displayX = -startX
-
-
-
-        let y = this.computeY(coordX, j, bumpAmp, seed, false, bumpOffset);
-        y += startY;
+        const y = this.computeY(coordX, j, bumpAmp, seed, false, bumpOffset) + startY;
 
         circle(displayX, y, 100);
         pop();
