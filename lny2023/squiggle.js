@@ -4,10 +4,10 @@ function Squiggle() {
 
     const CELL = height * 0.25;
     const KNOT_SEPARATION = CELL;
-    const LINECOUNT = 2;
-    const WAVE_SPEED = 0; 0.001;
+    const LINECOUNT = 25;
+    const WAVE_SPEED = 0.001;
     const DEBUG = false;
-    const OSCILLATION_SPEED = 0;
+    const OSCILLATION_SPEED = 0.01;
 
     this.setup = () => {
         this.drawOnce = false;
@@ -56,20 +56,18 @@ function Squiggle() {
         this.drawWaveBundle(0, -CELL * 4, height * 0.3, CELL * 1.00, 0, animals, CELL * 2);
 
         var unit = (width / 13);
-        animals[1] = { id: 1, offset: unit * 1 };
-        /*
-        animals[4] = {id: 1, offset: unit * 2};
-        animals[8] = {id: 1, offset: unit * 3};
-        animals[1] = {id: 1, offset: unit * 4};
-        animals[6] = {id: 1, offset: unit * 5};
-        animals[11] = {id: 1, offset: unit * 6};
-        animals[2] = {id: 1, offset: unit * 7};
-        animals[9] = {id: 1, offset: unit * 8};
-        animals[5] = {id: 1, offset: unit * 9};
-        animals[3] = {id: 1, offset: unit * 10};
-        animals[12] = {id: 1, offset: unit * 11};
-        animals[7] = {id: 1, offset: unit * 12};
-        */
+        animals[10] = { id: 1, offset: unit * 1 };
+        animals[4] = { id: 1, offset: unit * 2 };
+        animals[8] = { id: 1, offset: unit * 3 };
+        animals[1] = { id: 1, offset: unit * 4 };
+        animals[6] = { id: 1, offset: unit * 5 };
+        animals[11] = { id: 1, offset: unit * 6 };
+        animals[2] = { id: 1, offset: unit * 7 };
+        animals[9] = { id: 1, offset: unit * 8 };
+        animals[5] = { id: 1, offset: unit * 9 };
+        animals[3] = { id: 1, offset: unit * 10 };
+        animals[12] = { id: 1, offset: unit * 11 };
+        animals[7] = { id: 1, offset: unit * 12 };
 
         this.drawWaveBundle(0, -CELL * 4, height * 0.4, CELL * 1.10, 15, animals, 0);
 
@@ -110,17 +108,17 @@ function Squiggle() {
     this.drawAnimal = (animal, startX, startY, endX, bumpAmp, j, seed, bumpOffset) => {
         push();
         fill(255);
-        const maxDisplayX = width + CELL;
+        // define a loop length that is larger than the screen width
         const loopPadding = CELL;
-        const loopOffset = startX + loopPadding;
         const loopLength = width + 2 * loopPadding;
-        const x = frameCount * 4 + animal.offset;
-        const loopStart = (startX + loopPadding)
-        const loopX = (x + loopStart) % loopLength;
-        const displayX = loopX - loopPadding;
-        const coordX = loopX - loopOffset;
+        const loopX = (frameCount * 4 + animal.offset) % loopLength;
 
-        const y = this.computeY(coordX, j, bumpAmp, seed, false, bumpOffset) + startY;
+        // displayX = 0, loopX should be at exactly loopPadding:
+        const displayX = loopX - loopPadding;
+        // when splineX = 0, displayX should be exactly startX:
+        const splineX = displayX - startX;
+
+        const y = this.computeY(splineX, j, bumpAmp, seed, false, bumpOffset) + startY - 40;
 
         circle(displayX, y, 100);
         pop();
@@ -153,9 +151,9 @@ function Squiggle() {
 
     this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin, bumpOffset) => {
 
-        var LINE_NOISE_WEIGHT = 0; 2.5;
-        var GEN_NOISE_WEIGHT = 0; 1;
-        var SMALL_SIN_WEIGHT = 0; 1;
+        var LINE_NOISE_WEIGHT = 2.5;
+        var GEN_NOISE_WEIGHT = 1;
+        var SMALL_SIN_WEIGHT = 1;
 
         var t = frameCount * WAVE_SPEED;
 
@@ -184,7 +182,6 @@ function Squiggle() {
 
         curveTightness(-0.5);
         fill(red);
-        fill('rgba(180, 0, 0, 0.3)')
         strokeWeight(2);
         stroke(bg_color);
         beginShape();
