@@ -4,7 +4,7 @@ function Squiggle() {
 
     const CELL = height * 0.25;
     const KNOT_SEPARATION = CELL;
-    const LINECOUNT = 25;
+    const LINECOUNT = 15;
     const WAVE_SPEED = 0.001;
     const DEBUG = false;
 
@@ -51,11 +51,23 @@ function Squiggle() {
         image(this.moon, x, y, this.moon.width, this.moon.height);
 
         var animals = new Array(LINECOUNT).fill(0);
-        animals[10] = {id: 1, offset: width * 0.75};
-        animals[15] = {id: 1, offset: width * 0.5};
-        animals[1] = {id: 1, offset: width * 0.85};
 
         this.drawWaveBundle(0, -CELL * 4, height * 0.3, CELL * 1.00, 0, animals, CELL * 2);
+        
+        var unit = (width / 13); 
+        animals[10] = {id: 1, offset: unit * 1};
+        animals[4] = {id: 1, offset: unit * 2};
+        animals[8] = {id: 1, offset: unit * 3};
+        animals[1] = {id: 1, offset: unit * 4};
+        animals[6] = {id: 1, offset: unit * 5};
+        animals[11] = {id: 1, offset: unit * 6};
+        animals[2] = {id: 1, offset: unit * 7};
+        animals[9] = {id: 1, offset: unit * 8};
+        animals[5] = {id: 1, offset: unit * 9};
+        animals[3] = {id: 1, offset: unit * 10};
+        animals[12] = {id: 1, offset: unit * 11};
+        animals[7] = {id: 1, offset: unit * 12};
+
         this.drawWaveBundle(0, -CELL * 4, height * 0.4, CELL * 1.10, 15, animals, 0);
 
         //this.makeRabbit(this.rabbitLayer);
@@ -100,7 +112,7 @@ function Squiggle() {
     {
         push();
         fill(255);
-        var x = 6 * KNOT_SEPARATION +frameCount;
+        var x = (animal.offset + frameCount) % (width + CELL * 2) - CELL;
         var y = this.computeY(x, j, bumpAmp, seed, false, bumpOffset);      
 
         x += startX;
