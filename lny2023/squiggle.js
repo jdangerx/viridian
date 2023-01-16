@@ -51,12 +51,12 @@ function Squiggle() {
         image(this.moon, x, y, this.moon.width, this.moon.height);
 
         var animals = new Array(LINECOUNT).fill(0);
-        //animals[10] = {id: 1, offset: width * 0.75};
-        //animals[15] = {id: 1, offset: width * 0.5};
-        animals[0] = {id: 1, offset: width * 0.85};
+        animals[10] = {id: 1, offset: width * 0.75};
+        animals[15] = {id: 1, offset: width * 0.5};
+        animals[1] = {id: 1, offset: width * 0.85};
 
-        this.drawWaveBundle(0, -CELL * 9, height * 0.4, CELL * 1, 0, animals);
-        this.drawWaveBundle(0, -CELL * 4, height * 0.5, CELL * 2, 15, animals);
+        this.drawWaveBundle(0, -CELL * 9, height * 0.4, CELL * 0.75, 0, animals);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.5, CELL * 0.75, 15, animals);
 
         //this.makeRabbit(this.rabbitLayer);
         //image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
@@ -86,7 +86,7 @@ function Squiggle() {
         {
             var t = frameCount * 0.01;
             var yOff = j * CELL/10 + startY;
-            var xOff = CELL * 1 * sin(seed + j * 0.3 + t) + startX; 
+            var xOff = CELL * 1 * sin((seed + j) * 0.3 + t) + startX; 
 
             if (animals[j] !== 0) {
                 this.drawAnimal(animals[j], xOff, yOff, endX, bumpAmp, j, seed);
@@ -105,7 +105,7 @@ function Squiggle() {
 
         x += startX;
         y += startY;
-        circle(x, y, 100);
+        circle(x, y - CELL * 0.5, 100);
         pop();
     }
 
@@ -139,16 +139,27 @@ function Squiggle() {
 
     this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin=true) =>
     {
+
+        var LINE_NOISE_WEIGHT = 4;
+        var GEN_NOISE_WEIGHT = 2;
+        var SMALL_SIN_WEIGHT = 0.5;
+        
         var t = frameCount * WAVE_SPEED;
-        var noiseVal = noise((lineIndex * x + seed) * 0.05);
-        var noiseVal2 = ((noise(0.00001 * x + seed) * 2) - 1) * 0.75 * 0.25;
-        var smallSin = ((sin(x * 4) + 1) / 2) * 0.5; 
+        
+        var noiseVal = noise((10 + lineIndex + x * 0.1 + seed) * 0.05) * LINE_NOISE_WEIGHT;
+        var noiseVal2 = ((noise(0.003 * x + seed) * 2) - 1) * GEN_NOISE_WEIGHT;
+        var smallSin = ((sin(x * 4) + 1) / 2) * SMALL_SIN_WEIGHT; 
         var bigSin = ((cos(x *0.01 - t)+1)/2) * bigSinAmp;
+
         if (!useSmallSin)
-        {
+        { 
             smallSin *= 0;
         }
-        var y = (smallSin + noiseVal + noiseVal2) * (KNOT_SEPARATION/5) + bigSin;
+
+        //smallSin *= 0;
+        //bigSin *= 0;
+
+        var y = (smallSin + noiseVal + noiseVal2) * (KNOT_SEPARATION/4) + bigSin;
         return y;
     }
 
