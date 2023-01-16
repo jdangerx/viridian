@@ -2,7 +2,8 @@ function Squiggle() {
     var bg_color = color(250, 210, 200);
     var red = color(140, 30, 0);
 
-    var KNOT_SEPARATION = 120;
+    const CELL = height * 0.25;
+    var KNOT_SEPARATION = CELL;
 
     this.setup = () => {
         this.drawOnce = false;
@@ -18,13 +19,11 @@ function Squiggle() {
         // WHAT IF COLOR
         this.redTextureLayer = utils.createBaseTexture(texture, 255, 0, 0, 155);
 
-        
-
-        this.moon = createGraphics(600, 600);
-        this.moonTexture = createGraphics(600, 600);
+        this.moon = createGraphics(CELL * 3, CELL * 3);
+        this.moonTexture = createGraphics(CELL * 3, CELL * 3);
         this.moon.stroke(red);
         this.moon.strokeWeight(3);
-        this.moon.circle(300, 300, 500);
+        this.moon.circle(CELL * 1.5, CELL * 1.5, CELL * 3 - 5);
         utils.applyTexture(this.moon, this.moonTexture, this.redTextureLayer, MULTIPLY);
     }
 
@@ -40,15 +39,17 @@ function Squiggle() {
         stroke(red);
         strokeWeight(3);
         var t = frameCount * 0.01;
-        var x = width/2 + cos(t) * 400 - this.moon.width / 2;
-        var y = height/2 + sin(t) * 400 - this.moon.height / 2;
+        var x = width/2 + cos(t) * CELL * 3 - this.moon.width / 2;
+        var y = height/2 + sin(t) * CELL * 3 - this.moon.height / 2;
         image(this.moon, x, y, this.moon.width, this.moon.height);
 
+        /*
         this.drawWaveBundle(0, -1000, width+600, height * 0.4, 100, 0);
         this.drawWaveBundle(0, -400, width+600, height * 0.5, 200, 15);
 
         this.makeRabbit(this.rabbitLayer);
         image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
+        */
     }
 
     this.makeRabbit = (ctx) =>
