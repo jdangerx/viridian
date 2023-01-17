@@ -43,7 +43,18 @@ function preload() {
             rabbit: loadImage("images/big-white-rabbit.png"),
         },
         squiggle: {
-            rabbit: loadImage("images/bunny-leap.png"),
+            rat: loadImage("images/zodiac/rat.png"),
+            ox: loadImage("images/zodiac/cow.png"),
+            tiger: loadImage("images/zodiac/tiger.png"),
+            rabbit: loadImage("images/zodiac/rabbit.png"),
+            dragon: loadImage("images/zodiac/dragon.png"),
+            snake: loadImage("images/zodiac/snake.png"),
+            horse: loadImage("images/zodiac/horse.png"),
+            ram: loadImage("images/zodiac/ram.png"),
+            monkey: loadImage("images/zodiac/monkey.png"),
+            rooster: loadImage("images/zodiac/rooster.png"),
+            dog: loadImage("images/zodiac/dog.png"),
+            pig: loadImage("images/zodiac/pig.png"),
         }
     }
 }
@@ -60,7 +71,7 @@ function setup() {
     frameRate(60);
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(WhiteRabbit);
+    mgr.showScene(Squiggle);
     pop();
 }
 

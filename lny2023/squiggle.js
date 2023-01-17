@@ -1,22 +1,39 @@
 function Squiggle() {
-    var bg_color = color(250, 210, 200);
-    var red = color(140, 30, 0);
+    var bg_color = color(215,156,119);
+    //var red = color(140, 30, 0);
+    var red = color(130,5,1);
 
     const CELL = height * 0.25;
-    const KNOT_SEPARATION = CELL;
-    const LINECOUNT = 28;
-    const WAVE_SPEED = 0.01;
-    const DEBUG = false;
-    const OSCILLATION_SPEED = 0.03;
     const VIRTUAL_SCREEN_WIDTH = width * 2;
+    const KNOT_SEPARATION = CELL;
+    const ANIMAL_SIZE = CELL*0.45;
+    const LINECOUNT = 28;
+
+    const WAVE_SPEED = 0.01;
+    const OSCILLATION_SPEED = 0.03;
     const ANIMAL_SPEED = 3;
+
+    const DEBUG = false;
 
     this.setup = () => {
         this.drawOnce = false;
 
         // animals
-        this.rabbit = PRELOADS.squiggle.rabbit;
-        this.rabbitLayer = createGraphics(this.rabbit.width, this.rabbit.height);
+        this.animal1 = PRELOADS.squiggle.rat;
+        this.animal2 = PRELOADS.squiggle.ox;
+        this.animal3 = PRELOADS.squiggle.tiger;
+        this.animal4 = PRELOADS.squiggle.rabbit;
+        this.animal5 = PRELOADS.squiggle.dragon;
+        this.animal6 = PRELOADS.squiggle.snake;
+        this.animal7 = PRELOADS.squiggle.horse;
+        this.animal8 = PRELOADS.squiggle.ram;
+        this.animal9 = PRELOADS.squiggle.monkey;
+        this.animal10 = PRELOADS.squiggle.rooster;
+        this.animal11 = PRELOADS.squiggle.dog;
+        this.animal12 = PRELOADS.squiggle.pig;
+
+        //this.animal1Layer = createGraphics(ANIMAL_SIZE, ANIMAL_SIZE * this.animal1.height/this.animal1.width);
+        //this.animal1Layer.image(this.animal1, 0, 0, this.animal1Layer.width, this.animal1Layer.height);
 
         // paper
         const texture = PRELOADS.all.paper;
@@ -32,8 +49,15 @@ function Squiggle() {
         this.moon = createGraphics(CELL * 3, CELL * 3);
         this.moonTexture = createGraphics(CELL * 3, CELL * 3);
         this.moon.stroke(red);
-        this.moon.strokeWeight(3);
+        this.moon.strokeWeight(5);
         this.moon.circle(CELL * 1.5, CELL * 1.5, CELL * 3 - 5);
+        utils.applyTexture(this.moon, this.moonTexture, this.baseTextureLayer, MULTIPLY);
+
+        this.spot = createGraphics(CELL * 0.9, CELL * 0.9);
+        this.spotTexture = createGraphics(CELL * 0.9, CELL * 0.9);
+        this.spot.stroke(red);
+        this.spot.strokeWeight(5);
+        this.spot.circle(CELL * 0.45, CELL * 0.45, CELL * 0.9 - 10);
         utils.applyTexture(this.moon, this.moonTexture, this.baseTextureLayer, MULTIPLY);
     }
 
@@ -58,36 +82,33 @@ function Squiggle() {
         this.drawWaveBundle(0, -CELL * 4, height * 0.25, CELL * 0.75, 0, animals, CELL * 1.5);
 
         var unit = (VIRTUAL_SCREEN_WIDTH / 12);
-        animals[10] = { id: 1, offset: unit * 1 };
-        animals[4] = { id: 1, offset: unit * 2 };
-        animals[8] = { id: 1, offset: unit * 3 };
-        animals[1] = { id: 1, offset: unit * 4 };
-        animals[6] = { id: 1, offset: unit * 5 };
-        animals[11] = { id: 1, offset: unit * 6 };
-        animals[2] = { id: 1, offset: unit * 7 };
-        animals[9] = { id: 1, offset: unit * 8 };
-        animals[5] = { id: 1, offset: unit * 9 };
-        animals[3] = { id: 1, offset: unit * 10 };
-        animals[12] = { id: 1, offset: unit * 11 };
-        animals[7] = { id: 1, offset: unit * 12 };
+        animals[10] = { image: this.animal12, offset: unit * 1 };
+        animals[8] = { image: this.animal11, offset: unit * 2 };
+        animals[18] = { image: this.animal10, offset: unit * 3 };
+        animals[11] = { image: this.animal9, offset: unit * 4 };
+        animals[5] = { image: this.animal8, offset: unit * 5 };
+        animals[10] = { image: this.animal7, offset: unit * 6 };
+        animals[16] = { image: this.animal6, offset: unit * 7 };
+        animals[9] = { image: this.animal5, offset: unit * 8 };
+        animals[20] = { image: this.animal4, offset: unit * 9 };
+        animals[7] = { image: this.animal3, offset: unit * 10 };
+        animals[11] = { image: this.animal2, offset: unit * 11.5 };
+        animals[12] = { image: this.animal1, offset: unit * 12 };
 
         animals = animals.map((animal, i) => {
             if (animal === 0) {
                 return 0;
             }
-            let { id, offset } = animal;
+            let { image, offset } = animal;
             const offsetSize = 50;
             offset += offsetSize * 2 * (noise(i) - 0.5);
-            return { id, offset };
+            return { image, offset };
         })
 
         this.drawWaveBundle(0, -CELL * 4, height * 0.35, CELL * 1.10, 15, animals, 0);
-
-        //this.makeRabbit(this.rabbitLayer);
-        //image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
     }
 
-    this.makeRabbit = (ctx) => {
+    this.makeAnimal = (ctx, ) => {
         const rw = 0.2 * width;
         const rh = rw * this.rabbit.height / this.rabbit.width;
         ctx.image(this.rabbit, 0, 0, rw, rh);
@@ -133,7 +154,13 @@ function Squiggle() {
 
         const y = this.computeY(splineX, j, bumpAmp, seed, false, bumpOffset) + startY - 40;
 
-        circle(displayX, y-20, 100);
+        var displayY = y- CELL*0.3;
+        stroke(red);
+        //circle(displayX, displayY, CELL*0.9);
+        image(this.spot, displayX-CELL*0.45, displayY-CELL*0.45, CELL*0.9, CELL*0.9);
+        image(animal.image, displayX - ANIMAL_SIZE/2, displayY-ANIMAL_SIZE/2, ANIMAL_SIZE, ANIMAL_SIZE * animal.image.height/animal.image.width);
+        //image(this.animal1, displayX - ANIMAL_SIZE/2, y-20- ANIMAL_SIZE/2, ANIMAL_SIZE, ANIMAL_SIZE * this.animal1.height/this.animal1.width);
+
         pop();
     }
 
