@@ -4,11 +4,12 @@ function Squiggle() {
 
     const CELL = height * 0.25;
     const KNOT_SEPARATION = CELL;
-    const LINECOUNT = 25;
-    const WAVE_SPEED = 0.001;
+    const LINECOUNT = 28;
+    const WAVE_SPEED = 0.01;
     const DEBUG = false;
-    const OSCILLATION_SPEED = 0.01;
+    const OSCILLATION_SPEED = 0.03;
     const VIRTUAL_SCREEN_WIDTH = width * 2;
+    const ANIMAL_SPEED = 3;
 
     this.setup = () => {
         this.drawOnce = false;
@@ -54,7 +55,7 @@ function Squiggle() {
 
         var animals = new Array(LINECOUNT).fill(0);
 
-        this.drawWaveBundle(0, -CELL * 4, height * 0.3, CELL * 1.00, 0, animals, CELL * 2);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.25, CELL * 0.75, 0, animals, CELL * 1.5);
 
         var unit = (VIRTUAL_SCREEN_WIDTH / 12);
         animals[10] = { id: 1, offset: unit * 1 };
@@ -80,7 +81,7 @@ function Squiggle() {
             return { id, offset };
         })
 
-        this.drawWaveBundle(0, -CELL * 4, height * 0.4, CELL * 1.10, 15, animals, 0);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.35, CELL * 1.10, 15, animals, 0);
 
         //this.makeRabbit(this.rabbitLayer);
         //image(this.rabbitLayer, 0, 0, this.rabbit.width, this.rabbit.height);
@@ -105,7 +106,7 @@ function Squiggle() {
     this.drawWave = (startX, endX, startY, bumpAmp, seed, animals, bumpOffset) => {
         for (var j = 0; j < LINECOUNT; ++j) {
             var t = frameCount * OSCILLATION_SPEED;
-            var yOff = j * CELL / 12 + startY;
+            var yOff = j * CELL / 14 + startY;
             var xOff = CELL * 1 * sin((seed + j) * 0.3 + t) + startX;
 
             if (animals[j] !== 0) {
@@ -123,7 +124,7 @@ function Squiggle() {
         const loopPadding = (VIRTUAL_SCREEN_WIDTH - width) / 2;
         const loopLength = width + 2 * loopPadding;
 
-        const loopX = (frameCount + animal.offset + startX) % loopLength;
+        const loopX = (frameCount * ANIMAL_SPEED + animal.offset + startX) % loopLength;
 
         // displayX = 0, loopX should be at exactly loopPadding:
         const displayX = loopX - loopPadding;
@@ -132,7 +133,7 @@ function Squiggle() {
 
         const y = this.computeY(splineX, j, bumpAmp, seed, false, bumpOffset) + startY - 40;
 
-        circle(displayX, y, 100);
+        circle(displayX, y-20, 100);
         pop();
     }
 
@@ -163,26 +164,26 @@ function Squiggle() {
 
     this.computeY = (x, lineIndex, bigSinAmp, seed, useSmallSin, bumpOffset) => {
 
-        var LINE_NOISE_WEIGHT = 3.5;
-        var GEN_NOISE_WEIGHT = 1;
-        var SMALL_SIN_WEIGHT = 1;
+        var LINE_NOISE_WEIGHT = 0.8;
+        var GEN_NOISE_WEIGHT = 0;
+        var SMALL_SIN_WEIGHT = 0;
 
         var t = frameCount * WAVE_SPEED;
 
-        var noiseVal = noise((10 + lineIndex + x * 0.5 + seed) * 0.05) * LINE_NOISE_WEIGHT;
-        var noiseVal2 = ((noise(0.003 * x + seed) * 2) - 1) * GEN_NOISE_WEIGHT;
-        var smallSin = ((sin(x * 4) + 1) / 2) * SMALL_SIN_WEIGHT;
+        var noiseVal = noise((3 * lineIndex + x * 0.75 + seed) * 0.05) * KNOT_SEPARATION * LINE_NOISE_WEIGHT;
+        var noiseVal2 = ((noise(0.003 * x + seed) * 2) - 1) * KNOT_SEPARATION * GEN_NOISE_WEIGHT;
+        var smallSin = ((sin(x * 4) + 1) / 2) * KNOT_SEPARATION * SMALL_SIN_WEIGHT;
         var bigSin = ((cos(bumpOffset + x * 0.008 - t) + 1) / 2) * bigSinAmp;
 
         if (!useSmallSin) {
-            noiseVal = LINE_NOISE_WEIGHT;
+            noiseVal = KNOT_SEPARATION * 0.8;
             smallSin *= 0;
         }
 
         //smallSin *= 0;
         //bigSin *= 0;
 
-        var y = (smallSin + noiseVal + noiseVal2) * (KNOT_SEPARATION / 4) + bigSin;
+        var y = smallSin + noiseVal + noiseVal2 + bigSin;
         return y;
     }
 
