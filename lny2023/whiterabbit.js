@@ -313,6 +313,7 @@ function WhiteRabbit() {
         const leftTexts = [
             this.textDiamond("CHÚC MỪNG NĂM MỚI", 0.76 * g, "vn"),
             this.textDiamond("HAPPY NEW YEAR", 0.9 * g, "vn"),
+            this.viridianDiamond,
             this.textDiamond("新年快乐", 1.1 * g, "cn"),
             this.textDiamond("새해 복 많이 받으세요", 0.76 * g, "kr"),
         ]
@@ -321,6 +322,7 @@ function WhiteRabbit() {
         const rightTexts = [
             this.textDiamond("新年快乐", 1.1 * g, "cn"),
             this.textDiamond("새해 복 많이 받으세요", 0.76 * g, "kr"),
+            this.viridianDiamond,
             this.textDiamond("CHÚC MỪNG NĂM MỚI", 0.76 * g, "vn"),
             this.textDiamond("HAPPY NEW YEAR", 0.9 * g, "vn"),
         ]
@@ -345,7 +347,6 @@ function WhiteRabbit() {
         this.border(-borderSize / 6, width, borderT);
         this.reel(this.leftReel, leftItems, reelMargin, frameWidth * 0.4, t);
 
-
         this.reel(this.rightReel, rightItems, width - reelMargin, frameWidth * 0.4, t);
 
         blendMode(HARD_LIGHT);
@@ -353,6 +354,6 @@ function WhiteRabbit() {
         blendMode(BLEND);
         image(this.leftReel, 0, 0, width, height);
         image(this.rightReel, 0, 0, width, height);
-        background('rgba(255, 100, 0, 0.08)');
+        background('rgba(255, 100, 0, 0.15)');
     }
 }

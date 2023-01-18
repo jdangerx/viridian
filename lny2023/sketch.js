@@ -8,7 +8,7 @@
  */
 
 let mgr;
-const IS_PROD = false;
+const IS_PROD = true;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
@@ -38,7 +38,7 @@ function preload() {
             fonts: {
                 cn: loadFont("images/仓迹高德国妙黑.ttf"),
                 kr: loadFont("images/Gugi-Regular.ttf"),
-                vn: loadFont("images/Arima-SemiBold.ttf")
+                vn: loadFont("images/BigShouldersText-SemiBold.ttf")
             },
             rabbit: loadImage("images/big-white-rabbit.png"),
         },
