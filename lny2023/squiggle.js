@@ -7,7 +7,7 @@ function Squiggle() {
     const VIRTUAL_SCREEN_WIDTH = width * 2;
     const KNOT_SEPARATION = CELL;
     const ANIMAL_SIZE = CELL*0.45;
-    const LINECOUNT = 28;
+    const LINECOUNT = 29;
 
     const WAVE_SPEED = 0.01;
     const OSCILLATION_SPEED = 0.03;
@@ -16,7 +16,7 @@ function Squiggle() {
     const DEBUG = false;
 
     this.setup = () => {
-        this.drawOnce = false;
+        this.drawOnce = true;
 
         // animals
         this.animal1 = PRELOADS.squiggle.rat;
@@ -49,16 +49,16 @@ function Squiggle() {
         this.moon = createGraphics(CELL * 3, CELL * 3);
         this.moonTexture = createGraphics(CELL * 3, CELL * 3);
         this.moon.stroke(red);
-        this.moon.strokeWeight(5);
+        this.moon.strokeWeight((CELL/270.0)*7);
         this.moon.circle(CELL * 1.5, CELL * 1.5, CELL * 3 - 5);
         utils.applyTexture(this.moon, this.moonTexture, this.baseTextureLayer, MULTIPLY);
 
         this.spot = createGraphics(CELL * 0.9, CELL * 0.9);
         this.spotTexture = createGraphics(CELL * 0.9, CELL * 0.9);
         this.spot.stroke(red);
-        this.spot.strokeWeight(5);
+        this.spot.strokeWeight((CELL/270.0)*7);
         this.spot.circle(CELL * 0.45, CELL * 0.45, CELL * 0.9 - 10);
-        utils.applyTexture(this.moon, this.moonTexture, this.baseTextureLayer, MULTIPLY);
+        utils.applyTexture(this.spot, this.spotTexture, this.baseTextureLayer, MULTIPLY);
     }
 
     this.draw = () => {
@@ -105,13 +105,7 @@ function Squiggle() {
             return { image, offset };
         })
 
-        this.drawWaveBundle(0, -CELL * 4, height * 0.35, CELL * 1.10, 15, animals, 0);
-    }
-
-    this.makeAnimal = (ctx, ) => {
-        const rw = 0.2 * width;
-        const rh = rw * this.rabbit.height / this.rabbit.width;
-        ctx.image(this.rabbit, 0, 0, rw, rh);
+        this.drawWaveBundle(0, -CELL * 4, height * 0.35, CELL * 0.9, 17, animals, 0);
     }
 
     this.drawWaveBundle = (rotation, startX, startY, bumpAmp, seed, animals, bumpOffset) => {
@@ -128,7 +122,7 @@ function Squiggle() {
         for (var j = 0; j < LINECOUNT; ++j) {
             var t = frameCount * OSCILLATION_SPEED;
             var yOff = j * CELL / 14 + startY;
-            var xOff = CELL * 1 * sin((seed + j) * 0.3 + t) + startX;
+            var xOff = CELL * 1 * sin((seed + j) * (CELL/270.0)*0.2 + t) + startX;
 
             if (animals[j] !== 0) {
                 this.drawAnimal(animals[j], xOff, yOff, endX, bumpAmp, j, seed, bumpOffset);
@@ -154,13 +148,11 @@ function Squiggle() {
 
         const y = this.computeY(splineX, j, bumpAmp, seed, false, bumpOffset) + startY - 40;
 
-        var displayY = y- CELL*0.3;
+        var displayY = y- CELL*0.4;
         stroke(red);
-        //circle(displayX, displayY, CELL*0.9);
         image(this.spot, displayX-CELL*0.45, displayY-CELL*0.45, CELL*0.9, CELL*0.9);
         image(animal.image, displayX - ANIMAL_SIZE/2, displayY-ANIMAL_SIZE/2, ANIMAL_SIZE, ANIMAL_SIZE * animal.image.height/animal.image.width);
-        //image(this.animal1, displayX - ANIMAL_SIZE/2, y-20- ANIMAL_SIZE/2, ANIMAL_SIZE, ANIMAL_SIZE * this.animal1.height/this.animal1.width);
-
+ 
         pop();
     }
 
@@ -195,12 +187,14 @@ function Squiggle() {
         var GEN_NOISE_WEIGHT = 0;
         var SMALL_SIN_WEIGHT = 0;
 
+        var BIG_SIN_PERIOD = (CELL/270.0)*0.004;
+
         var t = frameCount * WAVE_SPEED;
 
         var noiseVal = noise((3 * lineIndex + x * 0.75 + seed) * 0.05) * KNOT_SEPARATION * LINE_NOISE_WEIGHT;
         var noiseVal2 = ((noise(0.003 * x + seed) * 2) - 1) * KNOT_SEPARATION * GEN_NOISE_WEIGHT;
         var smallSin = ((sin(x * 4) + 1) / 2) * KNOT_SEPARATION * SMALL_SIN_WEIGHT;
-        var bigSin = ((cos(bumpOffset + x * 0.008 - t) + 1) / 2) * bigSinAmp;
+        var bigSin = ((cos(bumpOffset + x * BIG_SIN_PERIOD - t) + 1) / 2) * bigSinAmp;
 
         if (!useSmallSin) {
             noiseVal = KNOT_SEPARATION * 0.8;
@@ -222,7 +216,7 @@ function Squiggle() {
 
         curveTightness(-0.5);
         fill(red);
-        strokeWeight(2);
+        strokeWeight((CELL/270.0)*5);
         stroke(bg_color);
         beginShape();
 
