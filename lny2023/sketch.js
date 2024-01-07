@@ -8,7 +8,7 @@
  */
 
 let mgr;
-const IS_PROD = true;
+const IS_PROD = false;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 

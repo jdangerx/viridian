@@ -1,6 +1,6 @@
 /**
  * To add a new scene:
- * 
+ *
  * 1. make a new Scene() function (see mooncakes.js). It should have its own
  *    setup and draw methods and live in its own file.
  * 2. Include that file in the <head> tag in index.html.
@@ -18,9 +18,12 @@ P5Capture.setDefaultOptions({
 });
 */
 
+
 let mgr;
 const IS_PROD = false;
+let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
+
 const SCENES = {
     "1": Scratch
 }
@@ -49,11 +52,24 @@ function draw() {
         fill('rgba(0, 0, 0, 0.4)');
         rect(width * (1 - gapWidth) / 2, 0, width * gapWidth, height);
     }
+    if (frameCount % 5 == 0) {
+        const fps = getFrameRate();
+        const sps = 60 / getFrameRate();
+        if (document.getElementById("frame-rate")) {
+            document.getElementById("frame-rate").innerHTML = `FPS:\t${fps.toFixed(2)}<br>60FPS would be this much faster than what you see:\t${sps.toFixed(2)}`;
+        }
+    }
     pop();
-
+    if (LIGHT_TEST) {
+        utils.lightTest();
+    }
 }
 
 function keyPressed() {
+    if (key === "l") {
+        LIGHT_TEST = !LIGHT_TEST;
+        document.getElementsByTagName('body')[0].style.background = `white`;
+    }
     if (SCENES.hasOwnProperty(key)) {
         console.log(`Switching to ${SCENES[key].name}`);
         mgr.showScene(SCENES[key]);
