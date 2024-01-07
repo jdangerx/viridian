@@ -43,6 +43,14 @@ function setup() {
     pop();
 }
 
+function preload() {
+    PRELOADS = {
+        tracer: {
+            // load text for paths here...
+        }
+    }
+}
+
 function draw() {
     push();
     mgr.draw();

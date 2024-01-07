@@ -7,8 +7,9 @@ initial points, with shadows etc. Would want to do some window patterns +
 various logos.
 
 ### TODO
-
 * [ ] extract path data from SVG
+  * the logo files appear to be not really vectors so much as vector files with embedded bitmaps, which is frustrating. but with some inkscape fiddling we can extract an SVG path.
+* [ ] render SVG path as processing strokes...
 * [ ] normalize path data + render as a static stroke
 * [ ] interpolate along path over time
 * [ ] split path into sections
