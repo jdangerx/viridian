@@ -4,9 +4,9 @@ function WaterBlob() {
         this.pattern = createGraphics(32 * size, 9 * size, WEBGL);
         this.pattern.background(0);
         this.pattern.noStroke();
-        this.bunny = this.pattern.loadModel("images/bunny.obj", true);
+        this.bunny = this.pattern.loadModel("images/dragon.stl", true);
         this.camera = this.pattern.createCamera();
-        this.camera.perspective(PI * 0.3);
+        this.camera.perspective(PI * 0.2);
         // todo: try blurring the pixels - you'll need a whole nother graphics context I think
 
         this.drawOnce = false;
@@ -55,11 +55,10 @@ function WaterBlob() {
     }
 
     this.render = (pattern) => {
-        background(200, 150, 150);
         const pixVals = this.getPixelValues(pattern);
         noStroke();
         let phase;
-        const numRows = 36;
+        const numRows = 32;
         const barWidth = width / pattern.width | 0;
         for (let j = numRows; j > 0; j--) {
             for (let i = 0; i < width; i += barWidth) {
@@ -68,9 +67,10 @@ function WaterBlob() {
                 yloc = (j - (0.5 + 0.5 * sin(phase))) / numRows;
                 imageY = ((yloc * pattern.height) - 1) | 0;
                 imageVal = pixVals[imageY][imageX];
-                ysize = 0.005 + (0.04 * imageVal) + 0.002 * sin(phase * 2 + 0.5 * sin(5 * yloc + frameCount * 0.05));
-                fill(255);
-                rect(i, height * (yloc - ysize / 2), barWidth, height * ysize);
+                if (imageVal != 0) {
+                    ysize = 0.005 + (0.04 * imageVal) + 0.002 * sin(phase * 2 + 0.5 * sin(5 * yloc + frameCount * 0.05));
+                    rect(i, height * (yloc - ysize / 2), barWidth, height * ysize);
+                }
             }
         }
     }
@@ -96,27 +96,48 @@ function WaterBlob() {
         );
         pattern.strokeWeight(1);
 
-        const numX = 16;
-        const numY = 2;
-        const numZ = 3;
-        const gridSize = 300;
-        for (let i = 0; i < numX; i++) {
-            for (let j = 0; j < numY; j++) {
-                for (let k = 0; k < numZ; k++) {
-                    if ((i + j + k) % 2 == 0) {
-                        this.makeBun(
-                            (i - numX / 2 + 0.5) * gridSize * 0.75,
-                            (j - numY / 2 + 0.5) * gridSize,
-                            ((k - numZ / 2 + 0.5) * gridSize + frameCount * 3) % (3 * gridSize) - gridSize,
-                        );
-                    }
-                }
-            }
-        }
+        this.makeBun(
+            360,
+            0,
+            150,
+            frameCount * 0.01
+        );
+
+        this.makeBun(
+            120,
+            0,
+            150,
+            frameCount * 0.01
+        );
+
+        this.makeBun(
+            -120,
+            0,
+            150,
+            -frameCount * 0.01
+        );
+
+        this.makeBun(
+            -360,
+            0,
+            150,
+            -frameCount * 0.01
+        );
 
         pattern.pop();
 
+        background(0);
+        push();
+        translate(-width * 0.0035, -width * 0.0035);
+        fill(255, 255, 100);
         this.render(this.pattern);
+        pop();
+
+        push();
+        translate(width * 0.0035, width * 0.0035);
+        fill(255, 100, 255);
+        this.render(this.pattern);
+        pop();
         push();
         translate(width / 2, height / 2);
         rotate(PI);
@@ -127,10 +148,13 @@ function WaterBlob() {
 
     }
 
-    this.makeBun = (x, y, z) => {
+    this.makeBun = (x, y, z, zr) => {
         this.pattern.push();
         this.pattern.translate(x, y, z);
-        this.pattern.rotateY(frameCount * 0.01);
+        this.pattern.rotateX(-3.14 / 2);
+        this.pattern.rotateZ(3.14 / 2);
+        this.pattern.rotateZ(zr);
+        this.pattern.scale(1);
         this.pattern.model(this.bunny);
         this.pattern.pop();
     }

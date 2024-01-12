@@ -8,7 +8,7 @@
  */
 
 let mgr;
-const IS_PROD = false;
+const IS_PROD = true;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
@@ -71,7 +71,7 @@ function setup() {
     frameRate(60);
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Squiggle);
+    mgr.showScene(WaterBlob);
     pop();
 }
 
