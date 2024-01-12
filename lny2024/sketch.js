@@ -25,7 +25,8 @@ let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
 const SCENES = {
-    "1": Scratch
+    "1": Gradient,
+    "2": Screens
 }
 
 function setup() {
@@ -39,7 +40,7 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Scratch);
+    mgr.showScene(Gradient);
     pop();
 }
 
