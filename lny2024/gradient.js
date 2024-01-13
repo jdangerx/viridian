@@ -1,7 +1,7 @@
 function Gradient() {
     const Y_AXIS = 1;
     const X_AXIS = 2;
-    var n = 4;
+    var n = 3;
 
     this.setup = () => {
         // this.do_draw()
@@ -12,8 +12,8 @@ function Gradient() {
     this.do_draw = () => {
         // split out from .draw() so we can inspect a static version
         // todo: pass in framecount here?
-        background(0);
-        var size = height / (n * 3.25);
+        background(100, 0, 0);
+        var size = height / (n * 3.35);
         const loopPeriod = 100;
         var loopCounter = (frameCount / loopPeriod) | 0;
 
@@ -30,7 +30,7 @@ function Gradient() {
             box(rank, animOffset, rankPhase(rank) + mainPhase, size, false);
         }
 
-                // a box that sits behind the rank N box
+         // a box that sits behind the rank N box
         // this box never moves, but has the phase of rank N+1
         box(n, 0, mainPhase + rankPhase(n + 1), size, true, width/2);
         // moving boxes
@@ -52,14 +52,17 @@ function Gradient() {
         // phase: gradient phase
         // size: width of each bar
 
+        phase *= 0.5;
+
         // TODO: pass in a p5js.point for the base location
         if (invertX)
         {
             setGradient(
-                (2*PI) - phase,
+                -phase,
                 xOffset, rank * size - animOffset, // XY
                 width / 2, size, // dimensions
-                X_AXIS
+                X_AXIS,
+                true
             );
         }
         else
@@ -68,7 +71,8 @@ function Gradient() {
                 phase,
                 xOffset, rank * size - animOffset, // XY
                 width / 2, size, // dimensions
-                X_AXIS
+                X_AXIS,
+                false
             );    
         }
 
@@ -76,16 +80,18 @@ function Gradient() {
             phase,
             xOffset + rank * size - animOffset, 0,
             size, height,
-            Y_AXIS
+            Y_AXIS,
+            false
         );
 
         if (invertX)
         {
             setGradient(
-                (2*PI) - phase,
+                -phase,
                 xOffset, height - ((rank + 1) * size) + animOffset,
                 width / 2, size,
-                X_AXIS
+                X_AXIS,
+                true
             );
         }
         else
@@ -94,7 +100,8 @@ function Gradient() {
                 phase,
                 xOffset, height - ((rank + 1) * size) + animOffset,
                 width / 2, size,
-                X_AXIS
+                X_AXIS,
+                false
             );
         }
 
@@ -104,7 +111,8 @@ function Gradient() {
             0,
             size,
             height,
-            Y_AXIS
+            Y_AXIS,
+            false
         );
     }
 
@@ -119,14 +127,25 @@ function Gradient() {
     }
 
 
-    function setGradient(offset, x, y, w, h, axis) {
+    function setGradient(offset, x, y, w, h, axis, flip) {
         // TODO: pass in a position & a dimension instead of 4 numbers
         push();
         noStroke();
 
-        const gradientRed = cosineGradient(1.178, 0.388, 1.000, 2.138)
-        const gradientGreen = cosineGradient(0.098, -0.352, 1.000, 2.738)
-        const gradientBlue = cosineGradient(0.098, 0.248, 1.000, 0.368)
+        let gradientRed = cosineGradient(1.178, 0.388, 1.000, 2.138)
+        let gradientGreen = cosineGradient(0.098, -0.352, 1.000, 2.738)
+        let gradientBlue = cosineGradient(0.098, 0.248, 1.000, 0.368)
+
+        let flipRed = cosineGradient(1.178, 0.388, 1.000, -2.138)
+        let flipGreen = cosineGradient(0.098, -0.352, 1.000, -2.738)
+        let flipBlue = cosineGradient(0.098, 0.248, 1.000, -0.368)
+
+        if (flip)
+        {
+            gradientRed = flipRed;
+            gradientGreen = flipGreen;
+            gradientBlue = flipBlue;
+        }
         
         //const gradientRed = cosineGradient(1.178, 0.388, 1.000, 2.138)
         //const gradientGreen = cosineGradient(0.5, -0.352, 1.000, 2.738)
