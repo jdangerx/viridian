@@ -7,27 +7,27 @@
  * 3. add a line in SCENES so you can switch at leisure.
  */
 
-/*
-P5Capture.setDefaultOptions({
-    format: "webm",
-    framerate: 60,
-    disableUi: false,
-    duration: 5 * MINUTE,
-    autoSaveDuration: 240,
-    disablePixelScaling: true
-});
-*/
-
 
 let mgr;
 const IS_PROD = false;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
+P5Capture.setDefaultOptions({
+    format: "mp4",
+    framerate: 60,
+    disableUi: false,
+    duration: 5 * MINUTE,
+    autoSaveDuration: 240,
+    disablePixelScaling: true
+});
+
+
 const SCENES = {
     "1": Gradient,
     "2": Screens,
     "3": Solitare,
+    "4": LightBlob,
 }
 
 function setup() {
@@ -47,9 +47,6 @@ function setup() {
 
 function preload() {
     PRELOADS = {
-        tracer: {
-            // load text for paths here...
-        }
     }
 }
 
