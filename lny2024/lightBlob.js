@@ -15,6 +15,7 @@ function LightBlob() {
     }
 
     this.draw = () => {
+        const loopPeriod = 300; // 5s loop
         const ctx3d = this.ctx3d;
         ctx3d.push();
         ctx3d.clear();
@@ -32,31 +33,23 @@ function LightBlob() {
 
         this.addModel(
             ctx3d,
-            360,
-            0,
-            150,
-            frameCount * 0.005
+            createVector(360, 0, 150),
+            frameCount / loopPeriod,
         );
         this.addModel(
             ctx3d,
-            120,
-            0,
-            150,
-            frameCount * -0.005
+            createVector(120, 0, 150),
+            -1 * frameCount / loopPeriod
         );
         this.addModel(
             ctx3d,
-            -120,
-            0,
-            150,
-            frameCount * 0.005
+            createVector(-120, 0, 150),
+            frameCount / loopPeriod,
         );
         this.addModel(
             ctx3d,
-            -360,
-            0,
-            150,
-            frameCount * -0.005
+            createVector(-360, 0, 150),
+            -1 * frameCount / loopPeriod
         );
         ctx3d.pop();
 
@@ -82,12 +75,12 @@ function LightBlob() {
 
     }
 
-    this.addModel = (ctx, x, y, z, zr) => {
+    this.addModel = (ctx, vec, zr) => {
         ctx.push();
-        ctx.translate(x, y, z);
+        ctx.translate(vec);
         ctx.rotateX(-PI / 2);
         ctx.rotateZ(PI / 2);
-        ctx.rotateZ(zr);
+        ctx.rotateZ(zr * TAU);
         ctx.scale(1);
         ctx.model(this.model);
         ctx.pop();
@@ -153,6 +146,7 @@ function LightBlob() {
         let phase;
         const numRows = 32;
         const barWidth = width / ctx.width | 0;
+        // TODO: if all these phases match up with the loop length then we can merely render a short loop and have it go forever
         for (let j = numRows; j > 0; j--) {
             for (let i = 0; i < width; i += barWidth) {
                 phase = ((i + frameCount) * 0.02 + 0.1) * ctx.width / width * 5;
@@ -162,7 +156,7 @@ function LightBlob() {
                 brightness = pixBrightness[imageY][imageX];
                 if (brightness != 0) {
                     ysize = 0.005 + (0.04 * brightness) + 0.002 * sin(phase * 2 + 0.5 * sin(5 * yloc + frameCount * 0.05));
-                    rect(i, height * (yloc - ysize / 2), barWidth, height * ysize);
+                    rect(i, height * (yloc - ysize / 2), barWidth + 1, height * ysize);
                 }
             }
         }
