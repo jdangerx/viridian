@@ -9,22 +9,20 @@ function Screens() {
 
     this.setup = () => {
         const size = 8;
-        this.pattern = createGraphics(32 * size, 9 * size, WEBGL);
+        this.pattern = createGraphics(width, height, WEBGL);
         this.pattern.background(0);
-        this.pattern.noStroke();
 
         locX = -width/2
         locY = -height/2;
+        background(0);
     }
 
     this.draw = () => {           
-        rect (100, 100, 100, 100);    
         // add point light to showcase specular material
         this.pattern.push();
 
-        let locX = frameCount*2-width/2;
+        let locX = frameCount-(this.pattern.width/2.0);
         let locY = sin(frameCount*0.1) * 150;
-        this.pattern.clear();
         this.pattern.pointLight(
             80, 80, 80, 1000, this.pattern.height * 0.5, 300
         );
@@ -42,9 +40,9 @@ function Screens() {
         //rotateX(frameCount * 0.01);
         //rotateY(frameCount * 0.01);
         this.pattern.plane(100);
-        z += 2;
+        z += 1;
         this.pattern.pop();   
         
-        image(this.pattern, -width / 2, -height / 2, this.pattern.width, this.pattern.height);
+        image(this.pattern, 0, 0, this.pattern.width, this.pattern.height);
     }
 }
