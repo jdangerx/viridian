@@ -26,7 +26,8 @@ const MINUTE = 60 * 60;
 
 const SCENES = {
     "1": Gradient,
-    "2": Screens
+    "2": Screens,
+    "3": Solitare,
 }
 
 function setup() {

@@ -45,7 +45,7 @@ function Gradient() {
 
         for (var i = n+2; i >= 0; --i)
         {
-            var offset = (1 + sin((i+extraOffset) / n)) * 0.5 + frameCount * 0.0;
+            var offset = (1 + sin((i-extraOffset) / n)) * 0.5;
             //offset *= 0.5;
 
             var animOffset = size * fract(frameCount*0.01);
@@ -71,7 +71,7 @@ function Gradient() {
         }
         if (frameCount % 100 == 0)
         {
-            extraOffset += 1  ;
+            extraOffset += 1;
         }
     }
 
