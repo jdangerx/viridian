@@ -13,7 +13,7 @@ function Gradient() {
         // split out from .draw() so we can inspect a static version
         // todo: pass in framecount here?
         background(0);
-        var size = height / (n * 3);
+        var size = height / (n * 3.25);
         const loopPeriod = 100;
         var loopCounter = (frameCount / loopPeriod) | 0;
 
@@ -22,48 +22,85 @@ function Gradient() {
 
         // a box that sits behind the rank N box
         // this box never moves, but has the phase of rank N+1
-        box(n, 0, mainPhase + rankPhase(n + 1), size);
+        box(n, 0, mainPhase + rankPhase(n + 1), size, false);
         // moving boxes
         // count down from highest rank because it's the farthest away
-        for (let rank = n; rank > 0; rank--) {
+        for (let rank = n; rank >= 0; rank--) {
             const animOffset = size * fract(frameCount / loopPeriod);
-            box(rank, animOffset, rankPhase(rank) + mainPhase, size);
+            box(rank, animOffset, rankPhase(rank) + mainPhase, size, false);
+        }
+
+                // a box that sits behind the rank N box
+        // this box never moves, but has the phase of rank N+1
+        box(n, 0, mainPhase + rankPhase(n + 1), size, true, width/2);
+        // moving boxes
+        // count down from highest rank because it's the farthest away
+        for (let rank = n; rank >= 0; rank--) {
+            const animOffset = size * fract(frameCount / loopPeriod);
+            box(rank, animOffset, rankPhase(rank) + mainPhase, size, true, width/2);
         }
 
         // outer box that never moves
         // TODO: there might be some clever way to make this phase match up better with the inner boxes
-        box(0, 0, mainPhase, size);
+        //box(0, 0, mainPhase, size);
 
     }
 
-    function box(rank, animOffset, phase, size) {
+    function box(rank, animOffset, phase, size, invertX, xOffset=0) {
         // rank: the higher the rank, the further "in" the animation it is
         // animOffset: how much this box has expanded from its initial pos
         // phase: gradient phase
         // size: width of each bar
 
         // TODO: pass in a p5js.point for the base location
+        if (invertX)
+        {
+            setGradient(
+                (2*PI) - phase,
+                xOffset, rank * size - animOffset, // XY
+                width / 2, size, // dimensions
+                X_AXIS
+            );
+        }
+        else
+        {
+            setGradient(
+                phase,
+                xOffset, rank * size - animOffset, // XY
+                width / 2, size, // dimensions
+                X_AXIS
+            );    
+        }
+
         setGradient(
             phase,
-            0, rank * size - animOffset, // XY
-            width / 2, size, // dimensions
-            X_AXIS
-        );
-        setGradient(
-            phase,
-            rank * size - animOffset, 0,
+            xOffset + rank * size - animOffset, 0,
             size, height,
             Y_AXIS
         );
+
+        if (invertX)
+        {
+            setGradient(
+                (2*PI) - phase,
+                xOffset, height - ((rank + 1) * size) + animOffset,
+                width / 2, size,
+                X_AXIS
+            );
+        }
+        else
+        {
+            setGradient(
+                phase,
+                xOffset, height - ((rank + 1) * size) + animOffset,
+                width / 2, size,
+                X_AXIS
+            );
+        }
+
         setGradient(
             phase,
-            0, height - ((rank + 1) * size) + animOffset,
-            width / 2, size,
-            X_AXIS
-        );
-        setGradient(
-            phase,
-            width / 2 - ((rank + 1) * size) + animOffset,
+            xOffset + width / 2 - ((rank + 1) * size) + animOffset,
             0,
             size,
             height,
@@ -86,9 +123,14 @@ function Gradient() {
         // TODO: pass in a position & a dimension instead of 4 numbers
         push();
         noStroke();
+
         const gradientRed = cosineGradient(1.178, 0.388, 1.000, 2.138)
-        const gradientGreen = cosineGradient(0.5, -0.352, 1.000, 2.738)
-        const gradientBlue = cosineGradient(0.5, 0.248, 1.000, 0.368)
+        const gradientGreen = cosineGradient(0.098, -0.352, 1.000, 2.738)
+        const gradientBlue = cosineGradient(0.098, 0.248, 1.000, 0.368)
+        
+        //const gradientRed = cosineGradient(1.178, 0.388, 1.000, 2.138)
+        //const gradientGreen = cosineGradient(0.5, -0.352, 1.000, 2.738)
+        //const gradientBlue = cosineGradient(0.5, 0.248, 1.000, 0.368)
         if (axis === Y_AXIS) {
             // Top to bottom gradient
             for (let i = y; i <= y + h; i++) {
