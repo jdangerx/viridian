@@ -28,6 +28,7 @@ const SCENES = {
     "2": Screens,
     "3": Solitare,
     "4": LightBlob,
+    "5": GlitchTest,
 }
 
 function setup() {
@@ -41,12 +42,15 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Gradient);
+    mgr.showScene(GlitchTest);
     pop();
 }
 
 function preload() {
     PRELOADS = {
+        glitchTest: {
+            dusseCross: loadImage("images/dusse-cross-white.png")
+        }
     }
 }
 
