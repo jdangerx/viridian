@@ -133,15 +133,15 @@ const utils = {
         return Math.ceil(num / 10) * 10;
     },
 
-    drawWithOutline: (ctx, x, y, color, glowStrokeWidth, sizeX, sizeY) => {
+    drawWithOutline: (ctx, x, y, color, glowStrokeWidth, size) => {
         utils.glow(color, 0, glowStrokeWidth, 0);
-        image(ctx, x, y, sizeX, sizeY);
+        image(ctx, x, y, size, size);
         utils.glow(color, 0, -glowStrokeWidth, 0);
-        image(ctx, x, y, sizeX, sizeY);
+        image(ctx, x, y, size, size);
         utils.glow(color, 0, 0, glowStrokeWidth);
-        image(ctx, x, y, sizeX, sizeY);
+        image(ctx, x, y, size, size);
         utils.glow(color, 0, 0, -glowStrokeWidth);
-        image(ctx, x, y, sizeX, sizeY);
+        image(ctx, x, y, size, size);
     },
 
     lightTest: () => {
