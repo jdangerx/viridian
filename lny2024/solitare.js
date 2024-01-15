@@ -49,8 +49,8 @@ function Solitare() {
         //locY += (noise(0.15 * frameCount + 100) - 0.5) * 30;
 
         image(background_pic, 0, 0, width, height);
-        buffer.image(logoCopy, buffer.width*0.35 + x, buffer.height*0.35 + y, logoCopy.width, logoCopy.height);
-        buffer.image(logoCopy, buffer.width*0.35 + width/2 + x, buffer.height*0.35 + y, logoCopy.width, logoCopy.height);
+        buffer.image(logoCopy, buffer.width*0.35 + x, buffer.height*0.4 + y, logoCopy.width, logoCopy.height);
+        buffer.image(logoCopy, buffer.width*0.35 + width/2 + x, buffer.height*0.4 + y, logoCopy.width, logoCopy.height);
         image(buffer, -width-x, -height-y, width*3, height*3);
         //utils.drawWithOutline(logo1, 0, 0, colorBG, 10, logo1.width * 0.1, logo1.height * 0.1);
     }
