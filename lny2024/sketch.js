@@ -9,7 +9,7 @@
 
 
 let mgr;
-const IS_PROD = false;
+const IS_PROD = true;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
@@ -24,32 +24,27 @@ P5Capture.setDefaultOptions({
 
 
 const SCENES = {
-    "1": Gradient,
-    "2": Screens,
-    "3": Solitare,
-    "4": LightBlob,
     "5": GlitchTest,
 }
 
 function setup() {
     push();
     grid = IS_PROD ? 120 : Math.floor(window.innerWidth / 32);
-    createCanvas(grid * 32, grid * 9);
-    if (IS_PROD) {
-        pixelDensity(1);
-    }
-
+    createCanvas(grid * 32, grid * 9, WEBGL);
+    // pixelDensity(1);
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
     mgr.showScene(GlitchTest);
     pop();
+    translate(-grid * 16, -grid * 9);
 }
 
 function preload() {
     PRELOADS = {
         glitchTest: {
-            dusseCross: loadImage("images/dusse-cross-white.png")
+            dusseCross: loadImage("images/dusse-cross-white.png"),
+            shader: loadShader("shaders/shader.vert", "shaders/shader.frag")
         }
     }
 }
