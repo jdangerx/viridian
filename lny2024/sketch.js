@@ -9,7 +9,7 @@
 
 
 let mgr;
-const IS_PROD = true;
+const IS_PROD = false;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
@@ -32,6 +32,8 @@ const SCENES = {
 }
 
 function setup() {
+    frameRate(60);
+    
     push();
     grid = IS_PROD ? 120 : Math.floor(window.innerWidth / 32);
     createCanvas(grid * 32, grid * 9);
@@ -54,7 +56,11 @@ function preload() {
         gradient: {
             chromaticShader: loadShader("shaders/chromatic.vert", "shaders/chromatic.frac"),
             dusseCross: loadImage("images/dusse-cross-white.png")
-        }
+        },
+        solitare: {
+            logo1 : loadImage('images/dusse-solid.png'),
+            logo2 : loadImage('images/dusse-stroke.png')
+        },
     }
 }
 

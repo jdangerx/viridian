@@ -28,7 +28,6 @@ function Screens() {
         t = (t + 1) * 0.5;
         t = utils.getGain(t, 0.1);
         t = (t * 2) - 1;
-        t = fract(t + (0.5));
         background(50,50,200);
         
         if (t > 0)
