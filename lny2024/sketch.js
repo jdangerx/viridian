@@ -42,13 +42,17 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(GlitchTest);
+    mgr.showScene(Gradient);
     pop();
 }
 
 function preload() {
     PRELOADS = {
         glitchTest: {
+            dusseCross: loadImage("images/dusse-cross-white.png")
+        },
+        gradient: {
+            chromaticShader: loadShader("shaders/chromatic.vert", "shaders/chromatic.frac"),
             dusseCross: loadImage("images/dusse-cross-white.png")
         }
     }

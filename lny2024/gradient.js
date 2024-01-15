@@ -2,9 +2,16 @@ function Gradient() {
     const Y_AXIS = 1;
     const X_AXIS = 2;
     var n = 3;
+    const U = width / 32;
 
     this.setup = () => {
         // this.do_draw()
+        this.shader = PRELOADS.gradient.chromaticShader;
+        this.dusse = PRELOADS.gradient.dusseCross;
+        const desiredHeight = 4 * U;
+        const scaleFactor = desiredHeight / this.dusse.height;
+        this.gl = createGraphics(this.dusse.width * scaleFactor * 2, this.dusse.height * scaleFactor * 2, WEBGL);
+        this.gl.shader(this.shader);
     }
 
     this.draw = () => this.do_draw()
@@ -22,31 +29,44 @@ function Gradient() {
 
         // a box that sits behind the rank N box
         // this box never moves, but has the phase of rank N+1
-        box(n, 0, mainPhase + rankPhase(n + 1), size, false);
+        const maxRank = n + 2;
+        box(maxRank, 0, mainPhase + rankPhase(n + 1), size, false);
         // moving boxes
         // count down from highest rank because it's the farthest away
-        for (let rank = n; rank >= 0; rank--) {
+        for (let rank = maxRank; rank >= 0; rank--) {
             const animOffset = size * fract(frameCount / loopPeriod);
             box(rank, animOffset, rankPhase(rank) + mainPhase, size, false);
         }
 
-         // a box that sits behind the rank N box
+        // a box that sits behind the rank N box
         // this box never moves, but has the phase of rank N+1
-        box(n, 0, mainPhase + rankPhase(n + 1), size, true, width/2);
+        box(n, 0, mainPhase + rankPhase(n + 1), size, true, width / 2);
         // moving boxes
         // count down from highest rank because it's the farthest away
-        for (let rank = n; rank >= 0; rank--) {
+        for (let rank = maxRank; rank >= 0; rank--) {
             const animOffset = size * fract(frameCount / loopPeriod);
-            box(rank, animOffset, rankPhase(rank) + mainPhase, size, true, width/2);
+            box(rank, animOffset, rankPhase(rank) + mainPhase, size, true, width / 2);
         }
 
+        push();
+        blendMode(SCREEN);
+        this.shader.setUniform("uTexture", PRELOADS.glitchTest.dusseCross);
+
+        for (let i = 0; i < 14; i++) {
+            const mx = 0.2 * (noise((frameCount + 3 * i) * 0.03) - 0.5);
+            const my = 0.2 * (noise((frameCount + 5 * i) * 0.03) - 0.5);
+            this.shader.setUniform("uOffset", [mx, my]);
+            this.gl.rect(0, 0, U, U);
+            image(this.gl, 3 * (i - 1) * U + (frameCount * 0.02 % 3 * U), 1 * U);
+        }
+        pop();
         // outer box that never moves
         // TODO: there might be some clever way to make this phase match up better with the inner boxes
         //box(0, 0, mainPhase, size);
 
     }
 
-    function box(rank, animOffset, phase, size, invertX, xOffset=0) {
+    function box(rank, animOffset, phase, size, invertX, xOffset = 0) {
         // rank: the higher the rank, the further "in" the animation it is
         // animOffset: how much this box has expanded from its initial pos
         // phase: gradient phase
@@ -55,8 +75,7 @@ function Gradient() {
         phase *= 0.5;
 
         // TODO: pass in a p5js.point for the base location
-        if (invertX)
-        {
+        if (invertX) {
             setGradient(
                 -phase,
                 xOffset, rank * size - animOffset, // XY
@@ -65,15 +84,14 @@ function Gradient() {
                 true
             );
         }
-        else
-        {
+        else {
             setGradient(
                 phase,
                 xOffset, rank * size - animOffset, // XY
                 width / 2, size, // dimensions
                 X_AXIS,
                 false
-            );    
+            );
         }
 
         setGradient(
@@ -84,8 +102,7 @@ function Gradient() {
             false
         );
 
-        if (invertX)
-        {
+        if (invertX) {
             setGradient(
                 -phase,
                 xOffset, height - ((rank + 1) * size) + animOffset,
@@ -94,8 +111,7 @@ function Gradient() {
                 true
             );
         }
-        else
-        {
+        else {
             setGradient(
                 phase,
                 xOffset, height - ((rank + 1) * size) + animOffset,
@@ -140,13 +156,12 @@ function Gradient() {
         let flipGreen = cosineGradient(0.098, -0.352, 1.000, -2.738)
         let flipBlue = cosineGradient(0.098, 0.248, 1.000, -0.368)
 
-        if (flip)
-        {
+        if (flip) {
             gradientRed = flipRed;
             gradientGreen = flipGreen;
             gradientBlue = flipBlue;
         }
-        
+
         //const gradientRed = cosineGradient(1.178, 0.388, 1.000, 2.138)
         //const gradientGreen = cosineGradient(0.5, -0.352, 1.000, 2.738)
         //const gradientBlue = cosineGradient(0.5, 0.248, 1.000, 0.368)
