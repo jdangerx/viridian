@@ -9,12 +9,12 @@
 
 
 let mgr;
-const IS_PROD = false;
+const IS_PROD = true;
 let LIGHT_TEST = false;
 const MINUTE = 60 * 60;
 
 P5Capture.setDefaultOptions({
-    format: "mp4",
+    format: "webm",
     framerate: 60,
     disableUi: false,
     duration: 5 * MINUTE,
@@ -42,7 +42,7 @@ function setup() {
     mgr = new SceneManager();
     Object.values(SCENES).forEach(scene => mgr.addScene(scene));
 
-    mgr.showScene(Gradient);
+    mgr.showScene(Solitare);
     pop();
 }
 
