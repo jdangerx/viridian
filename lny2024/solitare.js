@@ -32,14 +32,18 @@ function Solitare() {
 
         var r = 100 + (sin(frameCount*0.001))*height/2;
         var angle = frameCount*0.05;
+        var angle2 = (noise(frameCount*0.01)) * 2*PI;
         offset1 += (noise(0.5*angle)-0.5);
         offset2 += (noise(0.5*angle+10)-0.5);
 
         offset1 = constrain(offset1, -2, 2);
         offset2 = constrain(offset2, -2, 2);
 
-        var x = r * (sin(angle) + offset1 * 0.2);
-        var y = r * (cos(angle) + offset2 * 0.2);
+        //var x = r * (sin(angle) + offset1 * 0.2);
+        //var y = r * (cos(angle) + offset2 * 0.2);
+
+        var x = r * sin(angle) + r * sin(angle2);
+        var y = r * cos(angle) + r * cos(angle2);
 
         //locX += (noise(0.15 * frameCount) - 0.5) * 30;
         //locY += (noise(0.15 * frameCount + 100) - 0.5) * 30;
