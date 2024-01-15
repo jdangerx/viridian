@@ -8,9 +8,18 @@ function Gradient() {
         // this.do_draw()
         this.shader = PRELOADS.gradient.chromaticShader;
         this.dusse = PRELOADS.gradient.dusseCross;
+        this.dusseInterval = 3 * U;
         const desiredHeight = 4 * U;
         const scaleFactor = desiredHeight / this.dusse.height;
-        this.gl = createGraphics(this.dusse.width * scaleFactor * 2, this.dusse.height * scaleFactor * 2, WEBGL);
+        this.texture = createGraphics(width * 1.5, desiredHeight * 2);
+        for (let i = 0; i < 14; i++) {
+            this.texture.push()
+            this.texture.translate(i * this.dusseInterval, U);
+            this.texture.scale(scaleFactor);
+            this.texture.image(this.dusse, 0, 0);
+            this.texture.pop()
+        }
+        this.gl = createGraphics(this.texture.width, this.texture.height, WEBGL);
         this.gl.shader(this.shader);
     }
 
@@ -50,15 +59,14 @@ function Gradient() {
 
         push();
         blendMode(SCREEN);
-        this.shader.setUniform("uTexture", PRELOADS.glitchTest.dusseCross);
+        this.shader.setUniform("uTexture", this.texture);
 
-        for (let i = 0; i < 14; i++) {
-            const mx = 0.2 * (noise((frameCount + 3 * i) * 0.03) - 0.5);
-            const my = 0.2 * (noise((frameCount + 5 * i) * 0.03) - 0.5);
-            this.shader.setUniform("uOffset", [mx, my]);
-            this.gl.rect(0, 0, U, U);
-            image(this.gl, 3 * (i - 1) * U + (frameCount * 0.02 % 3 * U), 1 * U);
-        }
+        const mx = 0.03 * (noise(frameCount * 0.03) - 0.5);
+        const my = 0.1 * (noise((frameCount + 5) * 0.03) - 0.5);
+        this.shader.setUniform("uOffset", [mx, my]);
+        this.gl.rect(0, 0, U, U);
+        // image(this.gl, 3 * (i - 1) * U + (frameCount * 0.02 % 3 * U), 1 * U);
+        image(this.gl, (fract(frameCount / 120) - 1) * this.dusseInterval, 1.5 * U);
         pop();
         // outer box that never moves
         // TODO: there might be some clever way to make this phase match up better with the inner boxes
