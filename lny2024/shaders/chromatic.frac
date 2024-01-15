@@ -1,0 +1,31 @@
+precision mediump float;
+
+varying vec2 vTexCoord;
+uniform sampler2D uTexture;
+
+uniform vec2 uOffset;
+
+void main() {
+
+  vec2 uv = vTexCoord;
+  // assume uv is "graphics context space"
+
+  uv.y = 1.0 - uv.y;
+
+  float frac = 1.0 / 0.5;
+
+  vec2 other = vec2(
+    uv.x * frac - (frac - 1.0)/2.0,
+    uv.y * frac - (frac - 1.0)/2.0
+  );
+  
+  vec4 red = texture2D(uTexture, other + uOffset);
+  vec4 green = texture2D(uTexture, other);
+  vec4 blue = texture2D(uTexture, other - uOffset);
+  
+  vec4 color = vec4(red.r, green.g, blue.b, 1.0);
+  
+  // Send the color to the screen
+  gl_FragColor = color;
+
+}
