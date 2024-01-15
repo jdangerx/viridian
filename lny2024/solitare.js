@@ -9,12 +9,15 @@ function Solitare() {
     let colorBG = color(23, 44.2, 94.1, 255);
     let offset1;
     let offset2;
+    let unit = width/32;
 
 
     this.setup = () => {
         noStroke();
-        logo1 = loadImage('images/dusse-cross-white-pink-stroke.png');
+        logo1 = loadImage('images/dusse-cross-white.png');
+        logo2 = loadImage('images/dusse-all-text-white.png');
         background_pic = loadImage('images/filled_screen.png');
+
         logoCopy = createGraphics(1000, 1000);
         buffer = createGraphics(width*3, height*3); 
         buffer.background(0, 0, 0, 0);
@@ -25,12 +28,13 @@ function Solitare() {
     }
 
     this.draw = () => {        
-        background(0);
         // (ctx, x, y, color, glowStrokeWidth, size)
-        logoCopy.image(logo1, 0, 0, logo1.width*0.1, logo1.height*0.1);
+        logoCopy.image(logo1, 0, unit, unit * 4, (logo1.height/logo1.width) * unit * 4);
+        logoCopy.image(logo2, unit * 5, unit * 4, unit * 7, (logo2.height/logo2.width) * unit * 7);
+
         logoCopy.tint(255);
 
-        var r = 100 + (sin(frameCount*0.001))*height/2;
+        var r = 100 + (sin(frameCount*0.001))*height/4;
         var angle = frameCount*0.05;
         var angle2 = (noise(frameCount*0.01)) * 2*PI;
         offset1 += (noise(0.5*angle)-0.5);
@@ -48,9 +52,10 @@ function Solitare() {
         //locX += (noise(0.15 * frameCount) - 0.5) * 30;
         //locY += (noise(0.15 * frameCount + 100) - 0.5) * 30;
 
-        image(background_pic, 0, 0, width, height);
-        buffer.image(logoCopy, buffer.width*0.35 + x, buffer.height*0.4 + y, logoCopy.width, logoCopy.height);
-        buffer.image(logoCopy, buffer.width*0.35 + width/2 + x, buffer.height*0.4 + y, logoCopy.width, logoCopy.height);
+        //image(background_pic, 0, 0, width, height);
+        buffer.background(0, 0, 0, 7);
+        buffer.image(logoCopy, buffer.width*0.35+x, buffer.height*0.35+y, logoCopy.width, logoCopy.height);
+        buffer.image(logoCopy, buffer.width*0.35 + width/2+x, buffer.height*0.35+y, logoCopy.width, logoCopy.height);
         image(buffer, -width-x, -height-y, width*3, height*3);
         //utils.drawWithOutline(logo1, 0, 0, colorBG, 10, logo1.width * 0.1, logo1.height * 0.1);
     }
