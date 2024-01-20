@@ -11,7 +11,8 @@
 let mgr;
 const IS_PROD = false;
 let LIGHT_TEST = false;
-const MINUTE = 60 * 60;
+const SECOND = 60;
+const MINUTE = 60 * SECOND;
 
 P5Capture.setDefaultOptions({
     format: "webm",
