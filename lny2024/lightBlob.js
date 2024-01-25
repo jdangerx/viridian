@@ -15,7 +15,7 @@ function LightBlob() {
     }
 
     this.draw = () => {
-        const loopPeriod = 300; // 5s loop
+        const loopPeriod = 600; // 5s loop
         const ctx3d = this.ctx3d;
         ctx3d.push();
         ctx3d.clear();
@@ -34,7 +34,7 @@ function LightBlob() {
         this.addModel(
             ctx3d,
             createVector(360, 0, 150),
-            frameCount / loopPeriod,
+            0.5 * (frameCount / loopPeriod),
         );
         this.addModel(
             ctx3d,
@@ -49,7 +49,7 @@ function LightBlob() {
         this.addModel(
             ctx3d,
             createVector(-360, 0, 150),
-            -1 * frameCount / loopPeriod
+            -1 * 0.5 * (frameCount / loopPeriod)
         );
         ctx3d.pop();
 
