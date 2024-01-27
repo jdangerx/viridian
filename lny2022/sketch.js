@@ -1,6 +1,6 @@
-let overall = 1000;
+let overall = 10;
 let prehold = 0.0;
-let duration = 0.01;
+let duration = 0.10;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
@@ -12,8 +12,7 @@ let shadowWeight = 10;
 let weight = 20;
 
 let loopCounter = 0;
-let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
-let doCapture = false;
+let doCapture = true;
 
 let yellow;
 let gold;
@@ -23,9 +22,20 @@ let persianBlue;
 let rose;
 let goldenRod;
 
+const MINUTE = 60 * 60;
+P5Capture.setDefaultOptions({
+  format: "webm",
+  framerate: 60,
+  disableUi: false,
+  duration: 5 * MINUTE,
+  autoSaveDuration: 240,
+  disablePixelScaling: true
+});
+
+const grid = doCapture ? 120 : Math.floor(window.innerWidth / 32);
+
 function setup() {
-  let height = doCapture ? 762 : 536;
-  createCanvas(2640, height);
+  createCanvas(grid * 32, grid * 9);
 
   weight = window.innerWidth / 200;
   shadowWeight = weight;
@@ -65,28 +75,19 @@ function draw() {
   background(0);
 
   if (frameCount == 1 && doCapture) {
-    capturer.start();
+    const capturer = P5Capture.getInstance();
+    capturer.start({ format: "webm", duration: 5 * MINUTE })
   }
   cfg.t = min(max(0.0001, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   if (frameCount % overall == 0) {
     loopCounter++;
-    if (loopCounter === 1 && doCapture) {
-      capturer.stop()
-      capturer.save()
-    }
   }
 
   //animation1();
   animation2();
   //animation3();
   //animation4();
-  if (loopCounter === 0 && doCapture) {
-    capturer.capture(document.getElementById('defaultCanvas0'));
-    if (frameCount % 100 === 0) {
-      console.log("captured up til frame: " + frameCount + "/" + overall);
-    }
-  }
 }
 
 function animation1() {
@@ -176,23 +177,26 @@ function animation1() {
 }
 
 function animation2() {
-  overall = 1000;
-  weight = 7;
-  shadowWeight = 10;
-  shadowOffset = 3;
+  overall = 900;
+  duration = 0.2;
+  weight = width * 0.0035;
+  shadowWeight = weight * 1.5;
+  shadowOffset = weight * 0.5;
 
-  belt(cfg, 40, 120, 1);
-  belt(cfg, 280, 120, -1);
+  const squareSize = 1.8 * grid;
+  belt(cfg, grid, squareSize, 1);
+  belt(cfg, 5 * grid, squareSize, -1);
 }
 
 function belt(cfg, margin, side, direction) {
   cfg.t = max(0.001, cfg.t);
   let third = 1 / 3;
-  let height = margin + side * (5 / 3);
+  const fullPatternSize = side * 5 / 3;
+  let height = margin + fullPatternSize;
   let frameBorderTop = [[0, margin], [width, margin]];
   let frameBorderBot = [[0, height], [width, height]];
 
-  for (i = -3; i < 22; ++i) {
+  for (i = -3; i < width / fullPatternSize + 3; ++i) {
     let offset = (side * third) * (i + 1) + side * i;
     let topSquare = [[frameBorderTop[0][0] + offset, frameBorderTop[0][1]],
     [frameBorderTop[0][0] + offset, frameBorderTop[0][1] + side * 2 * third],
