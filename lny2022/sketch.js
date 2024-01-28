@@ -79,7 +79,8 @@ function draw() {
     const capturer = P5Capture.getInstance();
     capturer.start({ format: "webm", duration: 5 * MINUTE })
   }
-  cfg.t = min(max(0.0001, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+  // cfg.t = min(max(0.0001, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+  cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   if (frameCount % overall == 0) {
     loopCounter++;
@@ -93,8 +94,9 @@ function draw() {
 }
 
 function animation1() {
-  overall = 30 * FPS;
-  duration = 1.0;
+  overall = 5 * FPS;
+  prehold = 0.05;
+  duration = 0.9;
   // IMPORTANT. Order square points TL, BL, BR, TR (0, 0 is top left)
 
   weight = width * 0.0025;
@@ -132,23 +134,22 @@ function animation1() {
     [5, 3],
   ].map(scale);
 
-
   let numIters = 7;
   let xOffset = 0;
   let margin = cellSize * 1.5
   let center = width / 2 + margin / 2;
   for (i = 0; i < numIters; i++) {
-    let preholdInterval = 0.05; // 0.25 is max value before the center prehold starts to go above 1
-    let topBottomPrehold = preholdInterval;
-    let centerPrehold = preholdInterval + topBottomPrehold;
+    let boxDrawDuration = 0.15; // 0.25 is max value before the center prehold starts to go above 1
+    let topBottomPrehold = boxDrawDuration;
+    let centerPrehold = 2 * boxDrawDuration;
     if (i % 2 == 0) {
       // every other one starts with the top/bottom already going, but the center takes an *extra* long time
       topBottomPrehold = 0;
-      centerPrehold = centerPrehold + preholdInterval;
+      centerPrehold = 3 * boxDrawDuration;
     }
     let xscale = 1.25
-      + cos((cfg.t + i) * 10) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
-      + cos((cfg.t + i) * 30) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
+      //+ cos((cfg.t + i) * 3) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
+      //+ cos((cfg.t + i) * 6) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
       ;
     let inner1Scaled = inner1.map(([x, y]) => [x * xscale, y]);
     let outer1Scaled = outer1.map(([x, y]) => [x * xscale, y]);
@@ -156,13 +157,16 @@ function animation1() {
     let inner2Scaled = inner2.map(([x, y]) => [x * xscale, y]);
     let outer2Scaled = outer2.map(([x, y]) => [x * xscale, y]);
 
+    const cfgCopy = Object.assign({}, cfg);
+
+    cfgCopy.t = -0.5 * cos(cfg.t * TAU) + 0.5; // have T smoothly go up and back down
 
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2 * cellSize), topBottomPrehold, preholdInterval);
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2 * cellSize), topBottomPrehold, boxDrawDuration);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), centerPrehold, preholdInterval);
+    drawPanel(cfgCopy, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), centerPrehold, boxDrawDuration);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 20 * cellSize), topBottomPrehold, preholdInterval);
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, createVector(center + xOffset, 20 * cellSize), topBottomPrehold, boxDrawDuration);
 
     let width = outer1Scaled[3][0];
     xOffset += width + margin;
@@ -171,11 +175,11 @@ function animation1() {
     // to take into account both the width of the panel we drew on the last iteration, 
     // and the width of the panel we're about to draw
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2 * cellSize), topBottomPrehold, preholdInterval);
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2 * cellSize), topBottomPrehold, boxDrawDuration);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), centerPrehold, preholdInterval);
+    drawPanel(cfgCopy, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), centerPrehold, boxDrawDuration);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 20 * cellSize), topBottomPrehold, preholdInterval);
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, createVector(center - xOffset, 20 * cellSize), topBottomPrehold, boxDrawDuration);
 
   }
 }
@@ -336,7 +340,8 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
 
 function drawPanel(cfg, inner, outer, offset, prehold, duration) {
 
-  let t = renormalize(cfg.t, prehold, duration);
+  const precision = 10000;
+  let t = Math.round(renormalize(cfg.t, prehold, duration) * precision) / precision;
 
   let stretchers = computeStretchers(inner, outer);
 
