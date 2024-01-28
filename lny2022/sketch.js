@@ -12,7 +12,7 @@ let shadowWeight = 10;
 let weight = 20;
 
 let loopCounter = 0;
-let doCapture = true;
+let doCapture = false;
 
 let yellow;
 let gold;
@@ -22,7 +22,8 @@ let persianBlue;
 let rose;
 let goldenRod;
 
-const MINUTE = 60 * 60;
+const FPS = 60;
+const MINUTE = 60 * FPS;
 P5Capture.setDefaultOptions({
   format: "webm",
   framerate: 60,
@@ -32,7 +33,7 @@ P5Capture.setDefaultOptions({
   disablePixelScaling: true
 });
 
-const grid = doCapture ? 120 : Math.floor(window.innerWidth / 32);
+const grid = 120; //doCapture ? 120 : Math.floor(window.innerWidth / 32);
 
 function setup() {
   createCanvas(grid * 32, grid * 9);
@@ -82,23 +83,25 @@ function draw() {
 
   if (frameCount % overall == 0) {
     loopCounter++;
+    cfg.t = 0;
   }
 
-  //animation1();
-  animation2();
+  animation1();
+  //animation2();
   //animation3();
   //animation4();
 }
 
 function animation1() {
-  overall = 3000;
+  overall = 30 * FPS;
+  duration = 1.0;
   // IMPORTANT. Order square points TL, BL, BR, TR (0, 0 is top left)
 
-  weight = 7;
-  shadowWeight = 10;
-  shadowOffset = 3;
+  weight = width * 0.0025;
+  shadowWeight = weight * 1.5;
+  shadowOffset = weight * 0.5;
 
-  let cellSize = 20;
+  let cellSize = height / 27;
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
   let outer1 = [
@@ -133,14 +136,15 @@ function animation1() {
   let numIters = 7;
   let xOffset = 0;
   let margin = cellSize * 1.5
-  let center = 1320 + margin / 2;
+  let center = width / 2 + margin / 2;
   for (i = 0; i < numIters; i++) {
-    let duration = 0.05;
-    let start_time_edge = duration;
-    let start_time = duration + start_time_edge;
+    let preholdInterval = 0.05; // 0.25 is max value before the center prehold starts to go above 1
+    let topBottomPrehold = preholdInterval;
+    let centerPrehold = preholdInterval + topBottomPrehold;
     if (i % 2 == 0) {
-      start_time_edge = 0;
-      start_time = start_time + duration;
+      // every other one starts with the top/bottom already going, but the center takes an *extra* long time
+      topBottomPrehold = 0;
+      centerPrehold = centerPrehold + preholdInterval;
     }
     let xscale = 1.25
       + cos((cfg.t + i) * 10) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
@@ -154,11 +158,11 @@ function animation1() {
 
 
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2 * cellSize), topBottomPrehold, preholdInterval);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), start_time, duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), centerPrehold, preholdInterval);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 20 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 20 * cellSize), topBottomPrehold, preholdInterval);
 
     let width = outer1Scaled[3][0];
     xOffset += width + margin;
@@ -167,11 +171,11 @@ function animation1() {
     // to take into account both the width of the panel we drew on the last iteration, 
     // and the width of the panel we're about to draw
     // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2 * cellSize), topBottomPrehold, preholdInterval);
     // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), start_time, duration);
+    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), centerPrehold, preholdInterval);
     // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 20 * cellSize), start_time_edge, duration);
+    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 20 * cellSize), topBottomPrehold, preholdInterval);
 
   }
 }
