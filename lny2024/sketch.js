@@ -11,8 +11,7 @@
 let mgr;
 const IS_PROD = false;
 let LIGHT_TEST = false;
-const SECOND = 60;
-const MINUTE = 60 * SECOND;
+const MINUTE = 60 * 60;
 
 P5Capture.setDefaultOptions({
     format: "webm",
@@ -34,7 +33,7 @@ const SCENES = {
 
 function setup() {
     frameRate(60);
-    
+
     push();
     grid = IS_PROD ? 120 : Math.floor(window.innerWidth / 32);
     createCanvas(grid * 32, grid * 9);
@@ -60,7 +59,16 @@ function preload() {
         },
         solitare: {
             logo1 : loadImage('images/dusse-solid.png'),
-            logo2 : loadImage('images/dusse-stroke.png')
+            logo2 : loadImage('images/dusse-stroke.png'),
+            logo3 : loadImage('images/ASSETS_BARCARDI_LOGOS_PRIMARY_NO_BACKGROUND_ONE_COLOUR_SIMPLIFIED.png'),
+            logo4 : loadImage('images/ASSETS_BARCARDI_LOGOS_PRIMARY_NO_BACKGROUND_ONE_COLOUR_SIMPLIFIED.png')
+        },
+        screens: {
+            fonts: {
+                cn: loadFont("images/仓迹高德国妙黑.ttf"),
+                kr: loadFont("images/Gugi-Regular.ttf"),
+                vn: loadFont("images/BigShouldersText-SemiBold.ttf")
+            },
         },
     }
 }

@@ -9,12 +9,12 @@ function Gradient() {
         this.shader = PRELOADS.gradient.chromaticShader;
         this.dusse = PRELOADS.gradient.dusseCross;
         this.dusseInterval = 3 * U;
-        const desiredHeight = 4 * U;
+        const desiredHeight = 2 * U;
         const scaleFactor = desiredHeight / this.dusse.height;
         this.texture = createGraphics(width * 1.5, desiredHeight * 2);
         for (let i = 0; i < 14; i++) {
-            this.texture.push()
-            this.texture.translate(i * this.dusseInterval, U);
+            this.texture.push();
+            this.texture.translate(i * this.dusseInterval, U*2);
             this.texture.scale(scaleFactor);
             this.texture.image(this.dusse, 0, 0);
             this.texture.pop()

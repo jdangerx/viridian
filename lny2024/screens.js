@@ -12,13 +12,16 @@ function Screens() {
 
     this.setup = () => {
         this.pattern = createGraphics(width, height, WEBGL);
-        this.pattern.background(0);
 
         locX = -width/2
         locY = -height/2;
         background(0);
 
         background(50,50,200);
+    }
+
+    this.enter = () => {
+        this.fonts = PRELOADS.screens.fonts;
     }
 
     this.checkCoordinates = (i, j, x, y) =>
@@ -31,21 +34,35 @@ function Screens() {
     }
 
     this.isAChosenOne = (i, j) =>
-    {
-        return false;
-    }
-        /*
-        return this.checkCoordinates(i, j, 1, 2)
-            || this.checkCoordinates(i, j, 2, 1)
+    {        
+        return this.checkCoordinates(i, j, 2, 2)
+            || this.checkCoordinates(i, j, 3, 2)
             || this.checkCoordinates(i, j, 4, 2)
-            || this.checkCoordinates(i, j, 6, 3)
-            || this.checkCoordinates(i, j, 7, 1)
-            || this.checkCoordinates(i, j, 8, 3)
-            || this.checkCoordinates(i, j, 10, 2);
-    }*/
+            || this.checkCoordinates(i, j, 5, 2);
+    }
+
+    /*
+    this.textDiamond("CHÚC MỪNG NĂM MỚI", 0.76 * g, "vn"),
+            this.textDiamond("HAPPY NEW YEAR", 0.9 * g, "vn"),
+            this.viridianDiamond,
+            this.textDiamond("新年快乐", 1.1 * g, "cn"),
+            this.textDiamond("새해 복 많이 받으세요", 0.76 * g, "kr"),
+*/
+    this.text = (ctx, text, textSize = 20, x, y, lang = "cn") => {
+        const greeting = text;
+        ctx.textSize(textSize);
+        ctx.textFont(this.fonts[lang]);
+        //const bbox = this.fonts[lang].textBounds(greeting, 0, 0, textSize);
+        //ctx.fill(0,205,85);
+        fill(255);
+        ctx.text(greeting, x, y);
+    }
 
     this.draw = () => {
         stroke(255);
+        this.pattern.clear();
+        blendMode(BLEND);
+
         strokeWeight(3);
         t = sin(frameCount*0.002);
         t = (t + 1) * 0.5;
@@ -61,6 +78,7 @@ function Screens() {
             {
                 for (var j=0; j < 10; ++j)
                 {
+                    //fill(50,50,200);
                     fill(255,50,170);
                     circle(i*size, j*size, size);
 
@@ -68,6 +86,8 @@ function Screens() {
                     {
                         if (this.isAChosenOne(i, j))//noise(i, j) > 0.8)
                         {
+                            fill(50,50,200);
+                            circle(i*size, j*size, size);        
                             continue;
                         }
                     }
@@ -85,14 +105,21 @@ function Screens() {
                 for (var j=0; j < 10; ++j)
                 {
                     fill(255,50,170);
+                    //fill(50,50,200);
                     circle(i*size-size/2, j*size-size/2, size);
+                    /*
                     if (t > 0.8 || t < -0.8)
                     {
                        if (this.isAChosenOne(i, j)) // noise(i, j) > 0.75)
                         {
+                            fill(255);
+                            fill(50,50,200);
+                            noStroke();
+
+                            circle(i*size-size/2, j*size-size/2, size);        
                             continue;
                         }
-                    }
+                    }*/
                     makeCircle(i*size-size/2, j*size-size/2, size); //clip with just the main canvas!  
                     
                     noFill();
@@ -100,7 +127,20 @@ function Screens() {
                 }
             }
         }      
+
+    if (t > 0.9)
+    {
+        blendMode(LIGHTEST);
+        this.text(this.pattern, "新  年  快  乐", 1.65 * unit, -unit*12.65, unit*0.1, "cn");
+        //image(this.pattern, 0, 0, width, height);
     }
+    else if (t < -0.9)
+    {
+        blendMode(LIGHTEST);
+        this.text(this.pattern, "新  年  快  乐", 1.65 * unit, -unit*12.65, unit*0.1, "cn");
+        image(this.pattern, 0, 0, width, height);
+    }
+}
 
 // I discovered that you don't need multiple canvases!  You can use push and pop around the clipping; pop turns off the clipping.
     function makeCircle(x, y, size)
