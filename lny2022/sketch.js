@@ -1,6 +1,6 @@
-let overall = 1000;
+let overall = 10;
 let prehold = 0.0;
-let duration = 0.01;
+let duration = 0.10;
 let hold = 1 - prehold - duration;
 let cfg;
 let chunks = [];
@@ -12,7 +12,6 @@ let shadowWeight = 10;
 let weight = 20;
 
 let loopCounter = 0;
-let capturer = new CCapture({ format: 'webm', framerate: 30, name: "animation3-draw" });
 let doCapture = false;
 
 let yellow;
@@ -23,9 +22,21 @@ let persianBlue;
 let rose;
 let goldenRod;
 
+const FPS = 60;
+const MINUTE = 60 * FPS;
+P5Capture.setDefaultOptions({
+  format: "webm",
+  framerate: 60,
+  disableUi: false,
+  duration: 5 * MINUTE,
+  autoSaveDuration: 240,
+  disablePixelScaling: true
+});
+
+const grid = 120; //doCapture ? 120 : Math.floor(window.innerWidth / 32);
+
 function setup() {
-  let height = doCapture ? 762 : 536;
-  createCanvas(2640, height);
+  createCanvas(grid * 32, grid * 9);
 
   weight = window.innerWidth / 200;
   shadowWeight = weight;
@@ -65,39 +76,34 @@ function draw() {
   background(0);
 
   if (frameCount == 1 && doCapture) {
-    capturer.start();
+    const capturer = P5Capture.getInstance();
+    capturer.start({ format: "webm", duration: 30 * FPS })
   }
-  cfg.t = min(max(0.0001, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+  // cfg.t = min(max(0.0001, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
+  cfg.t = min(max(0, (frameCount % overall - prehold * overall) / (duration * overall)), 1);
 
   if (frameCount % overall == 0) {
     loopCounter++;
-    if (loopCounter === 1 && doCapture) {
-      capturer.stop()
-      capturer.save()
-    }
+    cfg.t = 0;
   }
 
-  //animation1();
-  animation2();
+  animation1();
+  //animation2();
   //animation3();
   //animation4();
-  if (loopCounter === 0 && doCapture) {
-    capturer.capture(document.getElementById('defaultCanvas0'));
-    if (frameCount % 100 === 0) {
-      console.log("captured up til frame: " + frameCount + "/" + overall);
-    }
-  }
 }
 
 function animation1() {
-  overall = 3000;
+  overall = 30 * FPS;
+  prehold = 0.05;
+  duration = 0.9;
   // IMPORTANT. Order square points TL, BL, BR, TR (0, 0 is top left)
 
-  weight = 7;
-  shadowWeight = 10;
-  shadowOffset = 3;
+  weight = width * 0.0025;
+  shadowWeight = weight * 1.5;
+  shadowOffset = weight * 0.5;
 
-  let cellSize = 20;
+  let cellSize = height / 27;
   const scale = ([x, y]) => [x * cellSize, y * cellSize];
 
   let outer1 = [
@@ -128,36 +134,41 @@ function animation1() {
     [5, 3],
   ].map(scale);
 
-
   let numIters = 7;
   let xOffset = 0;
   let margin = cellSize * 1.5
-  let center = 1320 + margin / 2;
+  let center = width / 2 + margin / 2;
+  const boxDrawDuration = 0.04;
+  const preholdInterval = boxDrawDuration;
+  const maxBoxDrawPrehold = 6;
+
+  const getPrehold = (row, column) => {
+    return ((row + column + 100 * maxBoxDrawPrehold) % maxBoxDrawPrehold) * preholdInterval;
+  };
+
   for (i = 0; i < numIters; i++) {
-    let duration = 0.05;
-    let start_time_edge = duration;
-    let start_time = duration + start_time_edge;
-    if (i % 2 == 0) {
-      start_time_edge = 0;
-      start_time = start_time + duration;
-    }
-    let xscale = 1.25
-      + cos((cfg.t + i) * 10) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
-      + cos((cfg.t + i) * 30) * 0.2 * widePulse(0.0, 0.7, 0.3, cfg.t)
-      ;
+    let xscale = 1.25;
     let inner1Scaled = inner1.map(([x, y]) => [x * xscale, y]);
     let outer1Scaled = outer1.map(([x, y]) => [x * xscale, y]);
 
     let inner2Scaled = inner2.map(([x, y]) => [x * xscale, y]);
     let outer2Scaled = outer2.map(([x, y]) => [x * xscale, y]);
 
+    const cfgCopy = Object.assign({}, cfg);
 
-    // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 2 * cellSize), start_time_edge, duration);
-    // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center + xOffset, 6 * cellSize), start_time, duration);
-    // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center + xOffset, 20 * cellSize), start_time_edge, duration);
+    if (cfg.t < 0.5) { // sawtooth wave for T to get un-drawing behavior
+      cfgCopy.t = 2 * cfg.t;
+    } else {
+      cfgCopy.t = 1 - 2 * (cfg.t - 0.5);
+    }
+
+    let topPos = createVector(center + xOffset, 2 * cellSize);
+    let centerPos = createVector(center + xOffset, 6 * cellSize);
+    let bottomPos = createVector(center + xOffset, 20 * cellSize);
+
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, topPos, getPrehold(i, 0), boxDrawDuration);
+    drawPanel(cfgCopy, inner2Scaled, outer2Scaled, centerPos, getPrehold(i, 1), boxDrawDuration);
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, bottomPos, getPrehold(i, 2), boxDrawDuration);
 
     let width = outer1Scaled[3][0];
     xOffset += width + margin;
@@ -165,34 +176,37 @@ function animation1() {
     // because the xOffset is from the left, when we're doing the left side we need 
     // to take into account both the width of the panel we drew on the last iteration, 
     // and the width of the panel we're about to draw
-    // top
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 2 * cellSize), start_time_edge, duration);
-    // center
-    drawPanel(cfg, inner2Scaled, outer2Scaled, createVector(center - xOffset, 6 * cellSize), start_time, duration);
-    // bottom
-    drawPanel(cfg, inner1Scaled, outer1Scaled, createVector(center - xOffset, 20 * cellSize), start_time_edge, duration);
+    topPos = createVector(center - xOffset, 2 * cellSize);
+    centerPos = createVector(center - xOffset, 6 * cellSize);
+    bottomPos = createVector(center - xOffset, 20 * cellSize);
 
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, topPos, getPrehold(-i, 0), boxDrawDuration);
+    drawPanel(cfgCopy, inner2Scaled, outer2Scaled, centerPos, getPrehold(-i, 1), boxDrawDuration);
+    drawPanel(cfgCopy, inner1Scaled, outer1Scaled, bottomPos, getPrehold(-i, 2), boxDrawDuration);
   }
 }
 
 function animation2() {
-  overall = 1000;
-  weight = 7;
-  shadowWeight = 10;
-  shadowOffset = 3;
+  overall = 900;
+  duration = 0.2;
+  weight = width * 0.0035;
+  shadowWeight = weight * 1.5;
+  shadowOffset = weight * 0.5;
 
-  belt(cfg, 40, 120, 1);
-  belt(cfg, 280, 120, -1);
+  const squareSize = 1.8 * grid;
+  belt(cfg, grid, squareSize, 1);
+  belt(cfg, 5 * grid, squareSize, -1);
 }
 
 function belt(cfg, margin, side, direction) {
   cfg.t = max(0.001, cfg.t);
   let third = 1 / 3;
-  let height = margin + side * (5 / 3);
+  const fullPatternSize = side * 5 / 3;
+  let height = margin + fullPatternSize;
   let frameBorderTop = [[0, margin], [width, margin]];
   let frameBorderBot = [[0, height], [width, height]];
 
-  for (i = -3; i < 22; ++i) {
+  for (i = -3; i < width / fullPatternSize + 3; ++i) {
     let offset = (side * third) * (i + 1) + side * i;
     let topSquare = [[frameBorderTop[0][0] + offset, frameBorderTop[0][1]],
     [frameBorderTop[0][0] + offset, frameBorderTop[0][1] + side * 2 * third],
@@ -328,7 +342,11 @@ function drawQuadPattern(offset, prehold, duration, size, cellSize) {
 
 function drawPanel(cfg, inner, outer, offset, prehold, duration) {
 
-  let t = renormalize(cfg.t, prehold, duration);
+  const precision = 10000;
+  let t = Math.round(renormalize(cfg.t, prehold, duration) * precision) / precision;
+  if (t < 0.015) {
+    return;
+  }
 
   let stretchers = computeStretchers(inner, outer);
 
