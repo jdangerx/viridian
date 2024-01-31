@@ -55,7 +55,12 @@ function preload() {
         },
         gradient: {
             chromaticShader: loadShader("shaders/chromatic.vert", "shaders/chromatic.frac"),
-            dusseCross: loadImage("images/dusse-cross-white.png")
+            dusseCross: loadImage("images/dusse-cross-white.png"),
+            fonts: {
+                cn: loadFont("images/仓迹高德国妙黑.ttf"),
+                kr: loadFont("images/Gugi-Regular.ttf"),
+                vn: loadFont("images/BigShouldersText-SemiBold.ttf")
+            },            
         },
         solitare: {
             logo1 : loadImage('images/dusse-solid.png'),

@@ -1,3 +1,5 @@
+// TODO scoot all text over by 1 half, use the negative edge
+
 function Screens() {
     const Y_AXIS = 1;
     const X_AXIS = 2;
@@ -8,6 +10,7 @@ function Screens() {
     let z = -100;
     let t = 0;
     let unit = width/32;
+    let loop = 0;
 
 
     this.setup = () => {
@@ -35,10 +38,43 @@ function Screens() {
 
     this.isAChosenOne = (i, j) =>
     {        
-        return this.checkCoordinates(i, j, 2, 2)
-            || this.checkCoordinates(i, j, 3, 2)
-            || this.checkCoordinates(i, j, 4, 2)
-            || this.checkCoordinates(i, j, 5, 2);
+        if (loop == 2) {
+            return this.checkCoordinates(i, j, 11, 2)
+                || this.checkCoordinates(i, j, 12, 2)
+                || this.checkCoordinates(i, j, 13, 2)
+                || this.checkCoordinates(i, j, 14, 2);
+        }
+        if (loop == 1) {
+            return this.checkCoordinates(i, j, 2, 2)
+                || this.checkCoordinates(i, j, 3, 2)
+                || this.checkCoordinates(i, j, 4, 2)
+                || this.checkCoordinates(i, j, 5, 2);
+        }
+        if (loop == 3) {
+            return this.checkCoordinates(i, j, 1, 3)
+                || this.checkCoordinates(i, j, 2, 3)
+                || this.checkCoordinates(i, j, 3, 3)
+                || this.checkCoordinates(i, j, 4, 3)
+                || this.checkCoordinates(i, j, 5, 3)
+                || this.checkCoordinates(i, j, 6, 3)
+                || this.checkCoordinates(i, j, 7, 3)
+                || this.checkCoordinates(i, j, 8, 3)
+                || this.checkCoordinates(i, j, 9, 3);
+        }
+        if (loop == 0) {
+            return this.checkCoordinates(i, j, 15, 4)
+                || this.checkCoordinates(i, j, 14, 4)
+                || this.checkCoordinates(i, j, 13, 4)
+                || this.checkCoordinates(i, j, 4, 4)
+                || this.checkCoordinates(i, j, 5, 4)
+                || this.checkCoordinates(i, j, 6, 4)
+                || this.checkCoordinates(i, j, 7, 4)
+                || this.checkCoordinates(i, j, 8, 4)
+                || this.checkCoordinates(i, j, 9, 4)
+                || this.checkCoordinates(i, j, 10, 4)
+                || this.checkCoordinates(i, j, 11, 4)
+                || this.checkCoordinates(i, j, 12, 4);
+        }
     }
 
     /*
@@ -64,12 +100,14 @@ function Screens() {
         blendMode(BLEND);
 
         strokeWeight(3);
-        t = sin(frameCount*0.002);
+        t = sin(frameCount*0.01);
         t = (t + 1) * 0.5;
         t = utils.getGain(t, 0.1);
         t = (t * 2) - 1;
         background(50,50,200);
 
+
+        var edge = 0.5;
         var size =unit*2;
         
         if (t > 0)
@@ -82,7 +120,7 @@ function Screens() {
                     fill(255,50,170);
                     circle(i*size, j*size, size);
 
-                    if (t > 0.8 || t < -0.8)
+                    if (t < -edge)
                     {
                         if (this.isAChosenOne(i, j))//noise(i, j) > 0.8)
                         {
@@ -107,19 +145,16 @@ function Screens() {
                     fill(255,50,170);
                     //fill(50,50,200);
                     circle(i*size-size/2, j*size-size/2, size);
-                    /*
-                    if (t > 0.8 || t < -0.8)
+                    
+                    if (t < -edge)
                     {
                        if (this.isAChosenOne(i, j)) // noise(i, j) > 0.75)
                         {
-                            fill(255);
                             fill(50,50,200);
-                            noStroke();
-
                             circle(i*size-size/2, j*size-size/2, size);        
                             continue;
                         }
-                    }*/
+                    }
                     makeCircle(i*size-size/2, j*size-size/2, size); //clip with just the main canvas!  
                     
                     noFill();
@@ -128,17 +163,47 @@ function Screens() {
             }
         }      
 
-    if (t > 0.9)
+    if (t < -edge)
     {
-        blendMode(LIGHTEST);
-        this.text(this.pattern, "新  年  快  乐", 1.65 * unit, -unit*12.65, unit*0.1, "cn");
-        //image(this.pattern, 0, 0, width, height);
+        this.writeText(i);
     }
-    else if (t < -0.9)
+    else if (t < -edge)
     {
-        blendMode(LIGHTEST);
-        this.text(this.pattern, "新  年  快  乐", 1.65 * unit, -unit*12.65, unit*0.1, "cn");
-        image(this.pattern, 0, 0, width, height);
+        this.writeText(i);
+    }
+    
+    if (frameCount % 100 == 0)
+    {
+        loop = (loop+1) % 4;
+    }
+
+}
+
+this.writeText = () => {
+    blendMode(LIGHTEST);
+    fill(255);
+
+    var xOffset = -unit * 1.0;
+    var yOffset = -unit * 1.0;
+    if (loop == 1)
+    {
+        this.text(this.pattern, "新   年   快   乐", 1.44 * unit, -unit*12.6+xOffset, unit*0.09+yOffset, "cn");
+        image(this.pattern, 0, 0, width, height);        
+    }
+    else if (loop == 2)
+    {
+        this.text(this.pattern, "CHÚC   MỪNG   NĂM     MỚI", 0.78 * unit, unit*5.3+xOffset, -unit*.15+yOffset, "vn");
+        image(this.pattern, 0, 0, width, height);        
+    }
+    else if (loop == 3)
+    {
+        this.text(this.pattern, "새  해  복  많  이  받  으  세  요", 1.31 * unit, -unit*14.7+xOffset, unit*2.0+yOffset, "kr");
+        image(this.pattern, 0, 0, width, height);        
+    }
+    else if (loop == 0)
+    {
+        this.text(this.pattern, "H    A    P    P    Y    N    E   W    Y    E    A    R", 1.58 * unit, -unit*8.4+xOffset, unit*4.12+yOffset, "vn");
+        image(this.pattern, 0, 0, width, height);        
     }
 }
 
